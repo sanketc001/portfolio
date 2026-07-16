@@ -1,0 +1,137 @@
+{
+  "profile": {
+    "name": "Sanket Choudhary",
+    "title": "GenAI & ML Engineer | Technical Consultant",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
+    "bio": "GenAI & ML Engineer with 3+ years of experience building production-grade AI systems at scale. Currently serving as AI Lead for JioSphere Browser at Reliance Jio via Quest Global, where I lead GenAI innovation across audio, video, and image-based offerings. Winner of the Jio-wide AI Agent Hackathon (July 2025).",
+    "location": "Navi Mumbai, Maharashtra, India",
+    "email": "sanketkumarchoudhary@gmail.com",
+    "github": "https://github.com/sanketc001",
+    "linkedin": "https://linkedin.com/in/sanket-choudhary-243625208",
+    "twitter": "https://x.com"
+  },
+  "skills": {
+    "AI & GenAI": ["Large Language Models (LLM)", "Stable Diffusion", "Retrieval-Augmented Generation (RAG)", "Multimodal AI", "Computer Vision (CV)", "Vector DBs"],
+    "Engineering": ["Python", "FastAPI", "On-device AI", "Model Compression", "Chrome Extensions (MV3)", "Azure"],
+    "Media & Streaming": ["SCTE-35 Signal Parsing", "Stream Preprocessing", "Speech AI", "Ad Delivery Monitoring"],
+    "Leadership & Tools": ["Technical Consulting", "System Architecture", "Git", "Docker", "Algorithms", "Data Collection"]
+  },
+  "experience": [
+    {
+      "role": "Artificial Intelligence Engineer & Technical Consultant",
+      "company": "Quest Global @ Reliance Jio",
+      "period": "March 2023 - Present",
+      "description": "• JioSphere Browser (Jan 2025 - Present): Leading AI strategy for Jio's Chromium-based browser (available across Android, iOS, Windows, macOS, Linux, KaiOS & Android TV). Building on-device Speech AI pipeline using model compression & optimization for cross-device in-browser serving.\n• GenAI Ad Creative Platform (JioAds): Built GenAI pipeline for SMB ad creative generation across audio, video & image, reaching Jio's 450M+ consumer base. Twice named Top Partner Employee (Dec 2023 & Jan 2025).\n• IPL 2023 Live Ad Operations (JioCinema): Built ad delivery monitoring across 12 languages & 17 feeds using SCTE-35 signal parsing. Created Ad Opportunity Loss Metrics critical to engineering teams. Supported ad infrastructure for world record 32M peak concurrent viewers."
+    },
+    {
+      "role": "Chief Technology Officer",
+      "company": "Yugma by STRTRS",
+      "period": "October 2020 - Present",
+      "description": "Leading technical direction, architecture design, and full-stack development. Directing early-stage prototyping and product engineering processes."
+    },
+    {
+      "role": "Developer Student Club Lead",
+      "company": "GDSC DYPIU",
+      "period": "August 2021 - May 2022",
+      "description": "Led on-campus developers community, organizing workshops on software development, cloud, and machine learning concepts in collaboration with Google."
+    },
+    {
+      "role": "Competitive Programming Lead",
+      "company": "CodeChef CP Lead",
+      "period": "September 2020 - July 2021",
+      "description": "Conducted programming challenges, mentored peers on data structures and algorithms, and fostered competitive programming culture on campus."
+    }
+  ],
+  "fallbackProjects": [
+    {
+      "id": "jiosphere-speech-ai",
+      "name": "jiosphere-speech-ai",
+      "description": "On-device Speech AI pipeline replacing Web Speech API using model compression and cross-device optimization for browser rendering.",
+      "language": "Python",
+      "stars": 45,
+      "homepage": "",
+      "html_url": "https://github.com/sanketc001/jiosphere-speech-ai",
+      "topics": ["speech-ai", "model-compression", "chromium", "on-device-ml"]
+    },
+    {
+      "id": "genai-ad-creative",
+      "name": "genai-ad-creative",
+      "description": "GenAI pipeline for automated SMB ad creative generation across audio, video, and images. Part of JioAds ecosystem serving 450M+ users.",
+      "language": "Python",
+      "stars": 88,
+      "homepage": "",
+      "html_url": "https://github.com/sanketc001/genai-ad-creative",
+      "topics": ["stable-diffusion", "fastapi", "multimodal-ai", "generative-art"]
+    },
+    {
+      "id": "scte35-live-ad-parser",
+      "name": "scte35-live-ad-parser",
+      "description": "Live ad delivery monitor using SCTE-35 signal parsing across 12 languages and 17 streams. Designed for IPL 2023 live ad infrastructure.",
+      "language": "Python",
+      "stars": 64,
+      "homepage": "",
+      "html_url": "https://github.com/sanketc001/scte35-live-ad-parser",
+      "topics": ["scte-35", "streaming", "video-processing", "observability"]
+    }
+  ],
+  "blog": [
+    {
+      "id": "on-device-speech-ai",
+      "title": "Running Speech AI On-Device: Model Compression & Chromium",
+      "date": "July 12, 2026",
+      "readTime": "6 min read",
+      "excerpt": "A technical breakdown on compiling and running optimized speech-to-text models on low-power mobile devices and Chromium-based engines.",
+      "content": "On-device AI is crucial for privacy and low-latency interaction. In this post, we discuss compiling speech-to-text models for JioSphere browser cross-device execution. We explore quantization (INT8), pruning weights, and writing lightweight JS integrations for Chromium. We achieve a 4x reduction in model footprint with minimal word-error-rate increases."
+    },
+    {
+      "id": "scte-35-ad-operations",
+      "title": "SCTE-35 Signal Parsing at Scale: IPL 2023 Live Ads",
+      "date": "May 15, 2026",
+      "readTime": "8 min read",
+      "excerpt": "How we monitored and processed stream markers across 17 feeds and 12 languages for 32 Million concurrent viewers on JioCinema.",
+      "content": "IPL 2023 set record metrics. Parsing SCTE-35 markers in live transport streams with microsecond precision is vital for inserting targeted ads. This post outlines our pipeline architecture, how we parsed splicing command markers, handled regional feeds, and generated opportunity loss telemetry data in real-time."
+    }
+  ],
+  "gallery": [
+    {
+      "id": "img-1",
+      "title": "JioSphere Browser Mobile",
+      "url": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80",
+      "description": "Mockup of JioSphere Browser on mobile, utilizing on-device speech AI."
+    },
+    {
+      "id": "img-2",
+      "title": "Ad Creative Automation",
+      "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
+      "description": "Aesthetic visualization of multimodal GenAI creative processing."
+    },
+    {
+      "id": "img-3",
+      "title": "Real-time Metrics Dashboard",
+      "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
+      "description": "Ad Opportunity Loss metric logging dashboard designed for live operations."
+    }
+  ],
+  "wallpapers": [
+    {
+      "id": "glassy-aurora",
+      "name": "Glassy Aurora (Default)",
+      "url": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80"
+    },
+    {
+      "id": "dark-macos",
+      "name": "Abstract Obsidian",
+      "url": "https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&w=1920&q=80"
+    },
+    {
+      "id": "misty-mountains",
+      "name": "Misty Alpine Peaks",
+      "url": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
+    },
+    {
+      "id": "sunset-gradient",
+      "name": "Warm Sunset",
+      "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80"
+    }
+  ]
+}
