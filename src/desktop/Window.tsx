@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { motion, useDragControls } from 'framer-motion'
+import { motion, useDragControls, useMotionValue } from 'framer-motion'
 import { useOS } from '../context/OSContext'
 import type { WindowState } from '../context/OSContext'
 import { X, Minus, Square, Minimize2, Move } from 'lucide-react'
@@ -23,6 +23,8 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
 
   const windowRef = useRef<HTMLDivElement>(null)
   const dragControls = useDragControls()
+  const dragX = useMotionValue(0)
+  const dragY = useMotionValue(0)
 
   // Window size and position state (for non-maximized states)
   const [size, setSize] = useState({ w: windowState.w, h: windowState.h })
@@ -99,8 +101,6 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
           ? {
               opacity: 1,
               scale: 1,
-              x: 0,
-              y: 0,
               left: 0,
               top: 0,
               width: '100%',
@@ -110,8 +110,6 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
           : {
               opacity: 1,
               scale: 1,
-              x: 0,
-              y: 0,
               left: position.x,
               top: position.y,
               width: size.w,
@@ -119,26 +117,41 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
               pointerEvents: 'auto'
             }
       }
+      style={{ x: dragX, y: dragY }}
       transition={{
-        default: { type: 'spring', stiffness: 220, damping: 25, mass: 0.8 },
-        x: { duration: 0 },
-        y: { duration: 0 }
+        default: { type: 'spring', stiffness: 220, damping: 25, mass: 0.8 }
       }}
       drag={!isMaximized}
       dragListener={false}
       dragControls={dragControls}
       dragConstraints={containerRef}
-      dragElastic={0.05}
+      dragElastic={0.02}
       dragMomentum={false}
       onDragEnd={() => {
-        if (windowRef.current && containerRef.current) {
-          const rect = windowRef.current.getBoundingClientRect()
-          const containerRect = containerRef.current.getBoundingClientRect()
-          setPosition({
-            x: rect.left - containerRect.left,
-            y: rect.top - containerRect.top
-          })
-        }
+        const dx = dragX.get()
+        const dy = dragY.get()
+
+        setPosition(prev => {
+          let newX = prev.x + dx
+          let newY = prev.y + dy
+
+          // Prevent top title bar from being dragged off the screen
+          if (containerRef.current) {
+            const containerWidth = containerRef.current.clientWidth
+            const containerHeight = containerRef.current.clientHeight
+
+            // Keep at least 150px of the window width visible on screen
+            newX = Math.max(150 - size.w, Math.min(containerWidth - 150, newX))
+            // Keep title bar within the vertical workspace bounds
+            newY = Math.max(0, Math.min(containerHeight - 100, newY))
+          }
+
+          return { x: newX, y: newY }
+        })
+
+        // Reset motion values so that the new left/top states hold positioning
+        dragX.set(0)
+        dragY.set(0)
       }}
       className={`absolute rounded-xl overflow-hidden shadow-2xl flex flex-col glass border transition-shadow duration-300 ${
         isFocused
