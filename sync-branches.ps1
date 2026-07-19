@@ -11,6 +11,10 @@ Write-Host "=== Starting Multi-Branch Sync ===" -ForegroundColor Cyan
 Write-Host "Checking out main branch..." -ForegroundColor Yellow
 git checkout main
 
+# Auto-scan physical folders and synchronize database configuration
+Write-Host "Auto-scanning media folders and generating registry..." -ForegroundColor Cyan
+node scripts/generate-media-registry.cjs
+
 # Check if there are local modifications to commit
 $status = git status --porcelain
 if ($null -eq $status -or $status.Trim() -eq "") {
