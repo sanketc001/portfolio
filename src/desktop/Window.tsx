@@ -30,6 +30,21 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
   const [size, setSize] = useState({ w: windowState.w, h: windowState.h })
   const [position, setPosition] = useState({ x: windowState.x, y: windowState.y })
 
+  // Track mode transition (maximize/minimize) to disable spring animations during manual drags
+  const prevMaximized = useRef(isMaximized)
+  const prevMinimized = useRef(isMinimized)
+  const [isTransitioningMode, setIsTransitioningMode] = useState(false)
+
+  useEffect(() => {
+    if (prevMaximized.current !== isMaximized || prevMinimized.current !== isMinimized) {
+      setIsTransitioningMode(true)
+      const timer = setTimeout(() => setIsTransitioningMode(false), 450)
+      prevMaximized.current = isMaximized
+      prevMinimized.current = isMinimized
+      return () => clearTimeout(timer)
+    }
+  }, [isMaximized, isMinimized])
+
   // Focus window on mount or when clicking inside
   const handleMouseDown = () => {
     if (activeWindowId !== id) {
@@ -118,9 +133,18 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
             }
       }
       style={{ x: dragX, y: dragY, zIndex }}
-      transition={{
-        default: { type: 'spring', stiffness: 220, damping: 25, mass: 0.8 }
-      }}
+      transition={
+        isTransitioningMode
+          ? { default: { type: 'spring', stiffness: 220, damping: 25, mass: 0.8 } }
+          : {
+              opacity: { type: 'spring', stiffness: 220, damping: 25 },
+              scale: { type: 'spring', stiffness: 220, damping: 25 },
+              left: { duration: 0 },
+              top: { duration: 0 },
+              width: { duration: 0 },
+              height: { duration: 0 }
+            }
+      }
       drag={!isMaximized}
       dragListener={false}
       dragControls={dragControls}
