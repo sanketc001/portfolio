@@ -1,8 +1,42 @@
 import React, { useState } from 'react'
 import { useOS } from '../../context/OSContext'
-import { Settings, Moon, Sun, Check, RefreshCw } from 'lucide-react'
+import { 
+  Settings, Moon, Sun, Check, RefreshCw,
+  Cpu, HardDrive, Monitor, Globe, Clock, Languages, Wifi, Fingerprint
+} from 'lucide-react'
 import { Github } from '../Common/BrandIcons'
 import { useDetectOS } from '../../hooks/useDetectOS'
+
+const getBrowserInfo = () => {
+  const ua = navigator.userAgent
+  let name = "Unknown Browser"
+  let version = ""
+
+  if (ua.includes("Firefox/")) {
+    name = "Mozilla Firefox"
+    version = ua.split("Firefox/")[1]
+  } else if (ua.includes("SamsungBrowser/")) {
+    name = "Samsung Internet"
+    version = ua.split("SamsungBrowser/")[1].split(" ")[0]
+  } else if (ua.includes("Opera/") || ua.includes("OPR/")) {
+    name = "Opera"
+    version = ua.includes("OPR/") ? ua.split("OPR/")[1] : ua.split("Opera/")[1]
+  } else if (ua.includes("Edge/") || ua.includes("Edg/")) {
+    name = "Microsoft Edge"
+    version = ua.includes("Edg/") ? ua.split("Edg/")[1] : ua.split("Edge/")[1]
+  } else if (ua.includes("Chrome/")) {
+    name = "Google Chrome"
+    version = ua.split("Chrome/")[1].split(" ")[0]
+  } else if (ua.includes("Safari/")) {
+    name = "Apple Safari"
+    version = ua.split("Version/")[1]?.split(" ")[0] || ""
+  }
+  
+  if (version.includes(" ")) {
+    version = version.split(" ")[0]
+  }
+  return { name, version }
+}
 
 export const SettingsApp: React.FC = () => {
   const detectedOS = useDetectOS()
@@ -20,6 +54,32 @@ export const SettingsApp: React.FC = () => {
   const [usernameInput, setUsernameInput] = useState(githubUsername)
   const [saveSuccess, setSaveSuccess] = useState(false)
 
+  // Hardware Diagnostics and Device info state
+  const [deviceInfo] = useState(() => {
+    const browser = getBrowserInfo()
+    const conn = (navigator as any).connection
+    const connectionType = conn 
+      ? `${conn.effectiveType?.toUpperCase() || ''} (${conn.downlink || 0} Mbps)` 
+      : 'Active (Broadband)'
+    const touchSupport = navigator.maxTouchPoints > 0 ? 'Supported' : 'Not Supported'
+    const ram = (navigator as any).deviceMemory ? `${(navigator as any).deviceMemory} GB` : 'N/A (Standard)'
+    
+    return {
+      os: detectedOS,
+      browser: `${browser.name} v${browser.version || 'Latest'}`,
+      screen: `${window.screen.width} × ${window.screen.height} px`,
+      viewport: `${window.innerWidth} × ${window.innerHeight} px`,
+      language: navigator.language || 'en-US',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      cores: navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Cores` : 'N/A',
+      memory: ram,
+      dpr: `${window.devicePixelRatio.toFixed(1)}x`,
+      touch: touchSupport,
+      connection: connectionType,
+      cookies: navigator.cookieEnabled ? 'Enabled' : 'Disabled'
+    }
+  })
+
   const handleSyncSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (usernameInput.trim()) {
@@ -30,7 +90,7 @@ export const SettingsApp: React.FC = () => {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-6 md:p-8 select-text">
+    <div className="h-full overflow-y-auto p-6 md:p-8 select-text bg-slate-50/50 dark:bg-slate-950/20">
       <div className="max-w-2xl mx-auto space-y-8">
         
         {/* Title */}
@@ -40,7 +100,7 @@ export const SettingsApp: React.FC = () => {
         </div>
 
         {/* Section 1: Themes */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4">
+        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4 shadow-sm">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">Personalization</h3>
           
           <div className="flex items-center justify-between">
@@ -51,7 +111,7 @@ export const SettingsApp: React.FC = () => {
             
             <button
               onClick={toggleTheme}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-250 font-bold text-xs transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors cursor-pointer"
             >
               {theme === 'dark' ? (
                 <>
@@ -69,7 +129,7 @@ export const SettingsApp: React.FC = () => {
         </div>
 
         {/* Section 2: Wallpaper Selector */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4">
+        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4 shadow-sm">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">Desktop Wallpaper</h3>
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -80,7 +140,7 @@ export const SettingsApp: React.FC = () => {
                 className="group cursor-pointer flex flex-col gap-1.5"
               >
                 <div className={`relative aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                  wallpaper === wp.url ? 'border-violet-500 ring-2 ring-violet-500/20' : 'border-transparent hover:border-slate-350 dark:hover:border-slate-700'
+                  wallpaper === wp.url ? 'border-violet-500 ring-2 ring-violet-500/20' : 'border-transparent hover:border-slate-300 dark:hover:border-slate-700'
                 }`}>
                   <img
                     src={wp.url}
@@ -102,14 +162,14 @@ export const SettingsApp: React.FC = () => {
         </div>
 
         {/* Section 3: GitHub Username Sync */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4">
+        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4 shadow-sm">
           <div className="flex items-center gap-2">
             <Github className="w-5 h-5 text-slate-700 dark:text-slate-200" />
             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">GitHub Sync</h3>
           </div>
 
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            Enter your GitHub username to dynamically populate the file explorer (Projects folder) and mobile Launcher (Projects app) with your actual public repositories.
+            Enter your GitHub username to dynamically populate the projects catalog with your public repositories.
           </p>
 
           <form onSubmit={handleSyncSubmit} className="flex gap-2 max-w-md">
@@ -141,25 +201,118 @@ export const SettingsApp: React.FC = () => {
           )}
         </div>
 
-        {/* Section 4: System Information */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">System Information</h3>
+        {/* Section 4: Advanced System Information */}
+        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-5 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">
+            Hardware & Device Diagnostics
+          </h3>
           
-          <div className="space-y-3 text-xs md:text-sm">
-            <div className="flex justify-between items-center py-1.5 border-b border-slate-200/50 dark:border-slate-800/50">
-              <span className="font-semibold text-slate-500">Visitor OS</span>
-              <span className="font-bold text-slate-800 dark:text-white px-2.5 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400">{detectedOS}</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            
+            {/* OS Card */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">OS Environment</span>
+                <Monitor className="w-4 h-4 text-blue-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
+                {deviceInfo.os}
+              </p>
             </div>
-            <div className="flex justify-between items-center py-1.5 border-b border-slate-200/50 dark:border-slate-800/50">
-              <span className="font-semibold text-slate-500">Host Environment</span>
-              <span className="font-bold text-slate-800 dark:text-white">
-                {import.meta.env.DEV ? 'Local Development' : 'GitHub Pages (Production)'}
-              </span>
+
+            {/* Browser Card */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">Browser Engine</span>
+                <Globe className="w-4 h-4 text-violet-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate" title={deviceInfo.browser}>
+                {deviceInfo.browser}
+              </p>
             </div>
-            <div className="flex justify-between items-center py-1.5">
-              <span className="font-semibold text-slate-500">Vite Base Path</span>
-              <span className="font-mono text-slate-400">{import.meta.env.BASE_URL}</span>
+
+            {/* CPU Cores */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">CPU Threads</span>
+                <Cpu className="w-4 h-4 text-emerald-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
+                {deviceInfo.cores}
+              </p>
             </div>
+
+            {/* Device Memory */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">Device RAM</span>
+                <HardDrive className="w-4 h-4 text-amber-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
+                {deviceInfo.memory}
+              </p>
+            </div>
+
+            {/* Timezone */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">Timezone</span>
+                <Clock className="w-4 h-4 text-pink-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate" title={deviceInfo.timezone}>
+                {deviceInfo.timezone}
+              </p>
+            </div>
+
+            {/* Screen Resolution */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">Resolution</span>
+                <span className="text-[9px] font-black text-rose-500 font-mono">DPR {deviceInfo.dpr}</span>
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
+                {deviceInfo.screen}
+              </p>
+            </div>
+
+            {/* Connection Speed */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">Connection</span>
+                <Wifi className="w-4 h-4 text-indigo-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
+                {deviceInfo.connection}
+              </p>
+            </div>
+
+            {/* Language */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">Language</span>
+                <Languages className="w-4 h-4 text-teal-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
+                {deviceInfo.language}
+              </p>
+            </div>
+
+            {/* Touch Screen */}
+            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-[9px] font-bold uppercase tracking-wider">Touch Input</span>
+                <Fingerprint className="w-4 h-4 text-fuchsia-500" />
+              </div>
+              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
+                {deviceInfo.touch}
+              </p>
+            </div>
+
+          </div>
+          
+          <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[10px] font-semibold text-slate-400">
+            <span>Environment Host: {import.meta.env.DEV ? 'Local Development' : 'GitHub Pages (sanketc001.github.io)'}</span>
+            <span>Vite Subpath: {import.meta.env.BASE_URL}</span>
           </div>
         </div>
 

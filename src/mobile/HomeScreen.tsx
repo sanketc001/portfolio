@@ -28,7 +28,7 @@ import { ContactApp } from '../components/Apps/ContactApp'
 import portfolioData from '../data/portfolioData.json'
 
 export const HomeScreen: React.FC = () => {
-  const { wallpaper, theme } = useOS()
+  const { wallpaper, theme, visitorCount } = useOS()
   const [activeApp, setActiveApp] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [time, setTime] = useState('')
@@ -101,7 +101,13 @@ export const HomeScreen: React.FC = () => {
             : 'text-slate-200 bg-slate-900 border-b border-slate-800'
           : 'text-white bg-black/10 backdrop-blur-[1px]'
       }`}>
-        <span>{time}</span>
+        <div className="flex items-center gap-2">
+          <span>{time}</span>
+          <span className="opacity-45">•</span>
+          <span className="text-[10px] tracking-wide font-medium flex items-center gap-0.5">
+            👥 {visitorCount !== null ? visitorCount.toLocaleString() : '...'}
+          </span>
+        </div>
         <div className="flex items-center gap-1.5">
           <Signal className="w-3.5 h-3.5" />
           <Wifi className="w-3.5 h-3.5" />

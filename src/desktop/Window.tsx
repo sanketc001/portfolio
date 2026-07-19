@@ -130,11 +130,15 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
       dragConstraints={containerRef}
       dragElastic={0.05}
       dragMomentum={false}
-      onDragEnd={(_, info) => {
-        setPosition(prev => ({
-          x: prev.x + info.offset.x,
-          y: prev.y + info.offset.y
-        }))
+      onDragEnd={() => {
+        if (windowRef.current && containerRef.current) {
+          const rect = windowRef.current.getBoundingClientRect()
+          const containerRect = containerRef.current.getBoundingClientRect()
+          setPosition({
+            x: rect.left - containerRect.left,
+            y: rect.top - containerRect.top
+          })
+        }
       }}
       className={`absolute rounded-xl overflow-hidden shadow-2xl flex flex-col glass border transition-shadow duration-300 ${
         isFocused

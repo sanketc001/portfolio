@@ -40,7 +40,8 @@ export const Desktop: React.FC = () => {
     githubUsername,
     setGithubUsername,
     startMenuOpen,
-    setStartMenuOpen
+    setStartMenuOpen,
+    visitorCount
   } = useOS()
 
   const desktopRef = useRef<HTMLDivElement>(null)
@@ -143,6 +144,16 @@ export const Desktop: React.FC = () => {
         backgroundPosition: 'center'
       }}
     >
+      {/* Visitor Counter (Top Right) */}
+      <div className="absolute top-6 right-6 z-10 select-none">
+        <div className="glass px-3.5 py-1.5 rounded-full border border-white/10 flex items-center gap-2 text-white shadow-lg backdrop-blur-md">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[10px] font-bold tracking-wider uppercase opacity-85">Visitors:</span>
+          <span className="text-xs font-black font-display text-emerald-450">
+            {visitorCount !== null ? visitorCount.toLocaleString() : '...'}
+          </span>
+        </div>
+      </div>
       {/* Desktop Icons Grid (Left column layout) */}
       <div className="absolute top-6 left-6 bottom-18 w-32 flex flex-col flex-wrap gap-4 content-start z-10">
         {desktopIcons.map(icon => {

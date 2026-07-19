@@ -39,6 +39,7 @@ interface OSContextType {
   setStartMenuOpen: (open: boolean) => void
   searchQuery: string
   setSearchQuery: (query: string) => void
+  visitorCount: number | null
 }
 
 const OSContext = createContext<OSContextType | undefined>(undefined)
@@ -82,6 +83,19 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   })
   const [projects, setProjects] = useState<GithubProject[]>([])
   const [loadingProjects, setLoadingProjects] = useState(false)
+  const [visitorCount, setVisitorCount] = useState<number | null>(null)
+
+  // Fetch / Increment visitor count
+  useEffect(() => {
+    fetch('https://api.counterapi.dev/v1/sanketc001/portfolio/up')
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.value === 'number') {
+          setVisitorCount(data.value)
+        }
+      })
+      .catch(err => console.error("Counter API error:", err))
+  }, [])
 
   // Sync theme with document class list
   useEffect(() => {
@@ -225,7 +239,8 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         startMenuOpen,
         setStartMenuOpen,
         searchQuery,
-        setSearchQuery
+        setSearchQuery,
+        visitorCount
       }}
     >
       {children}
