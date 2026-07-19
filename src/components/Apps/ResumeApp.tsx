@@ -61,7 +61,7 @@ export const ResumeApp: React.FC = () => {
 
         <div className="flex gap-2">
           <a
-            href="/Resume.pdf"
+            href={`${import.meta.env.BASE_URL}Resume.pdf`}
             download="Sanket_Choudhary_Resume.pdf"
             className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-violet-500 hover:text-white dark:hover:bg-violet-600 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
             title="Download PDF"
@@ -76,7 +76,7 @@ export const ResumeApp: React.FC = () => {
             <Printer className="w-4 h-4" />
           </button>
           <a
-            href="/Resume.pdf"
+            href={`${import.meta.env.BASE_URL}Resume.pdf`}
             target="_blank"
             rel="noreferrer"
             className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-violet-500 hover:text-white dark:hover:bg-violet-600 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
@@ -189,7 +189,7 @@ export const ResumeApp: React.FC = () => {
         ) : (
           <div className="w-full h-full min-h-[500px] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white shadow">
             <iframe
-              src="/Resume.pdf"
+              src={`${import.meta.env.BASE_URL}Resume.pdf`}
               title="Resume PDF"
               className="w-full h-full border-none"
             />
