@@ -90,13 +90,15 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   useEffect(() => {
     const cachedCount = localStorage.getItem('portfolio_visitor_count')
     const fallbackSeed = cachedCount ? parseInt(cachedCount, 10) : 1482
+    const baseOffset = 1480
 
     fetch('https://api.counterapi.dev/v1/sanketc001/portfolio/up')
       .then(res => res.json())
       .then(data => {
-        if (data && typeof data.value === 'number') {
-          setVisitorCount(data.value)
-          localStorage.setItem('portfolio_visitor_count', data.value.toString())
+        if (data && typeof data.count === 'number') {
+          const totalVisits = data.count + baseOffset
+          setVisitorCount(totalVisits)
+          localStorage.setItem('portfolio_visitor_count', totalVisits.toString())
         } else {
           const newVal = fallbackSeed + 1
           setVisitorCount(newVal)
