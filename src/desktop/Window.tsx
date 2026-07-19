@@ -233,7 +233,7 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
       </div>
 
       {/* Window Content */}
-      <div className="flex-1 overflow-hidden bg-slate-50/90 dark:bg-[#131722]/95 relative">
+      <div className="flex-1 overflow-hidden bg-[#faf8f4]/95 dark:bg-[#131722]/95 relative">
         {children}
       </div>
 

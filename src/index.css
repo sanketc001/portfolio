@@ -69,11 +69,11 @@
 
 /* Glassmorphism utilities */
 .glass {
-  background: rgba(255, 255, 255, 0.76);
+  background: rgba(249, 246, 240, 0.85); /* Premium warm eggshell white */
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(228, 222, 208, 0.65); /* Warm sand border */
+  box-shadow: 0 8px 32px 0 rgba(142, 137, 126, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
   transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -86,11 +86,11 @@
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(245, 242, 235, 0.93); /* Slightly richer eggshell panel */
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(220, 212, 198, 0.7);
+  box-shadow: 0 8px 32px 0 rgba(142, 137, 126, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
   transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -104,10 +104,10 @@
 
 /* Nested cards inside glass windows should have solid/frosted contrast, not compounded blur */
 .glass .glass {
-  background: rgba(255, 255, 255, 0.65) !important;
+  background: rgba(253, 251, 247, 0.75) !important; /* Lighter eggshell card */
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  border: 1px solid rgba(0, 0, 0, 0.07) !important;
+  border: 1px solid rgba(225, 218, 204, 0.5) !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
@@ -121,9 +121,9 @@
 
 /* Glass-specific input fields and forms */
 .glass input, .glass textarea, .glass select {
-  background: rgba(255, 255, 255, 0.8) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  color: #1e293b !important;
+  background: rgba(255, 254, 252, 0.9) !important; /* Milky eggshell input background */
+  border: 1px solid rgba(220, 212, 198, 0.6) !important;
+  color: #2b261f !important; /* Soft warm charcoal text */
   transition: all 0.2s ease !important;
 }
 
@@ -134,9 +134,9 @@
 }
 
 .glass input:focus, .glass textarea:focus, .glass select:focus {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-color: #8b5cf6 !important;
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: #d97706 !important; /* Warm amber focus border to fit the eggshell/warm theme */
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.15) !important;
   outline: none !important;
 }
 
@@ -147,7 +147,7 @@
 }
 
 ::selection {
-  background-color: rgba(139, 92, 246, 0.25);
+  background-color: rgba(217, 119, 6, 0.25); /* Warm amber highlight for light mode text */
   color: inherit;
 }
 

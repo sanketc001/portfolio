@@ -125,7 +125,7 @@ export const HomeScreen: React.FC = () => {
       <div className={`h-8 px-4 flex items-center justify-between text-[11px] font-semibold z-[200] transition-all duration-300 ${
         activeApp 
           ? theme === 'light'
-            ? 'text-slate-700 bg-white border-b border-slate-200'
+            ? 'text-slate-700 bg-[#f9f6f0] border-b border-[#e4ded0]'
             : 'text-slate-200 bg-slate-900 border-b border-slate-800'
           : 'text-white bg-black/10 backdrop-blur-[1px]'
       }`}>
