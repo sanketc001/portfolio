@@ -44,14 +44,14 @@ export const AboutApp: React.FC = () => {
             {profile.title}
           </p>
 
-          <div className="flex flex-col gap-2 mt-6 w-full text-left text-sm text-slate-600 dark:text-slate-300 border-t border-slate-200/50 dark:border-slate-800/50 pt-4">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-slate-400" />
-              <span>{profile.location}</span>
+          <div className="flex flex-col gap-2 mt-6 w-full text-left text-sm text-slate-600 dark:text-slate-300 border-t border-slate-200/50 dark:border-slate-800/50 pt-4 min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <span className="truncate">{profile.location}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-slate-400" />
-              <a href={`mailto:${profile.email}`} className="hover:text-violet-500 transition-colors">{profile.email}</a>
+            <div className="flex items-center gap-2 min-w-0 w-full">
+              <Mail className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <a href={`mailto:${profile.email}`} className="hover:text-violet-500 transition-colors truncate flex-1 block" title={profile.email}>{profile.email}</a>
             </div>
           </div>
 

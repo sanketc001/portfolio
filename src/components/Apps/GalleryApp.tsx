@@ -62,7 +62,7 @@ export const GalleryApp: React.FC = () => {
 
         <button
           onClick={() => setIsUploadOpen(true)}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-750 text-white text-xs font-bold transition-all shadow cursor-pointer"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold transition-all shadow cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add Image</span>
@@ -102,11 +102,11 @@ export const GalleryApp: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-slate-905 p-6 rounded-2xl w-full max-w-md border border-slate-205 dark:border-slate-800 shadow-2xl relative"
+              className="bg-white dark:bg-slate-900 p-6 rounded-2xl w-full max-w-md border border-slate-200 dark:border-slate-800 shadow-2xl relative"
             >
               <button
                 onClick={() => setIsUploadOpen(false)}
-                className="absolute right-4 top-4 p-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-655 dark:hover:text-white transition-colors cursor-pointer"
+                className="absolute right-4 top-4 p-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>

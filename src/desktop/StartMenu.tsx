@@ -95,7 +95,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search apps, utilities..."
-                className="w-full text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-205 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-violet-500"
+                className="w-full text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-violet-500"
               />
               <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-slate-400" />
             </div>

@@ -51,7 +51,7 @@ export const BlogApp: React.FC = () => {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-850 dark:text-white group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors font-display">
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors font-display">
                     {post.title}
                   </h3>
                   
@@ -59,7 +59,7 @@ export const BlogApp: React.FC = () => {
                     {post.excerpt}
                   </p>
                   
-                  <div className="text-xs font-bold text-violet-505 dark:text-violet-400 mt-4 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                  <div className="text-xs font-bold text-violet-500 dark:text-violet-400 mt-4 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                     <span>Read Article</span>
                     <span>&rarr;</span>
                   </div>
@@ -99,12 +99,12 @@ export const BlogApp: React.FC = () => {
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight font-display border-b border-slate-100 dark:border-slate-850 pb-6 mb-6">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight font-display border-b border-slate-100 dark:border-slate-800 pb-6 mb-6">
                 {selectedPost.title}
               </h1>
 
               {/* Article Content */}
-              <div className="text-sm md:text-base text-slate-655 dark:text-slate-300 leading-relaxed space-y-4 whitespace-pre-wrap">
+              <div className="text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed space-y-4 whitespace-pre-wrap">
                 {selectedPost.content}
               </div>
             </div>

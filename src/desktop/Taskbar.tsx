@@ -69,8 +69,8 @@ export const Taskbar: React.FC<TaskbarProps> = ({ onStartMenuToggle, startMenuOp
         onClick={onStartMenuToggle}
         className={`h-9 w-9 rounded-xl flex items-center justify-center cursor-pointer transition-all ${
           startMenuOpen
-            ? 'bg-violet-650 text-white shadow-inner scale-95'
-            : 'bg-white/10 dark:bg-white/5 hover:bg-violet-600 hover:text-white text-slate-750 dark:text-slate-200'
+            ? 'bg-violet-600 text-white shadow-inner scale-95'
+            : 'bg-white/10 dark:bg-white/5 hover:bg-violet-600 hover:text-white text-slate-700 dark:text-slate-200'
         }`}
       >
         <LayoutGrid className="w-5 h-5" />
@@ -102,7 +102,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({ onStartMenuToggle, startMenuOp
               {isOpen && (
                 <div
                   className={`absolute bottom-0.5 w-1 h-1 rounded-full transition-all ${
-                    isActive ? 'bg-violet-500 w-3' : 'bg-slate-400 dark:bg-slate-655'
+                    isActive ? 'bg-violet-500 w-3' : 'bg-slate-400 dark:bg-slate-650'
                   }`}
                 />
               )}
