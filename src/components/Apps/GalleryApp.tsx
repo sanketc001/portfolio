@@ -120,6 +120,17 @@ export const GalleryApp: React.FC = () => {
     setIsAddOpen(false)
   }
 
+  const getEmbedUrl = (url: string) => {
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+      const match = url.match(regExp)
+      if (match && match[2].length === 11) {
+        return `https://www.youtube.com/embed/${match[2]}`
+      }
+    }
+    return null
+  }
+
   return (
     <div className="h-full flex flex-col md:flex-row select-text bg-slate-50/20 dark:bg-slate-950/10">
       {/* Hidden audio element for music player */}
@@ -250,7 +261,7 @@ export const GalleryApp: React.FC = () => {
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-250">{doc.name}</h4>
+                      <h4 className="text-sm font-bold text-slate-850 dark:text-slate-250">{doc.name}</h4>
                       <p className="text-[10px] text-slate-400">{doc.size} • PDF Document</p>
                     </div>
                   </div>
@@ -368,7 +379,7 @@ export const GalleryApp: React.FC = () => {
                         <p className="text-[9px] text-slate-400 mt-0.5">{track.size}</p>
                       </div>
                     </div>
-                    <button className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-450 group-hover:text-slate-800 dark:group-hover:text-white transition-all cursor-pointer">
+                    <button className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-805 text-slate-450 group-hover:text-slate-800 dark:group-hover:text-white transition-all cursor-pointer">
                       {currentPlayingMusic?.id === track.id && isPlaying ? (
                         <Pause className="w-3.5 h-3.5" />
                       ) : (
@@ -387,14 +398,26 @@ export const GalleryApp: React.FC = () => {
               {/* Active Video Player Widget */}
               {activeVideo && (
                 <div className="rounded-2xl overflow-hidden border border-slate-200/50 dark:border-slate-800/50 bg-black shadow-lg">
-                  <div className="aspect-video relative w-full">
-                    <video
-                      key={activeVideo.id}
-                      src={activeVideo.url}
-                      controls
-                      autoPlay
-                      className="w-full h-full object-contain"
-                    />
+                  <div className="aspect-video relative w-full bg-slate-950 flex items-center justify-center">
+                    {getEmbedUrl(activeVideo.url) ? (
+                      <iframe
+                        src={getEmbedUrl(activeVideo.url)!}
+                        title={activeVideo.name}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                        className="w-full h-full"
+                      />
+                    ) : (
+                      <video
+                        key={activeVideo.id}
+                        src={activeVideo.url}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="w-full h-full object-contain"
+                      />
+                    )}
                   </div>
                   <div className="p-4 bg-slate-900/90 text-white flex justify-between items-center">
                     <div>
@@ -408,7 +431,6 @@ export const GalleryApp: React.FC = () => {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                </div>
               )}
 
               {/* Videos Grid list */}

@@ -213,8 +213,8 @@
       { "id": "mus-2", "name": "Ambient Synth Focus.mp3", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", "size": "7.3 MB" }
     ],
     "videos": [
-      { "id": "vid-1", "name": "JioCinema IPL ad ops demo.mp4", "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "size": "12.5 MB" },
-      { "id": "vid-2", "name": "AI Speech Synthesis.mp4", "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "size": "8.9 MB" }
+      { "id": "vid-1", "name": "JioCinema IPL ad ops demo.mp4", "url": "https://www.w3schools.com/html/mov_bbb.mp4", "size": "1.5 MB" },
+      { "id": "vid-2", "name": "AI Speech Synthesis.mp4", "url": "https://www.youtube.com/watch?v=aircAruvnKk", "size": "YouTube Stream" }
     ]
   }
 }
