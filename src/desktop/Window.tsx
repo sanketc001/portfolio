@@ -101,6 +101,8 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
               scale: 1,
               x: 0,
               y: 0,
+              left: 0,
+              top: 0,
               width: '100%',
               height: 'calc(100% - 48px)', // Subtract taskbar height
               pointerEvents: 'auto'
@@ -108,14 +110,20 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
           : {
               opacity: 1,
               scale: 1,
-              x: position.x,
-              y: position.y,
+              x: 0,
+              y: 0,
+              left: position.x,
+              top: position.y,
               width: size.w,
               height: size.h,
               pointerEvents: 'auto'
             }
       }
-      transition={{ type: 'spring', stiffness: 220, damping: 25, mass: 0.8 }}
+      transition={{
+        default: { type: 'spring', stiffness: 220, damping: 25, mass: 0.8 },
+        x: { duration: 0 },
+        y: { duration: 0 }
+      }}
       drag={!isMaximized}
       dragListener={false}
       dragControls={dragControls}
@@ -123,14 +131,10 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
       dragElastic={0.05}
       dragMomentum={false}
       onDragEnd={(_, info) => {
-        // Save the final drag position relative to the container
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect()
-          setPosition({
-            x: info.point.x - rect.left - 100, // offset correction for dragging title offset
-            y: info.point.y - rect.top - 16
-          })
-        }
+        setPosition(prev => ({
+          x: prev.x + info.offset.x,
+          y: prev.y + info.offset.y
+        }))
       }}
       className={`absolute rounded-xl overflow-hidden shadow-2xl flex flex-col glass border transition-shadow duration-300 ${
         isFocused

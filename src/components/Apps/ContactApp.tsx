@@ -10,7 +10,7 @@ export const ContactApp: React.FC = () => {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !email.trim() || !message.trim()) {
       setStatus('error')
@@ -19,13 +19,38 @@ export const ContactApp: React.FC = () => {
 
     setStatus('submitting')
 
-    // Simulate sending email api call
-    setTimeout(() => {
-      setStatus('success')
-      setName('')
-      setEmail('')
-      setMessage('')
-    }, 1500)
+    try {
+      const accessKey = (profile as any).web3forms_key || "YOUR_ACCESS_KEY_HERE"
+      
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: name,
+          email: email,
+          message: message,
+          from_name: "Portfolio Contact",
+          subject: `New Portfolio Message from ${name}`
+        })
+      })
+
+      const result = await response.json()
+      if (result.success) {
+        setStatus('success')
+        setName('')
+        setEmail('')
+        setMessage('')
+      } else {
+        setStatus('error')
+      }
+    } catch (error) {
+      console.error("Email submission failed:", error)
+      setStatus('error')
+    }
   }
 
   return (

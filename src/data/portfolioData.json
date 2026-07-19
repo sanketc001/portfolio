@@ -8,7 +8,8 @@
     "email": "sanketkumarchoudhary@gmail.com",
     "github": "https://github.com/sanketc001",
     "linkedin": "https://linkedin.com/in/sanket-choudhary-243625208",
-    "twitter": "https://x.com"
+    "twitter": "https://x.com",
+    "web3forms_key": "YOUR_ACCESS_KEY_HERE"
   },
   "skills": {
     "AI & GenAI": ["Large Language Models (LLM)", "Stable Diffusion", "Retrieval-Augmented Generation (RAG)", "Multimodal AI", "Computer Vision (CV)", "Vector DBs"],
@@ -132,6 +133,35 @@
       "id": "sunset-gradient",
       "name": "Warm Sunset",
       "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80"
+    }
+  ],
+  "linkedinPosts": [
+    {
+      "id": "li-1",
+      "date": "2 weeks ago",
+      "content": "Excited to share that we just successfully completed IPL 2023 live ad operations on JioCinema! 🚀\n\nTo support our peak concurrent viewership of 32M+ viewers, we built real-time ad delivery monitoring across 12 languages and 17 streams using SCTE-35 signal parsing. By creating an automated telemetry dashboard for Ad Opportunity Loss, we were able to pinpoint stream drops instantly and save millions in potential lost revenue.\n\nHuge shoutout to the engineering teams at Reliance Jio and Quest Global for making this historic season happen! 🏆",
+      "likes": 245,
+      "comments": 38,
+      "shares": 12,
+      "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "li-2",
+      "date": "1 month ago",
+      "content": "Humbled to receive the Top Partner Employee award for my contributions to the JioAds ecosystem! 🏅\n\nOver the past year, we have been building a GenAI Ad Creative Platform designed to help small and medium businesses (SMBs) automatically generate high-quality audio, video, and image-based ad creatives. Seeing this pipeline scale to Jio's 450M+ consumer base has been an incredible journey. \n\nLooking forward to pushing the boundaries of multimodal GenAI even further! 💡",
+      "likes": 312,
+      "comments": 47,
+      "shares": 15,
+      "image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "li-3",
+      "date": "2 months ago",
+      "content": "On-device AI is moving fast! 📲\n\nWe are currently developing a cross-device on-device Speech AI pipeline for the JioSphere browser. By applying model compression (INT8 quantization, structural pruning) and memory optimization, we've successfully integrated high-performance speech-to-text models directly into the browser engine. This eliminates server hops, reduces costs, and provides near-zero latency while maintaining user privacy.\n\nRead more details in my latest technical article or try it out in the JioSphere browser app! 🌐",
+      "likes": 189,
+      "comments": 22,
+      "shares": 8,
+      "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80"
     }
   ]
 }
