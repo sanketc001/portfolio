@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { useOS } from '../../context/OSContext'
 import { Settings, Moon, Sun, Check, RefreshCw } from 'lucide-react'
 import { Github } from '../Common/BrandIcons'
+import { useDetectOS } from '../../hooks/useDetectOS'
 
 export const SettingsApp: React.FC = () => {
+  const detectedOS = useDetectOS()
   const {
     theme,
     toggleTheme,
@@ -138,6 +140,29 @@ export const SettingsApp: React.FC = () => {
             </p>
           )}
         </div>
+
+        {/* Section 4: System Information */}
+        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4">
+          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">System Information</h3>
+          
+          <div className="space-y-3 text-xs md:text-sm">
+            <div className="flex justify-between items-center py-1.5 border-b border-slate-200/50 dark:border-slate-800/50">
+              <span className="font-semibold text-slate-500">Visitor OS</span>
+              <span className="font-bold text-slate-800 dark:text-white px-2.5 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400">{detectedOS}</span>
+            </div>
+            <div className="flex justify-between items-center py-1.5 border-b border-slate-200/50 dark:border-slate-800/50">
+              <span className="font-semibold text-slate-500">Host Environment</span>
+              <span className="font-bold text-slate-800 dark:text-white">
+                {import.meta.env.DEV ? 'Local Development' : 'GitHub Pages (Production)'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-1.5">
+              <span className="font-semibold text-slate-500">Vite Base Path</span>
+              <span className="font-mono text-slate-400">{import.meta.env.BASE_URL}</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   )
