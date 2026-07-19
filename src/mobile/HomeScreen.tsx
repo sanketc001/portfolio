@@ -13,7 +13,8 @@ import {
   Signal,
   Battery,
   ChevronLeft,
-  Search
+  Search,
+  Award
 } from 'lucide-react'
 import { Github, Linkedin } from '../components/Common/BrandIcons'
 
@@ -25,6 +26,7 @@ import { GalleryApp } from '../components/Apps/GalleryApp'
 import { BlogApp } from '../components/Apps/BlogApp'
 import { SettingsApp } from '../components/Apps/SettingsApp'
 import { ContactApp } from '../components/Apps/ContactApp'
+import { CertificationsApp } from '../components/Apps/CertificationsApp'
 import portfolioData from '../data/portfolioData.json'
 
 export const HomeScreen: React.FC = () => {
@@ -60,6 +62,7 @@ export const HomeScreen: React.FC = () => {
     { id: 'blog', name: 'Blog', icon: BookOpen, color: 'bg-indigo-500 text-white' },
     { id: 'contact', name: 'Contact', icon: Mail, color: 'bg-purple-500 text-white' },
     { id: 'settings', name: 'Settings', icon: Settings, color: 'bg-slate-600 text-white' },
+    { id: 'certifications', name: 'Certifications', icon: Award, color: 'bg-violet-500 text-white' },
     { id: 'github', name: 'GitHub', icon: Github, color: 'bg-slate-900 text-white', isExternal: true, url: portfolioData.profile.github },
     { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'bg-blue-600 text-white', isExternal: true, url: portfolioData.profile.linkedin }
   ]
@@ -234,6 +237,7 @@ export const HomeScreen: React.FC = () => {
                 {activeApp === 'blog' && <BlogApp />}
                 {activeApp === 'settings' && <SettingsApp />}
                 {activeApp === 'contact' && <ContactApp />}
+                {activeApp === 'certifications' && <CertificationsApp />}
               </div>
 
               {/* Android Navigation Bar Pill at Bottom */}

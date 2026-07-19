@@ -14,7 +14,8 @@ import {
   RefreshCw,
   Sun,
   Moon,
-  Trash2
+  Trash2,
+  Award
 } from 'lucide-react'
 import { Github, Linkedin } from '../components/Common/BrandIcons'
 import portfolioData from '../data/portfolioData.json'
@@ -27,6 +28,7 @@ import { GalleryApp } from '../components/Apps/GalleryApp'
 import { BlogApp } from '../components/Apps/BlogApp'
 import { SettingsApp } from '../components/Apps/SettingsApp'
 import { ContactApp } from '../components/Apps/ContactApp'
+import { CertificationsApp } from '../components/Apps/CertificationsApp'
 
 export const Desktop: React.FC = () => {
   const {
@@ -62,6 +64,7 @@ export const Desktop: React.FC = () => {
     { id: 'blog', name: 'Developer Blog', icon: BookOpen, color: 'from-violet-400 to-purple-500' },
     { id: 'contact', name: 'Contact Me', icon: Mail, color: 'from-fuchsia-400 to-pink-500' },
     { id: 'settings', name: 'Settings', icon: Settings, color: 'from-slate-400 to-slate-600' },
+    { id: 'certifications', name: 'Certifications', icon: Award, color: 'from-violet-500 to-fuchsia-600' },
     { id: 'github', name: 'GitHub Profile', icon: Github, color: 'from-slate-800 to-black', isExternal: true, url: portfolioData.profile.github },
     { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'from-blue-600 to-blue-800', isExternal: true, url: portfolioData.profile.linkedin }
   ]
@@ -204,6 +207,7 @@ export const Desktop: React.FC = () => {
           {win.id === 'blog' && <BlogApp />}
           {win.id === 'contact' && <ContactApp />}
           {win.id === 'settings' && <SettingsApp />}
+          {win.id === 'certifications' && <CertificationsApp />}
         </Window>
       ))}
 

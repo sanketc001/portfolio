@@ -163,5 +163,58 @@
       "shares": 8,
       "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80"
     }
-  ]
+  ],
+  "certifications": [
+    {
+      "id": "cert-1",
+      "title": "Generative AI with Large Language Models",
+      "issuer": "DeepLearning.AI & AWS",
+      "date": "June 2024",
+      "credentialId": "DL-GENAI-LLM-8923",
+      "url": "https://coursera.org/verify/generative-ai-llms"
+    },
+    {
+      "id": "cert-2",
+      "title": "AWS Certified Machine Learning – Specialty",
+      "issuer": "Amazon Web Services (AWS)",
+      "date": "April 2024",
+      "credentialId": "AWS-ML-SPEC-23491",
+      "url": "https://aws.amazon.com/verification"
+    },
+    {
+      "id": "cert-3",
+      "title": "Getting Started with Deep Learning",
+      "issuer": "NVIDIA Deep Learning Institute",
+      "date": "September 2023",
+      "credentialId": "NVIDIA-DLI-DL-98213",
+      "url": "https://courses.nvidia.com/certificates"
+    },
+    {
+      "id": "cert-4",
+      "title": "TensorFlow Developer Certificate",
+      "issuer": "TensorFlow Certificate Network",
+      "date": "December 2022",
+      "credentialId": "TF-DEV-CERT-90412",
+      "url": "https://google.com/tensorflow/certificate"
+    }
+  ],
+  "mediaGallery": {
+    "documents": [
+      { "id": "doc-1", "name": "Resume.pdf", "url": "Resume.pdf", "size": "142 KB" },
+      { "id": "doc-2", "name": "GenAI-Project-Brief.pdf", "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", "size": "85 KB" }
+    ],
+    "pictures": [
+      { "id": "pic-1", "name": "JioSphere Browser Mobile.png", "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80", "size": "1.2 MB" },
+      { "id": "pic-2", "name": "Team Hackathon Award.png", "url": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80", "size": "2.4 MB" },
+      { "id": "pic-3", "name": "Office Desk Setup.png", "url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80", "size": "1.8 MB" }
+    ],
+    "music": [
+      { "id": "mus-1", "name": "Lofi Coding Session.mp3", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", "size": "6.1 MB" },
+      { "id": "mus-2", "name": "Ambient Synth Focus.mp3", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", "size": "7.3 MB" }
+    ],
+    "videos": [
+      { "id": "vid-1", "name": "JioCinema IPL ad ops demo.mp4", "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "size": "12.5 MB" },
+      { "id": "vid-2", "name": "AI Speech Synthesis.mp4", "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "size": "8.9 MB" }
+    ]
+  }
 }

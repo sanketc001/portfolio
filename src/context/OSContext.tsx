@@ -51,7 +51,8 @@ const DEFAULT_WINDOWS: WindowState[] = [
   { id: 'gallery', title: 'Media Gallery', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 200, y: 150, w: 700, h: 480, minW: 400, minH: 300 },
   { id: 'blog', title: 'Developer Blog', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 240, y: 180, w: 780, h: 520, minW: 400, minH: 300 },
   { id: 'contact', title: 'Contact / Mail', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 280, y: 210, w: 600, h: 450, minW: 350, minH: 300 },
-  { id: 'settings', title: 'System Settings', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 320, y: 240, w: 600, h: 460, minW: 350, minH: 300 }
+  { id: 'settings', title: 'System Settings', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 320, y: 240, w: 600, h: 460, minW: 350, minH: 300 },
+  { id: 'certifications', title: 'Certifications', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 340, y: 260, w: 750, h: 500, minW: 400, minH: 300 }
 ]
 
 export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -85,16 +86,29 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const [loadingProjects, setLoadingProjects] = useState(false)
   const [visitorCount, setVisitorCount] = useState<number | null>(null)
 
-  // Fetch / Increment visitor count
+  // Fetch / Increment visitor count with ad-blocker fallback
   useEffect(() => {
+    const cachedCount = localStorage.getItem('portfolio_visitor_count')
+    const fallbackSeed = cachedCount ? parseInt(cachedCount, 10) : 1482
+
     fetch('https://api.counterapi.dev/v1/sanketc001/portfolio/up')
       .then(res => res.json())
       .then(data => {
         if (data && typeof data.value === 'number') {
           setVisitorCount(data.value)
+          localStorage.setItem('portfolio_visitor_count', data.value.toString())
+        } else {
+          const newVal = fallbackSeed + 1
+          setVisitorCount(newVal)
+          localStorage.setItem('portfolio_visitor_count', newVal.toString())
         }
       })
-      .catch(err => console.error("Counter API error:", err))
+      .catch(err => {
+        console.warn("Counter API blocked or failed, using local caching rules:", err)
+        const newVal = fallbackSeed + 1
+        setVisitorCount(newVal)
+        localStorage.setItem('portfolio_visitor_count', newVal.toString())
+      })
   }, [])
 
   // Sync theme with document class list
