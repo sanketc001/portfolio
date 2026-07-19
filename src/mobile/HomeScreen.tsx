@@ -36,6 +36,21 @@ export const HomeScreen: React.FC = () => {
   const [time, setTime] = useState('')
   const [dateStr, setDateStr] = useState('')
 
+  // Track wallpaper fade state on mobile
+  const [prevWallpaper, setPrevWallpaper] = useState(wallpaper)
+  const [fade, setFade] = useState(false)
+
+  useEffect(() => {
+    if (wallpaper !== prevWallpaper) {
+      setFade(true)
+      const timer = setTimeout(() => {
+        setPrevWallpaper(wallpaper)
+        setFade(false)
+      }, 550)
+      return () => clearTimeout(timer)
+    }
+  }, [wallpaper, prevWallpaper])
+
   // Update clock & date
   useEffect(() => {
     const updateTime = () => {
@@ -55,14 +70,14 @@ export const HomeScreen: React.FC = () => {
 
   // App catalog
   const apps = [
-    { id: 'about', name: 'About Me', icon: User, color: 'bg-blue-500 text-white' },
-    { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'bg-amber-500 text-white' },
-    { id: 'resume', name: 'Resume', icon: FileText, color: 'bg-emerald-500 text-white' },
-    { id: 'gallery', name: 'Gallery', icon: ImageIcon, color: 'bg-pink-500 text-white' },
-    { id: 'blog', name: 'Blog', icon: BookOpen, color: 'bg-indigo-500 text-white' },
-    { id: 'contact', name: 'Contact', icon: Mail, color: 'bg-purple-500 text-white' },
-    { id: 'settings', name: 'Settings', icon: Settings, color: 'bg-slate-600 text-white' },
-    { id: 'certifications', name: 'Certifications', icon: Award, color: 'bg-violet-500 text-white' },
+    { id: 'about', name: 'About Me', icon: User, color: 'from-blue-400 to-indigo-500' },
+    { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'from-amber-400 to-orange-500' },
+    { id: 'resume', name: 'Resume', icon: FileText, color: 'from-emerald-400 to-teal-500' },
+    { id: 'gallery', name: 'Gallery', icon: ImageIcon, color: 'from-pink-400 to-rose-500' },
+    { id: 'certifications', name: 'Credentials', icon: Award, color: 'from-violet-400 to-fuchsia-500' },
+    { id: 'blog', name: 'Blog', icon: BookOpen, color: 'from-indigo-400 to-purple-500' },
+    { id: 'contact', name: 'Contact', icon: Mail, color: 'from-purple-400 to-pink-500' },
+    { id: 'settings', name: 'Settings', icon: Settings, color: 'from-teal-400 to-emerald-500' },
     { id: 'github', name: 'GitHub', icon: Github, color: 'bg-slate-900 text-white', isExternal: true, url: portfolioData.profile.github },
     { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'bg-blue-600 text-white', isExternal: true, url: portfolioData.profile.linkedin }
   ]
@@ -88,14 +103,24 @@ export const HomeScreen: React.FC = () => {
   )
 
   return (
-    <div
-      className="h-full w-full relative flex flex-col justify-between overflow-hidden select-none bg-slate-950 font-sans"
-      style={{
-        backgroundImage: `url(${wallpaper})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
+    <div className="h-full w-full relative flex flex-col justify-between overflow-hidden select-none bg-slate-950 font-sans">
+      {/* Mobile background wallpaper layers with cross-fade transition */}
+      <div className="absolute inset-0 -z-20 overflow-hidden bg-slate-900 pointer-events-none">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${prevWallpaper})` }}
+        />
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-opacity duration-500 ease-in-out"
+          style={{ 
+            backgroundImage: `url(${wallpaper})`,
+            opacity: fade ? 1 : 0
+          }}
+        />
+      </div>
+
+      {/* Dynamic Theme backdrop overlay to soften background contrast */}
+      <div className="absolute inset-0 bg-white/5 dark:bg-black/15 -z-19 pointer-events-none transition-colors duration-500" />
       {/* 1. Android/iOS Status Bar (Sticky at top, adapts theme) */}
       <div className={`h-8 px-4 flex items-center justify-between text-[11px] font-semibold z-[200] transition-all duration-300 ${
         activeApp 

@@ -132,6 +132,20 @@ export const Desktop: React.FC = () => {
     return () => window.removeEventListener('keydown', handleGlobalShortcuts)
   }, [startMenuOpen, setStartMenuOpen, contextMenu])
 
+  const [prevWallpaper, setPrevWallpaper] = useState(wallpaper)
+  const [fade, setFade] = useState(false)
+
+  useEffect(() => {
+    if (wallpaper !== prevWallpaper) {
+      setFade(true)
+      const timer = setTimeout(() => {
+        setPrevWallpaper(wallpaper)
+        setFade(false)
+      }, 550)
+      return () => clearTimeout(timer)
+    }
+  }, [wallpaper, prevWallpaper])
+
   return (
     <div
       ref={desktopRef}
@@ -141,12 +155,24 @@ export const Desktop: React.FC = () => {
         setStartMenuOpen(false)
       }}
       className="h-screen w-screen overflow-hidden relative select-none"
-      style={{
-        backgroundImage: `url(${wallpaper})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
     >
+      {/* Desktop background wallpaper layers with cross-fade transition */}
+      <div className="absolute inset-0 -z-20 overflow-hidden bg-slate-900 pointer-events-none">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${prevWallpaper})` }}
+        />
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-opacity duration-500 ease-in-out"
+          style={{ 
+            backgroundImage: `url(${wallpaper})`,
+            opacity: fade ? 1 : 0
+          }}
+        />
+      </div>
+
+      {/* Dynamic Theme backdrop overlay to soften background contrast */}
+      <div className="absolute inset-0 bg-white/5 dark:bg-black/15 -z-19 pointer-events-none transition-colors duration-500" />
       {/* Visitor Counter (Top Right) */}
       <div className="absolute top-6 right-6 z-10 select-none">
         <div className="glass px-3.5 py-1.5 rounded-full border border-white/10 flex items-center gap-2 text-white shadow-lg backdrop-blur-md">

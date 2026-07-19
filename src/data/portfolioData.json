@@ -115,14 +115,19 @@
   ],
   "wallpapers": [
     {
-      "id": "glassy-aurora",
-      "name": "Glassy Aurora (Default)",
-      "url": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80"
+      "id": "dark-macos",
+      "name": "Abstract Obsidian (Dark Default)",
+      "url": "https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&w=1920&q=80"
     },
     {
-      "id": "dark-macos",
-      "name": "Abstract Obsidian",
-      "url": "https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&w=1920&q=80"
+      "id": "light-pastel",
+      "name": "Minimalist Pastel (Light Default)",
+      "url": "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1920&q=80"
+    },
+    {
+      "id": "glassy-aurora",
+      "name": "Glassy Aurora",
+      "url": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80"
     },
     {
       "id": "misty-mountains",

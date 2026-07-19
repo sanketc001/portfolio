@@ -152,7 +152,18 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   }, [githubUsername])
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'))
+    setTheme(prev => {
+      const nextTheme = prev === 'light' ? 'dark' : 'light'
+      const darkDefault = 'https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&w=1920&q=80'
+      const lightDefault = 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1920&q=80'
+      const savedWallpaper = localStorage.getItem('portfolio_wallpaper')
+      if (!savedWallpaper || savedWallpaper === darkDefault || savedWallpaper === lightDefault) {
+        const nextWallpaper = nextTheme === 'dark' ? darkDefault : lightDefault
+        setWallpaper(nextWallpaper)
+        localStorage.setItem('portfolio_wallpaper', nextWallpaper)
+      }
+      return nextTheme
+    })
   }
 
   const focusWindow = (id: string) => {
