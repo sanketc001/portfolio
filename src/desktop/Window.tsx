@@ -117,7 +117,7 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
               pointerEvents: 'auto'
             }
       }
-      style={{ x: dragX, y: dragY }}
+      style={{ x: dragX, y: dragY, zIndex }}
       transition={{
         default: { type: 'spring', stiffness: 220, damping: 25, mass: 0.8 }
       }}
@@ -158,7 +158,6 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
           ? 'ring-1 ring-violet-500/20 shadow-violet-500/5 border-white/20 dark:border-white/10'
           : 'border-white/10 dark:border-white/5 opacity-90'
       }`}
-      style={{ zIndex }}
     >
       {/* Title Bar */}
       <div
