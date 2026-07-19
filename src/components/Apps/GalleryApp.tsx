@@ -431,6 +431,7 @@ export const GalleryApp: React.FC = () => {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
+                </div>
               )}
 
               {/* Videos Grid list */}
