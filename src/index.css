@@ -74,7 +74,7 @@
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark .glass {
@@ -91,7 +91,7 @@
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark .glass-panel {
@@ -102,11 +102,61 @@
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38), 0 1px 2px 0 rgba(0, 0, 0, 0.15);
 }
 
+/* Nested cards inside glass windows should have solid/frosted contrast, not compounded blur */
+.glass .glass {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(0, 0, 0, 0.07) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
+}
+
+.dark .glass .glass {
+  background: rgba(20, 26, 42, 0.5) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Glass-specific input fields and forms */
+.glass input, .glass textarea, .glass select {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #1e293b !important;
+  transition: all 0.2s ease !important;
+}
+
+.dark .glass input, .dark .glass textarea, .dark .glass select {
+  background: rgba(10, 14, 23, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #f1f5f9 !important;
+}
+
+.glass input:focus, .glass textarea:focus, .glass select:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15) !important;
+  outline: none !important;
+}
+
+.dark .glass input:focus, .dark .glass textarea:focus, .dark .glass select:focus {
+  background: rgba(10, 14, 23, 0.85) !important;
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.15) !important;
+}
+
+::selection {
+  background-color: rgba(139, 92, 246, 0.25);
+  color: inherit;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
-  background-color: #0f172a;
+  background-color: #0c0f17;
+  transition: background-color 0.5s ease;
 }
