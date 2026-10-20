@@ -37,3 +37,7 @@ CLAUDE.md
 # Caches
 .eslintcache
 *.tsbuildinfo
+
+# Cloudflare Worker local files
+.dev.vars
+.wrangler/

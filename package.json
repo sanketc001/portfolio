@@ -8,6 +8,7 @@
     "prebuild": "node scripts/generate-media-registry.cjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test:worker": "node --test chat-proxy/test/worker.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
