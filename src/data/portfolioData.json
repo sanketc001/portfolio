@@ -2,9 +2,10 @@
   "profile": {
     "name": "Sanket Choudhary",
     "title": "GenAI & ML Engineer | Technical Consultant",
+    "headline": "GenAI & ML Engineer | Technical Consultant @ Reliance Jio via Quest Global | Building Production AI Systems | LLM · Stable Diffusion",
     "pitch": "GenAI & ML engineer with 3+ years building production AI systems at Reliance Jio (via Quest Global): on-device speech AI, a multimodal ad-creative pipeline and live ad monitoring at IPL scale. Outside work I build LLM agents, MCP servers and local-first AI tools end to end, from model calls to the UI. Open to Applied AI and Forward Deployed Engineer roles.",
     "avatar": "https://github.com/sanketc001.png",
-    "bio": "GenAI & ML Engineer with 3+ years of experience building production-grade AI systems at scale. Currently serving as AI Lead for JioSphere Browser at Reliance Jio via Quest Global, where I lead GenAI innovation across audio, video, and image-based offerings. Winner of the Jio-wide AI Agent Hackathon (July 2025).",
+    "bio": "GenAI & ML Engineer with 3+ years of experience building production-grade AI systems at scale. Currently serving as AI Lead for JioSphere Browser at Reliance Jio via Quest Global, where I lead GenAI innovation across audio, video, and image-based offerings. Recognised as Top Partner Employee twice consecutively (December 2023 & January 2025) for driving measurable impact on GenAI ad products. Won the Jio-wide AI Agent Hackathon (July 2025) competing across one of India's largest technology organisations. Core expertise: Large Language Models, Retrieval-Augmented Generation, Stable Diffusion, multimodal AI, and full-stack AI integration — from research and prototyping through to production deployment. Passionate about applying AI to real-world products, civic infrastructure, and enterprise tooling as well as contributing time and effort for Social Good.",
     "location": "Navi Mumbai, Maharashtra, India",
     "email": "sanketkumarchoudhary@gmail.com",
     "github": "https://github.com/sanketc001",
@@ -17,7 +18,13 @@
       "Retrieval-Augmented Generation (RAG)",
       "Multimodal AI",
       "Computer Vision (CV)",
-      "Vector DBs"
+      "Vector DBs",
+      "Machine Learning",
+      "Artificial Intelligence (AI)",
+      "LangChain",
+      "Natural Language Processing (NLP)",
+      "TensorFlow",
+      "Conversational User Interfaces (CUI)"
     ],
     "Engineering": [
       "Python",
@@ -25,7 +32,16 @@
       "On-device AI",
       "Model Compression",
       "Chrome Extensions (MV3)",
-      "Azure"
+      "Azure",
+      "Big Data",
+      "Async",
+      "Pandas",
+      "Data Analysis",
+      "Data Structures",
+      "C++",
+      "C",
+      "SQL",
+      "Web Scraping"
     ],
     "Media & Streaming": [
       "SCTE-35 Signal Parsing",
@@ -39,7 +55,10 @@
       "Git",
       "Docker",
       "Algorithms",
-      "Data Collection"
+      "Data Collection",
+      "Communication",
+      "Team Leadership",
+      "Training"
     ]
   },
   "experience": [
@@ -47,25 +66,38 @@
       "role": "Artificial Intelligence Engineer & Technical Consultant",
       "company": "Quest Global @ Reliance Jio",
       "period": "March 2023 - Present",
-      "description": "• JioSphere Browser (Jan 2025 - Present): Leading AI strategy for Jio's Chromium-based browser (available across Android, iOS, Windows, macOS, Linux, KaiOS & Android TV). Building on-device Speech AI pipeline using model compression & optimization for cross-device in-browser serving.\n• GenAI Ad Creative Platform (JioAds): Built GenAI pipeline for SMB ad creative generation across audio, video & image, reaching Jio's 450M+ consumer base. Twice named Top Partner Employee (Dec 2023 & Jan 2025).\n• IPL 2023 Live Ad Operations (JioCinema): Built ad delivery monitoring across 12 languages & 17 feeds using SCTE-35 signal parsing. Created Ad Opportunity Loss Metrics critical to engineering teams. Supported ad infrastructure for world record 32M peak concurrent viewers."
+      "location": "Navi Mumbai",
+      "description": "JioSphere Browser (Jan 2025 – Present)\n• Leading AI strategy for Jio's Chromium-based browser — the first Jio Platforms product on Linux, available across Android, iOS, Windows, macOS, Linux, KaiOS & Android TV\n• Building on-device Speech AI pipeline to replace Web Speech API using model compression & optimization for cross-device in-browser serving\n• Building Chrome extensions for rapid feature deployment and cross-platform testing\n\nGenAI Ad Creative Platform — JioAds (2023 – 2024)\n• Built GenAI pipeline for SMB ad creative generation across audio, video & image for GoLocal, JioHalo & Ajio — reaching Jio's 450M+ consumer base\n• Recognised as Top Partner Employee (Dec 2023 & Jan 2025)\n\nIPL 2023 — Live Ad Operations (JioCinema)\n• Contributed to ad infrastructure for IPL 2023 — a world record 32M peak concurrent viewers, 449M total viewers, 800+ advertisers & ~₹2,300 Cr in ad revenue\n• Built Ad Opportunity Loss Metrics — match-wise reporting critical to stakeholders and engineering teams\n• Built ad delivery monitoring across 12 languages & 17 simultaneous feeds using SCTE-35 signal parsing\n• Designed stream preprocessing pipeline for Ad/Non-Ad categorisation and user cohort management\n\nContent Intelligence & Catalogue (JioCinema · Ajio · JioMart · Tira)\n• CV-based content & product extraction for JioCinema\n• Product catalogue, inventory, retargeting & recommendation systems across 3 commerce platforms\n\nAds Monitoring & Observability Platform\n• Built real-time campaign performance tracking platform across Jio's ad network\n\nAchievements\n• Top Partner Employee for both consecutive years— Dec 2023 & Jan 2025\n• Winner — Jio-wide AI Agent Hackathon, July 2025\n\nTech: Python · LLMs · RAG · Stable Diffusion · Multimodal AI · CV · SCTE-35 · On-device AI · Model Compression · Chrome Extensions (MV3) · FastAPI · Azure · Vector DBs"
     },
     {
       "role": "Chief Technology Officer",
       "company": "Yugma by STRTRS",
       "period": "October 2020 - Present",
+      "location": "Pune, Maharashtra, India",
       "description": "Leading technical direction, architecture design, and full-stack development. Directing early-stage prototyping and product engineering processes."
     },
     {
       "role": "Developer Student Club Lead",
       "company": "GDSC DYPIU",
       "period": "August 2021 - May 2022",
+      "location": "Pune, Maharashtra, India",
       "description": "Led on-campus developers community, organizing workshops on software development, cloud, and machine learning concepts in collaboration with Google."
     },
     {
       "role": "Competitive Programming Lead",
-      "company": "CodeChef CP Lead",
+      "company": "CodeChef",
       "period": "September 2020 - July 2021",
+      "location": "Pune, Maharashtra, India",
       "description": "Conducted programming challenges, mentored peers on data structures and algorithms, and fostered competitive programming culture on campus."
+    }
+  ],
+  "education": [
+    {
+      "school": "D Y Patil International University",
+      "degree": "Bachelor of Technology - BTech",
+      "start": "August 2019",
+      "end": "August 2023",
+      "activities": "GDSC, Codechef Chapter, Drama Club, Journal Club, Mehfil"
     }
   ],
   "featuredProjects": [
@@ -357,36 +389,116 @@
   ],
   "certifications": [
     {
-      "id": "cert-1",
-      "title": "Generative AI with Large Language Models",
-      "issuer": "DeepLearning.AI & AWS",
-      "date": "June 2024",
-      "credentialId": "DL-GENAI-LLM-8923",
-      "url": "https://coursera.org/verify/generative-ai-llms"
+      "id": "neural-networks-and-deep-learning",
+      "title": "Neural Networks and Deep Learning",
+      "issuer": "Coursera",
+      "date": "June 2020",
+      "credentialId": "U8S3KP4ZRPLM",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/U8S3KP4ZRPLM"
     },
     {
-      "id": "cert-2",
-      "title": "AWS Certified Machine Learning – Specialty",
-      "issuer": "Amazon Web Services (AWS)",
-      "date": "April 2024",
-      "credentialId": "AWS-ML-SPEC-23491",
-      "url": "https://aws.amazon.com/verification"
+      "id": "introduction-to-tensorflow-for-artificial-intelligence-machine-learning-and-deep-learning",
+      "title": "Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning",
+      "issuer": "Coursera",
+      "date": "June 2020",
+      "credentialId": "GGMBMUDHUVR5",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/GGMBMUDHUVR5"
     },
     {
-      "id": "cert-3",
-      "title": "Getting Started with Deep Learning",
-      "issuer": "NVIDIA Deep Learning Institute",
-      "date": "September 2023",
-      "credentialId": "NVIDIA-DLI-DL-98213",
-      "url": "https://courses.nvidia.com/certificates"
+      "id": "crash-course-on-python",
+      "title": "Crash Course on Python",
+      "issuer": "Coursera",
+      "date": "July 2020",
+      "credentialId": "5YK35VKBBFR5",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/5YK35VKBBFR5"
     },
     {
-      "id": "cert-4",
-      "title": "TensorFlow Developer Certificate",
-      "issuer": "TensorFlow Certificate Network",
-      "date": "December 2022",
-      "credentialId": "TF-DEV-CERT-90412",
-      "url": "https://google.com/tensorflow/certificate"
+      "id": "object-oriented-data-structures-in-c",
+      "title": "Object-Oriented Data Structures in C++",
+      "issuer": "Coursera",
+      "date": "July 2020",
+      "credentialId": "FYLKGDC2DUSJ",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/FYLKGDC2DUSJ"
+    },
+    {
+      "id": "data-analysis-and-representation-selection-and-iteration",
+      "title": "Data Analysis and Representation, Selection and Iteration",
+      "issuer": "Coursera",
+      "date": "June 2020",
+      "credentialId": "XW2BPYKZDVT6",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/XW2BPYKZDVT6"
+    },
+    {
+      "id": "algorithms-data-collection-and-starting-to-code",
+      "title": "Algorithms, Data Collection, and Starting to Code",
+      "issuer": "Coursera",
+      "date": "June 2020",
+      "credentialId": "9X2N3Y8M27J5",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/9X2N3Y8M27J5"
+    },
+    {
+      "id": "introduction-to-genomic-technologies",
+      "title": "Introduction to Genomic Technologies",
+      "issuer": "Coursera",
+      "date": "August 2020",
+      "credentialId": "3ZP9QNC3LTLJ",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/3ZP9QNC3LTLJ"
+    },
+    {
+      "id": "introduction-to-virtual-reality",
+      "title": "Introduction to Virtual Reality",
+      "issuer": "Coursera",
+      "date": "August 2020",
+      "credentialId": "M3UBKHZC2W7W",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/M3UBKHZC2W7W"
+    },
+    {
+      "id": "design-thinking-for-innovation",
+      "title": "Design Thinking for Innovation",
+      "issuer": "Coursera",
+      "date": "August 2020",
+      "credentialId": "3PBFA8ANE3C9",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/3PBFA8ANE3C9"
+    },
+    {
+      "id": "design-thinking-and-global-startup",
+      "title": "Design Thinking and Global Startup",
+      "issuer": "Coursera",
+      "date": "August 2020",
+      "credentialId": "V9CHD8H597G8",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/V9CHD8H597G8"
+    },
+    {
+      "id": "computational-thinking-with-beginning-c-programming-specialization",
+      "title": "Computational Thinking with Beginning C Programming Specialization",
+      "issuer": "Coursera",
+      "date": "July 2020",
+      "credentialId": "DD2TXTBJLPYW",
+      "url": "https://www.coursera.org/account/accomplishments/specialization/certificate/DD2TXTBJLPYW"
+    },
+    {
+      "id": "abstraction-problem-decomposition-and-functions",
+      "title": "Abstraction, Problem Decomposition, and Functions",
+      "issuer": "Coursera",
+      "date": "July 2020",
+      "credentialId": "4B82T44DUESP",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/4B82T44DUESP"
+    },
+    {
+      "id": "simulation-algorithm-analysis-and-pointers",
+      "title": "Simulation, Algorithm Analysis, and Pointers",
+      "issuer": "Coursera",
+      "date": "July 2020",
+      "credentialId": "MFXBQLXT3E8W",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/MFXBQLXT3E8W"
+    },
+    {
+      "id": "introduction-to-augmented-reality-and-arcore",
+      "title": "Introduction to Augmented Reality and ARCore",
+      "issuer": "Coursera",
+      "date": "June 2020",
+      "credentialId": "EK8BS2EYYHM4",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/EK8BS2EYYHM4"
     }
   ],
   "mediaGallery": {

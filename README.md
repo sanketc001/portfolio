@@ -12,11 +12,11 @@ Instead of a single scrolling page, each section of the portfolio is an "app" th
 |---|---|
 | About Me | Name, title, short pitch, location, quick links and résumé button; background and skills |
 | Featured Projects | Curated project cards with real screenshots (problem → what I built → stack) and an "All repositories" tab fetched live from the GitHub API (forks, archived repos and the profile repo are skipped) |
-| Experience | Work timeline and awards |
+| Experience | Work timeline, education and awards |
 | Ask my portfolio | Chat that answers questions about the portfolio through the `chat-proxy` worker |
 | Contact / Mail | Contact form backed by Web3Forms, or a mailto button when no key is configured |
 | Resume.pdf | Embedded resume viewer |
-| Certifications | Certificates and credentials |
+| Certifications | Certificates with issuer, date, credential ID and link |
 | Media Gallery | Project screenshots from `public/gallery/` plus anything in `public/{documents,pictures,music,videos}` |
 | Developer Blog | Short posts |
 | Settings | Light/dark mode and wallpaper selection |
@@ -58,7 +58,10 @@ src/
 └── data/portfolioData.json  all content: profile, skills, featured projects, media registry
 scripts/generate-media-registry.cjs   scans public/{documents,pictures,music,videos}
                                       and writes the gallery entries into portfolioData.json
-chat-proxy/                  Cloudflare Worker for the chat (Workers AI), knowledge.md, tests
+scripts/import-linkedin.mjs           updates portfolioData.json from a LinkedIn data export
+scripts/linkedin-import.config.json   import rules (merges, renames, hidden entries, skill categories)
+scripts/build-knowledge.mjs           generates chat-proxy/knowledge.md from portfolioData.json
+chat-proxy/                  Cloudflare Worker for the chat (Workers AI), knowledge base, tests
 ```
 
 Content is data-driven: editing `src/data/portfolioData.json` (or dropping files into the `public/` media folders) updates the site without touching components.
@@ -85,16 +88,21 @@ Other scripts:
 npm run build      # regenerates the media registry, type-checks, builds to dist/
 npm run preview    # serve the production build locally
 npm run lint       # oxlint
-npm run test:worker  # chat-proxy worker tests (Node, no wrangler needed)
+npm test           # importer + worker tests, and checks knowledge.md is up to date
+npm run test:worker  # chat-proxy worker tests only (Node, no wrangler needed)
+npm run knowledge  # regenerate chat-proxy/knowledge.md
+npm run import:linkedin -- <export.zip>   # see "Updating from LinkedIn"
 ```
 
 ## Configuration
 
 Site content lives in `src/data/portfolioData.json`:
 
-- `profile` – name, title, pitch, bio, links, avatar
+- `profile` – name, title, LinkedIn headline, pitch, bio, links, avatar
 - `featuredProjects` – curated project cards (problem, what was built, stack, screenshots in `public/gallery/`); also the fallback list when the GitHub API is unavailable or rate-limited
-- `experience`, `skills`, `certifications`, `blog`
+- `experience`, `education`, `skills`, `certifications`, `blog`
+
+`profile.name/title/headline/bio/location`, `experience`, `education`, `certifications` and the LinkedIn part of `skills` are written by the LinkedIn importer (see below): change them on LinkedIn or through `scripts/linkedin-import.config.json`, otherwise the next import overwrites the edit. Everything else is curated by hand.
 
 Optional build-time environment variables (see `.env.example`; copy it to `.env.local` for local development):
 
@@ -103,9 +111,31 @@ Optional build-time environment variables (see `.env.example`; copy it to `.env.
 | `VITE_CHAT_ENDPOINT` | Ask my portfolio | Chat shows an offline notice that points to Contact and email |
 | `VITE_WEB3FORMS_KEY` | Contact form ([Web3Forms](https://web3forms.com) access key) | Contact shows a mailto button instead of the form |
 
-When the portfolio content changes, update `chat-proxy/knowledge.md` too so the chat stays accurate.
+`chat-proxy/knowledge.md` (the chat's knowledge base) is generated from `portfolioData.json` plus the hand-written sections in `chat-proxy/knowledge.extra.md` (availability, awards, notes that are not in the JSON). Do not edit it directly: change the JSON or the extra file and run `npm run knowledge`. The deploy workflow regenerates it before deploying the worker, and `npm test` fails when the committed copy is stale.
 
 The base path is set to `/portfolio/` in `vite.config.ts` for GitHub Pages.
+
+## Updating from LinkedIn
+
+LinkedIn's API does not give individuals their full profile, so the data export is the source.
+
+1. **Request the export.** On LinkedIn: **Settings → Data privacy → Get a copy of your data**. Either option works (picking only Profile, Positions, Education, Skills and Certifications is faster). LinkedIn emails a download link; save the `.zip` outside the repo, or inside it as `*LinkedInDataExport*.zip` or under `linkedin-export/` (both are git-ignored).
+2. **Preview, then import.**
+   ```bash
+   npm run import:linkedin -- ~/Downloads/Basic_LinkedInDataExport_10-21-2026.zip --dry-run
+   npm run import:linkedin -- ~/Downloads/Basic_LinkedInDataExport_10-21-2026.zip
+   ```
+   The path can also be an extracted folder. The importer reads only `Profile.csv`, `Profile Summary.csv`, `Positions.csv`, `Education.csv`, `Skills.csv` and `Certifications.csv`; messages, connections, contact details and every other file in the export are never opened or copied. It stops with an error when `Profile.csv` or `Positions.csv` is missing. It prints what changed (profile fields, experience entries, education, certificates added/removed, new skills and their categories) and then regenerates `chat-proxy/knowledge.md`.
+3. **Adjust the rules if needed** in `scripts/linkedin-import.config.json` and run the import again (it is idempotent):
+   - `profile.titleOverride`: short title shown on the site (the full LinkedIn headline is kept as `profile.headline`)
+   - `experience.merge`: positions with the same start date shown as one entry (e.g. employer and client), with a combined company and role
+   - `experience.rename` / `experience.roles`: company names, and role text keyed by `"Company|Title"` or `"Company"`
+   - `experience.keepCuratedDescription`: companies whose description in `portfolioData.json` is kept instead of LinkedIn's (an empty LinkedIn description always keeps the existing one)
+   - `experience.hide`, `education.hide`, `certifications.hide`
+   - `certifications.relevantKeywords`: certificates matching these (in priority order) are listed first, then newest first
+   - `skills.categories` (skill → category; unmapped skills go to `skills.defaultCategory`), `skills.rename`, `skills.hide`. LinkedIn skills are added to the curated categories without duplicates; curated skills are never removed.
+4. **Review** with `git diff src/data/portfolioData.json chat-proxy/knowledge.md` and `npm run dev`, then run `npm test`.
+5. **Commit and push.** The workflow rebuilds the site and redeploys the chat worker with the regenerated knowledge base.
 
 ## Deployment
 
@@ -122,4 +152,4 @@ The same workflow deploys the worker in `chat-proxy/` and builds the site with i
 - Unauthenticated GitHub API calls are limited to 60 requests/hour per visitor IP; the localStorage cache and fallback list soften this.
 - Large media files are served directly from the repository; moving them to a CDN would reduce repo size and build time.
 - The chat proxy's in-memory rate limit is per isolate; bind the optional KV namespace for a shared limit.
-- Automated tests cover the chat proxy only (`npm run test:worker`).
+- Automated tests cover the chat proxy, the LinkedIn importer and the knowledge builder (`npm test`); there are no UI tests.

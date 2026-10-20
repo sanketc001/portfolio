@@ -1,25 +1,32 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Briefcase, Trophy } from 'lucide-react'
+import { Briefcase, Trophy, GraduationCap, MapPin } from 'lucide-react'
 import portfolioData from '../../data/portfolioData.json'
+import { parseDescription } from '../../utils/description'
 
 interface ExperienceEntry {
   role: string
   company: string
   period: string
+  location?: string
   description: string
 }
 
-/** Descriptions use "•" to separate bullet points. */
-function toBullets(description: string): string[] {
-  return description
-    .split('•')
-    .map(s => s.trim())
-    .filter(Boolean)
+interface EducationEntry {
+  school: string
+  degree?: string
+  start?: string
+  end?: string
+  notes?: string
+  activities?: string
 }
+
+/** "August 2019" -> "Aug 2019"; year-only values are kept. */
+const shortDate = (d?: string) => (d ? d.replace(/^([A-Za-z]{3})[a-z]+/, '$1') : '')
 
 export const ExperienceApp: React.FC = () => {
   const experience = portfolioData.experience as ExperienceEntry[]
+  const education = ((portfolioData as { education?: EducationEntry[] }).education ?? [])
 
   return (
     <div className="h-full overflow-y-auto p-5 md:p-8 select-text">
@@ -32,7 +39,7 @@ export const ExperienceApp: React.FC = () => {
 
           <ol className="relative pl-6 border-l border-slate-200 dark:border-slate-800 space-y-7">
             {experience.map((exp, index) => {
-              const bullets = toBullets(exp.description)
+              const blocks = parseDescription(exp.description)
               return (
                 <motion.li
                   key={`${exp.company}-${exp.role}`}
@@ -46,28 +53,84 @@ export const ExperienceApp: React.FC = () => {
                     <div>
                       <h4 className="text-base font-bold text-slate-800 dark:text-white">{exp.role}</h4>
                       <p className="text-sm font-medium text-violet-600 dark:text-violet-400">{exp.company}</p>
+                      {exp.location && (
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          <span>{exp.location}</span>
+                        </p>
+                      )}
                     </div>
                     <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full self-start whitespace-nowrap">
                       {exp.period}
                     </span>
                   </div>
-                  {bullets.length > 1 ? (
-                    <ul className="list-none space-y-2 mt-3">
-                      {bullets.map((bullet, i) => (
-                        <li key={i} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex items-start gap-2">
-                          <span className="text-violet-500 mt-1 flex-shrink-0 text-[10px]">▸</span>
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">{exp.description}</p>
-                  )}
+                  <div className="mt-3 space-y-3">
+                    {blocks.map((block, b) => (
+                      <div key={b}>
+                        {block.heading && (
+                          <p
+                            className={
+                              block.bullets.length
+                                ? 'text-[13px] font-semibold text-slate-700 dark:text-slate-200 mb-1.5'
+                                : 'text-sm text-slate-600 dark:text-slate-300 leading-relaxed'
+                            }
+                          >
+                            {block.heading}
+                          </p>
+                        )}
+                        {block.bullets.length > 0 && (
+                          <ul className="list-none space-y-1.5">
+                            {block.bullets.map((bullet, i) => (
+                              <li key={i} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex items-start gap-2">
+                                <span className="text-violet-500 mt-1 flex-shrink-0 text-[10px]">▸</span>
+                                <span>{bullet}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </motion.li>
               )
             })}
           </ol>
         </section>
+
+        {education.length > 0 && (
+          <section className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5">
+            <h3 className="text-base font-bold text-slate-800 dark:text-white mb-4 font-display flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-sky-500" />
+              <span>Education</span>
+            </h3>
+            <div className="space-y-3">
+              {education.map(edu => (
+                <div
+                  key={`${edu.school}-${edu.start ?? ''}`}
+                  className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60"
+                >
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                    <div>
+                      <p className="text-sm font-bold text-slate-800 dark:text-white">{edu.school}</p>
+                      {edu.degree && <p className="text-sm text-sky-600 dark:text-sky-400 mt-0.5">{edu.degree}</p>}
+                    </div>
+                    {(edu.start || edu.end) && (
+                      <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full self-start whitespace-nowrap">
+                        {[shortDate(edu.start), shortDate(edu.end)].filter(Boolean).join(' - ')}
+                      </span>
+                    )}
+                  </div>
+                  {edu.notes && <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">{edu.notes}</p>}
+                  {edu.activities && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                      <span className="font-semibold">Activities:</span> {edu.activities}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5">
           <h3 className="text-base font-bold text-slate-800 dark:text-white mb-4 font-display flex items-center gap-2">

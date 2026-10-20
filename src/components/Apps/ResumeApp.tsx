@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Download, Printer, Eye, Award, Trophy, Star } from 'lucide-react'
 import portfolioData from '../../data/portfolioData.json'
+import { parseDescription } from '../../utils/description'
 
 export const ResumeApp: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'interactive' | 'pdf'>('interactive')
@@ -10,27 +11,36 @@ export const ResumeApp: React.FC = () => {
     window.print()
   }
 
-  // Parse experience descriptions: split on bullet (•) to render as list items
-  const renderDescription = (desc: string) => {
-    const bullets = desc.split('•').filter(s => s.trim())
-    if (bullets.length > 1) {
-      return (
-        <ul className="list-none space-y-2 mt-2">
-          {bullets.map((bullet, i) => (
-            <li key={i} className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed flex items-start gap-2">
-              <span className="text-violet-500 mt-0.5 flex-shrink-0 text-[10px]">▸</span>
-              <span>{bullet.trim()}</span>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-    return (
-      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-        {desc}
-      </p>
-    )
-  }
+  // Experience descriptions: heading lines, "•" bullets, blank lines between sections
+  const renderDescription = (desc: string) => (
+    <div className="mt-2 space-y-2">
+      {parseDescription(desc).map((block, b) => (
+        <div key={b}>
+          {block.heading && (
+            <p
+              className={
+                block.bullets.length
+                  ? 'text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1'
+                  : 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed'
+              }
+            >
+              {block.heading}
+            </p>
+          )}
+          {block.bullets.length > 0 && (
+            <ul className="list-none space-y-1.5">
+              {block.bullets.map((bullet, i) => (
+                <li key={i} className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed flex items-start gap-2">
+                  <span className="text-violet-500 mt-0.5 flex-shrink-0 text-[10px]">▸</span>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  )
 
   return (
     <div className="h-full flex flex-col select-text">

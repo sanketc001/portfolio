@@ -1,18 +1,18 @@
 import React from 'react'
-import { Award, ExternalLink, Calendar, ShieldCheck } from 'lucide-react'
+import { Award, ExternalLink, Calendar, ShieldCheck, Hash } from 'lucide-react'
 import portfolioData from '../../data/portfolioData.json'
 
 interface Certificate {
   id: string
   title: string
   issuer: string
-  date: string
-  credentialId: string
-  url: string
+  date?: string
+  credentialId?: string
+  url?: string
 }
 
 export const CertificationsApp: React.FC = () => {
-  const certifications = (portfolioData as any).certifications as Certificate[] || []
+  const certifications = ((portfolioData as { certifications?: Certificate[] }).certifications ?? [])
 
   return (
     <div className="h-full overflow-y-auto p-6 md:p-8 select-text bg-slate-50/50 dark:bg-slate-950/20">
@@ -22,7 +22,9 @@ export const CertificationsApp: React.FC = () => {
           <Award className="w-7 h-7 text-violet-500" />
           <div>
             <h2 className="text-xl font-bold font-display text-slate-800 dark:text-white">Professional Certifications</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Verified credentials from LinkedIn & resume registries</p>
+            <p className="text-xs text-slate-400 mt-0.5">
+              {certifications.length} certificates, as listed on LinkedIn
+            </p>
           </div>
         </div>
 
@@ -39,7 +41,7 @@ export const CertificationsApp: React.FC = () => {
               </div>
 
               {/* Details */}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 flex flex-col">
                 <h3 className="text-sm font-bold text-slate-800 dark:text-white leading-snug tracking-tight group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors">
                   {cert.title}
                 </h3>
@@ -47,26 +49,33 @@ export const CertificationsApp: React.FC = () => {
                   {cert.issuer}
                 </p>
 
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 mt-2 font-medium">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>Issued: {cert.date}</span>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400 mt-2 font-medium">
+                  {cert.date && (
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Issued {cert.date}</span>
+                    </span>
+                  )}
+                  {cert.credentialId && (
+                    <span className="flex items-center gap-1 font-mono" title="Credential ID">
+                      <Hash className="w-3.5 h-3.5" />
+                      <span className="break-all">{cert.credentialId}</span>
+                    </span>
+                  )}
                 </div>
 
-                <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500 mt-1">
-                  ID: {cert.credentialId}
-                </div>
+                {cert.url && (
+                  <a
+                    href={cert.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 self-start inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-violet-600 dark:hover:text-violet-300 border border-slate-200/60 dark:border-slate-800/60 hover:border-violet-500/30 transition-colors"
+                  >
+                    <span>Show credential</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
               </div>
-
-              {/* Verify Link */}
-              <a
-                href={cert.url}
-                target="_blank"
-                rel="noreferrer"
-                className="absolute right-4 bottom-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-400 hover:text-slate-800 dark:hover:text-white border border-slate-200/50 dark:border-slate-800/50 hover:border-violet-500/25 transition-all shadow-sm flex items-center justify-center"
-                title="Verify Credential"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
             </div>
           ))}
         </div>
