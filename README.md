@@ -40,7 +40,7 @@ On a first visit the site walks the visitor through the most relevant windows, o
 
 `src/components/Apps/ChatApp.tsx` posts `{messages:[{role,content}]}` (last 10 messages, 1000 characters max per message) to `VITE_CHAT_ENDPOINT` and renders the streamed reply (`text/event-stream` in OpenAI chat-completions format, with a plain JSON fallback). Answers are rendered with a tiny markdown renderer that never injects HTML. If the endpoint is not configured or a request fails, the window points visitors to Contact and email instead.
 
-The endpoint is the Cloudflare Worker in [`chat-proxy/`](chat-proxy/README.md). It runs Llama 3.3 70B on Cloudflare Workers AI (free daily allowance; Azure OpenAI is a config switch), restricts CORS to the site, validates input, adds a server-side system prompt built from `chat-proxy/knowledge.md`, rate-limits per IP and streams the answer back.
+The endpoint is the Cloudflare Worker in [`chat-proxy/`](chat-proxy/README.md). It runs Llama 3.1 8B (fp8-fast) on Cloudflare Workers AI (free daily allowance; Azure OpenAI is a config switch), restricts CORS to the site, validates input, adds a server-side system prompt built from `chat-proxy/knowledge.md`, rate-limits per IP and streams the answer back.
 
 ## Architecture
 

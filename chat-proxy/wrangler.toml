@@ -13,7 +13,7 @@ fallthrough = true
 binding = "AI"
 
 [vars]
-WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8-fast"
 # Comma-separated list of origins allowed to call the worker
 ALLOWED_ORIGIN = "https://sanketc001.github.io,http://localhost:5173"
 

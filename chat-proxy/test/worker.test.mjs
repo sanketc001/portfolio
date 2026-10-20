@@ -236,7 +236,7 @@ test('Workers AI: default provider when the AI binding exists; output converted 
   const deltas = text.split('\n').filter((l) => l.startsWith('data: {')).map((l) => JSON.parse(l.slice(6)).choices[0].delta.content);
   assert.deepEqual(deltas, ['Hel', 'lo']);
   assert.ok(text.trim().endsWith('data: [DONE]'));
-  assert.equal(capture.model, '@cf/meta/llama-3.3-70b-instruct-fp8-fast');
+  assert.equal(capture.model, '@cf/meta/llama-3.1-8b-instruct-fp8-fast');
   assert.equal(capture.input.stream, true);
   assert.equal(capture.input.messages[0].role, 'system');
   assert.ok(capture.input.messages[0].content.includes('Knowledge base'));

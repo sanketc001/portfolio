@@ -12,7 +12,7 @@
 import knowledge from './knowledge.md';
 
 const DEFAULTS = {
-  WORKERS_AI_MODEL: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+  WORKERS_AI_MODEL: '@cf/meta/llama-3.1-8b-instruct-fp8-fast',
   AZURE_OPENAI_DEPLOYMENT: 'gpt-4o',
   AZURE_OPENAI_API_VERSION: '2024-10-21',
   ALLOWED_ORIGIN: 'https://sanketc001.github.io,http://localhost:5173',

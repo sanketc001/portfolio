@@ -4,7 +4,7 @@ Cloudflare Worker behind the portfolio's **Ask my portfolio** chat. It answers o
 `knowledge.md`, keeps all model access server-side and streams the answer to the browser.
 
 ```
-browser ──POST {messages}──▶ worker ──▶ Workers AI (Llama 3.3 70B, stream)
+browser ──POST {messages}──▶ worker ──▶ Workers AI (Llama 3.1 8B, stream)
                                │          └─ or Azure OpenAI (PROVIDER = "azure")
                                └─ CORS check · validation · system prompt · rate limit
 ```
@@ -12,8 +12,9 @@ browser ──POST {messages}──▶ worker ──▶ Workers AI (Llama 3.3 70
 ## What it does
 
 - **Model**: Cloudflare Workers AI through the `AI` binding, default
-  `@cf/meta/llama-3.3-70b-instruct-fp8-fast` (change `WORKERS_AI_MODEL`, e.g.
-  `@cf/meta/llama-3.1-8b-instruct` to stretch the free allowance). Workers AI's
+  `@cf/meta/llama-3.1-8b-instruct-fp8-fast`, the cheapest capable chat model (change
+  `WORKERS_AI_MODEL`, e.g. `@cf/google/gemma-4-26b-a4b-it` or
+  `@cf/meta/llama-3.3-70b-instruct-fp8-fast` for higher quality at higher cost). Workers AI's
   `{"response": ...}` stream is converted to OpenAI chat-completions SSE, so the frontend
   works with either provider.
 - **CORS**: only origins in `ALLOWED_ORIGIN` (comma-separated) get a response.
@@ -26,10 +27,11 @@ browser ──POST {messages}──▶ worker ──▶ Workers AI (Llama 3.3 70
 
 ## Cost
 
-The Workers AI free allowance is 10,000 neurons per day. With the knowledge base as the
-system prompt, one answer on the 70B model costs roughly 100–200 neurons, so expect around fifty
-chats per day for free; the 8B model stretches that several times. When the
-allowance runs out the worker returns 503 and the site shows its "email me instead"
+The Workers AI free allowance is 10,000 neurons per day. A question sends the knowledge
+base (about 3,500 tokens) plus the conversation, so one answer on the 8B fp8-fast model
+costs roughly 25–35 neurons: around 300 chats per day for free. (Gemma 4 26B costs
+about 2x that; Llama 3.3 70B about 6x.) When the allowance runs out the worker returns 503
+and the site shows its "email me instead"
 message. Check usage under **Workers & Pages → AI → Usage**.
 
 ## Deploy from GitHub Actions (recommended)
