@@ -8,6 +8,8 @@ import {
   BookOpen,
   Mail,
   Settings,
+  Briefcase,
+  MessageCircle,
   Wifi,
   Volume2,
   Battery,
@@ -40,10 +42,12 @@ export const Taskbar: React.FC<TaskbarProps> = ({ onStartMenuToggle, startMenuOp
   const appItems = [
     { id: 'about', name: 'About Me', icon: User, color: 'hover:text-blue-500' },
     { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'hover:text-amber-500' },
+    { id: 'experience', name: 'Experience', icon: Briefcase, color: 'hover:text-sky-500' },
+    { id: 'chat', name: 'Ask my portfolio', icon: MessageCircle, color: 'hover:text-violet-500' },
+    { id: 'contact', name: 'Contact', icon: Mail, color: 'hover:text-purple-500' },
     { id: 'resume', name: 'Resume', icon: FileText, color: 'hover:text-emerald-500' },
     { id: 'gallery', name: 'Gallery', icon: ImageIcon, color: 'hover:text-pink-500' },
     { id: 'blog', name: 'Blog', icon: BookOpen, color: 'hover:text-indigo-500' },
-    { id: 'contact', name: 'Contact', icon: Mail, color: 'hover:text-purple-500' },
     { id: 'settings', name: 'Settings', icon: Settings, color: 'hover:text-teal-500' }
   ]
 
@@ -66,7 +70,13 @@ export const Taskbar: React.FC<TaskbarProps> = ({ onStartMenuToggle, startMenuOp
     <div className="h-12 w-full glass-panel border-t border-white/20 dark:border-white/5 absolute bottom-0 left-0 flex items-center justify-between px-4 z-[99999] select-none">
       {/* Start Button */}
       <button
-        onClick={onStartMenuToggle}
+        onClick={e => {
+          // Keep the desktop's click-to-dismiss handler from immediately closing the menu again
+          e.stopPropagation()
+          onStartMenuToggle()
+        }}
+        aria-label="Start menu"
+        title="Start menu"
         className={`h-9 w-9 rounded-xl flex items-center justify-center cursor-pointer transition-all ${
           startMenuOpen
             ? 'bg-violet-600 text-white shadow-inner scale-95'
@@ -95,6 +105,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({ onStartMenuToggle, startMenuOp
                   : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-white/5'
               } ${app.color}`}
               title={app.name}
+              aria-label={app.name}
             >
               <Icon className="w-4.5 h-4.5 group-hover:scale-105 transition-transform" />
               
@@ -102,7 +113,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({ onStartMenuToggle, startMenuOp
               {isOpen && (
                 <div
                   className={`absolute bottom-0.5 w-1 h-1 rounded-full transition-all ${
-                    isActive ? 'bg-violet-500 w-3' : 'bg-slate-400 dark:bg-slate-650'
+                    isActive ? 'bg-violet-500 w-3' : 'bg-slate-400 dark:bg-slate-600'
                   }`}
                 />
               )}

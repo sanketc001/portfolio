@@ -14,7 +14,11 @@ import {
   Battery,
   ChevronLeft,
   Search,
-  Award
+  Award,
+  Briefcase,
+  MessageCircle,
+  Compass,
+  X
 } from 'lucide-react'
 import { Github, Linkedin } from '../components/Common/BrandIcons'
 
@@ -27,11 +31,45 @@ import { BlogApp } from '../components/Apps/BlogApp'
 import { SettingsApp } from '../components/Apps/SettingsApp'
 import { ContactApp } from '../components/Apps/ContactApp'
 import { CertificationsApp } from '../components/Apps/CertificationsApp'
+import { ExperienceApp } from '../components/Apps/ExperienceApp'
+import { ChatApp } from '../components/Apps/ChatApp'
+import { TourBar } from '../components/Common/TourBar'
+import { TOUR_STEPS } from '../tour'
 import portfolioData from '../data/portfolioData.json'
 
 export const HomeScreen: React.FC = () => {
-  const { wallpaper, theme, visitorCount } = useOS()
-  const [activeApp, setActiveApp] = useState<string | null>(null)
+  const { wallpaper, theme, visitorCount, tourStep, nextTourStep, skipTour, startTour, tourNotice, setTourNotice } = useOS()
+  const [activeApp, setActiveApp] = useState<string | null>(() =>
+    tourStep !== null ? TOUR_STEPS[tourStep].id : null
+  )
+
+  // Follow the guided tour: each step opens its app; ending the tour returns to the launcher.
+  const [followedTourStep, setFollowedTourStep] = useState(tourStep)
+  if (tourStep !== followedTourStep) {
+    setFollowedTourStep(tourStep)
+    setActiveApp(tourStep !== null ? TOUR_STEPS[tourStep].id : null)
+  }
+  const tourAppId = tourStep !== null ? TOUR_STEPS[tourStep].id : null
+
+  const closeApp = () => {
+    // Leaving the current tour app ends the tour (it can be restarted from the Tour icon).
+    if (tourAppId && activeApp === tourAppId) {
+      skipTour()
+    } else {
+      setActiveApp(null)
+    }
+  }
+
+  const openContact = () => {
+    if (tourAppId === 'chat') nextTourStep()
+    else setActiveApp('contact')
+  }
+
+  useEffect(() => {
+    if (!tourNotice) return
+    const timer = setTimeout(() => setTourNotice(null), 6000)
+    return () => clearTimeout(timer)
+  }, [tourNotice, setTourNotice])
   const [searchQuery, setSearchQuery] = useState('')
   const [time, setTime] = useState('')
   const [dateStr, setDateStr] = useState('')
@@ -71,13 +109,16 @@ export const HomeScreen: React.FC = () => {
   // App catalog
   const apps = [
     { id: 'about', name: 'About Me', icon: User, color: 'from-blue-400 to-indigo-500' },
-    { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'from-amber-400 to-orange-500' },
-    { id: 'resume', name: 'Resume', icon: FileText, color: 'from-emerald-400 to-teal-500' },
-    { id: 'gallery', name: 'Gallery', icon: ImageIcon, color: 'from-pink-400 to-rose-500' },
-    { id: 'certifications', name: 'Credentials', icon: Award, color: 'from-violet-400 to-fuchsia-500' },
-    { id: 'blog', name: 'Blog', icon: BookOpen, color: 'from-indigo-400 to-purple-500' },
+    { id: 'projects', name: 'Projects', title: 'Featured Projects', icon: FolderOpen, color: 'from-amber-400 to-orange-500' },
+    { id: 'experience', name: 'Experience', icon: Briefcase, color: 'from-sky-400 to-blue-600' },
+    { id: 'chat', name: 'Ask', title: 'Ask my portfolio', icon: MessageCircle, color: 'from-violet-500 to-indigo-600' },
     { id: 'contact', name: 'Contact', icon: Mail, color: 'from-purple-400 to-pink-500' },
+    { id: 'resume', name: 'Resume', icon: FileText, color: 'from-emerald-400 to-teal-500' },
+    { id: 'certifications', name: 'Credentials', icon: Award, color: 'from-violet-400 to-fuchsia-500' },
+    { id: 'gallery', name: 'Gallery', icon: ImageIcon, color: 'from-pink-400 to-rose-500' },
+    { id: 'blog', name: 'Blog', icon: BookOpen, color: 'from-indigo-400 to-purple-500' },
     { id: 'settings', name: 'Settings', icon: Settings, color: 'from-teal-400 to-emerald-500' },
+    { id: 'tour', name: 'Tour', icon: Compass, color: 'from-fuchsia-500 to-violet-600', isAction: true },
     { id: 'github', name: 'GitHub', icon: Github, color: 'bg-slate-900 text-white', isExternal: true, url: portfolioData.profile.github },
     { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'bg-blue-600 text-white', isExternal: true, url: portfolioData.profile.linkedin }
   ]
@@ -86,12 +127,14 @@ export const HomeScreen: React.FC = () => {
   const dockApps = [
     { id: 'about', name: 'About', icon: User, color: 'bg-blue-500 text-white' },
     { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'bg-amber-500 text-white' },
-    { id: 'resume', name: 'Resume', icon: FileText, color: 'bg-emerald-500 text-white' },
+    { id: 'chat', name: 'Ask my portfolio', icon: MessageCircle, color: 'bg-violet-600 text-white' },
     { id: 'contact', name: 'Contact', icon: Mail, color: 'bg-purple-500 text-white' }
   ]
 
   const handleAppLaunch = (id: string, isExternal?: boolean, url?: string) => {
-    if (isExternal && url) {
+    if (id === 'tour') {
+      startTour()
+    } else if (isExternal && url) {
       window.open(url, '_blank')
     } else {
       setActiveApp(id)
@@ -131,10 +174,12 @@ export const HomeScreen: React.FC = () => {
       }`}>
         <div className="flex items-center gap-2">
           <span>{time}</span>
-          <span className="opacity-45">•</span>
-          <span className="text-[10px] tracking-wide font-medium flex items-center gap-0.5">
-            👥 {visitorCount !== null ? visitorCount.toLocaleString() : '...'}
-          </span>
+          {visitorCount !== null && <span className="opacity-45">•</span>}
+          {visitorCount !== null && (
+            <span className="text-[10px] tracking-wide font-medium flex items-center gap-0.5" title="Visitors">
+              👥 {visitorCount.toLocaleString()}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           <Signal className="w-3.5 h-3.5" />
@@ -189,9 +234,10 @@ export const HomeScreen: React.FC = () => {
                     <button
                       key={app.id}
                       onClick={() => handleAppLaunch(app.id, app.isExternal, app.url)}
+                      aria-label={app.id === 'tour' ? 'Take the tour' : `Open ${app.name}`}
                       className="flex flex-col items-center cursor-pointer group active:scale-90 transition-transform"
                     >
-                      <div className={`w-12 h-12 rounded-2xl ${app.color} shadow-lg shadow-black/10 flex items-center justify-center mb-1.5`}>
+                      <div className={`w-12 h-12 rounded-2xl ${app.color.startsWith('from-') ? 'bg-gradient-to-tr text-white' : ''} ${app.color} shadow-lg shadow-black/10 flex items-center justify-center mb-1.5`}>
                         <Icon className="w-5.5 h-5.5 stroke-[1.8]" />
                       </div>
                       <span className="text-[10px] font-bold text-white text-center tracking-wide leading-tight line-clamp-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
@@ -203,6 +249,20 @@ export const HomeScreen: React.FC = () => {
               </motion.div>
             </div>
 
+            {/* Tour finished / skipped notice */}
+            {tourNotice && (
+              <div role="status" className="mx-6 mb-3 max-w-sm self-center w-[calc(100%-3rem)] glass-panel rounded-2xl px-4 py-3 flex items-start gap-3 text-xs text-slate-700 dark:text-slate-200 shadow-xl">
+                <Compass className="w-4 h-4 text-violet-500 flex-shrink-0 mt-0.5" />
+                <p className="flex-1 leading-relaxed">{tourNotice}</p>
+                <button type="button" onClick={() => startTour()} className="font-bold text-violet-600 dark:text-violet-400 cursor-pointer whitespace-nowrap">
+                  Restart
+                </button>
+                <button type="button" onClick={() => setTourNotice(null)} aria-label="Dismiss" className="text-slate-400 cursor-pointer">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             {/* 5. Mobile Dock (Bottom pinned launcher apps) */}
             <div className="px-6 pb-6 w-full z-10">
               <div className="max-w-sm mx-auto p-3.5 rounded-3xl glass backdrop-blur-2xl flex justify-around shadow-2xl border border-white/15 dark:border-white/5">
@@ -212,6 +272,7 @@ export const HomeScreen: React.FC = () => {
                     <button
                       key={app.id}
                       onClick={() => handleAppLaunch(app.id)}
+                      aria-label={`Open ${app.name}`}
                       className="flex flex-col items-center cursor-pointer active:scale-90 transition-transform"
                     >
                       <div className={`w-11 h-11 rounded-2xl ${app.color} shadow flex items-center justify-center`}>
@@ -238,15 +299,18 @@ export const HomeScreen: React.FC = () => {
               {/* Native App Top Navigation Bar */}
               <div className="h-14 px-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md flex-shrink-0 select-none">
                 <button
-                  onClick={() => setActiveApp(null)}
+                  onClick={closeApp}
                   className="flex items-center gap-1 text-slate-600 dark:text-slate-300 text-xs font-bold py-2 pr-3 cursor-pointer"
                 >
                   <ChevronLeft className="w-5 h-5 text-violet-500" />
                   <span>Launcher</span>
                 </button>
 
-                <span className="text-sm font-bold text-slate-800 dark:text-white capitalize font-display">
-                  {apps.find(a => a.id === activeApp)?.name}
+                <span className="text-sm font-bold text-slate-800 dark:text-white font-display">
+                  {(() => {
+                    const app = apps.find(a => a.id === activeApp)
+                    return app?.title || app?.name
+                  })()}
                 </span>
                 
                 {/* placeholder for symmetrical design */}
@@ -263,12 +327,19 @@ export const HomeScreen: React.FC = () => {
                 {activeApp === 'settings' && <SettingsApp />}
                 {activeApp === 'contact' && <ContactApp />}
                 {activeApp === 'certifications' && <CertificationsApp />}
+                {activeApp === 'experience' && <ExperienceApp />}
+                {activeApp === 'chat' && <ChatApp onOpenContact={openContact} />}
               </div>
+
+              {/* Guided tour controls */}
+              {tourStep !== null && activeApp === tourAppId && (
+                <TourBar step={tourStep} onNext={nextTourStep} onSkip={skipTour} compact />
+              )}
 
               {/* Android Navigation Bar Pill at Bottom */}
               <div className="h-6 w-full flex items-center justify-center bg-transparent select-none flex-shrink-0">
                 <div 
-                  onClick={() => setActiveApp(null)}
+                  onClick={closeApp}
                   className="w-28 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 opacity-60 active:scale-95 cursor-pointer"
                 />
               </div>

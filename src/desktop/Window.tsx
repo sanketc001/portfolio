@@ -3,6 +3,8 @@ import { motion, useDragControls, useMotionValue } from 'framer-motion'
 import { useOS } from '../context/OSContext'
 import type { WindowState } from '../context/OSContext'
 import { X, Minus, Square, Minimize2, Move } from 'lucide-react'
+import { TourBar } from '../components/Common/TourBar'
+import { TOUR_STEPS } from '../tour'
 
 interface WindowProps {
   windowState: WindowState
@@ -16,7 +18,10 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
     focusWindow,
     closeWindow,
     minimizeWindow,
-    toggleMaximizeWindow
+    toggleMaximizeWindow,
+    tourStep,
+    nextTourStep,
+    skipTour
   } = useOS()
 
   const { id, title, isOpen, isMinimized, isMaximized, zIndex, minW = 300, minH = 200 } = windowState
@@ -29,6 +34,15 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
   // Window size and position state (for non-maximized states)
   const [size, setSize] = useState({ w: windowState.w, h: windowState.h })
   const [position, setPosition] = useState({ x: windowState.x, y: windowState.y })
+
+  // When the window manager re-centres this window (e.g. on re-open), adopt the new rect.
+  const rectKey = `${windowState.x},${windowState.y},${windowState.w},${windowState.h}`
+  const [appliedRectKey, setAppliedRectKey] = useState(rectKey)
+  if (rectKey !== appliedRectKey) {
+    setAppliedRectKey(rectKey)
+    setSize({ w: windowState.w, h: windowState.h })
+    setPosition({ x: windowState.x, y: windowState.y })
+  }
 
   // Track mode transition (maximize/minimize) to disable spring animations during manual drags
   const prevMaximized = useRef(isMaximized)
@@ -103,12 +117,15 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
   if (!isOpen) return null
 
   const isFocused = activeWindowId === id
+  const isTourWindow = tourStep !== null && TOUR_STEPS[tourStep]?.id === id
 
   return (
     <motion.div
       ref={windowRef}
       onMouseDown={handleMouseDown}
-      initial={false}
+      role="dialog"
+      aria-label={title}
+      initial={{ opacity: 0, scale: 0.97 }}
       animate={
         isMinimized
           ? { opacity: 0, scale: 0.8, y: 150, pointerEvents: 'none' }
@@ -197,7 +214,8 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
           <button
             onClick={() => closeWindow(id)}
             className="w-3 h-3 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center group cursor-pointer transition-colors"
-            title="Close"
+            title={isTourWindow ? 'Close (continues the tour)' : 'Close'}
+            aria-label="Close window"
           >
             <X className="w-2 h-2 text-rose-950 opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
@@ -206,6 +224,7 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
             onClick={() => minimizeWindow(id)}
             className="w-3 h-3 rounded-full bg-amber-500 hover:bg-amber-600 flex items-center justify-center group cursor-pointer transition-colors"
             title="Minimize"
+            aria-label="Minimize window"
           >
             <Minus className="w-2 h-2 text-amber-950 opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
@@ -214,6 +233,7 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
             onClick={() => toggleMaximizeWindow(id)}
             className="w-3 h-3 rounded-full bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center group group-hover:scale-100 cursor-pointer transition-colors"
             title="Maximize"
+            aria-label="Maximize window"
           >
             {isMaximized ? (
               <Minimize2 className="w-2 h-2 text-emerald-950 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -236,6 +256,11 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
       <div className="flex-1 overflow-hidden bg-[#faf8f4]/95 dark:bg-[#131722]/95 relative">
         {children}
       </div>
+
+      {/* Guided tour footer (only on the current tour window) */}
+      {isTourWindow && tourStep !== null && (
+        <TourBar step={tourStep} onNext={nextTourStep} onSkip={skipTour} />
+      )}
 
       {/* Resize Handle (only show when not maximized) */}
       {!isMaximized && (

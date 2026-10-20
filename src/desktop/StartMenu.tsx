@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useOS } from '../context/OSContext'
-import { Search, LogOut, Sun, Moon, Settings, User, FileText, FolderOpen, Image as ImageIcon, BookOpen, Mail } from 'lucide-react'
+import { Search, LogOut, Sun, Moon, Settings, User, FileText, FolderOpen, Image as ImageIcon, BookOpen, Mail, Briefcase, MessageCircle, Award, Compass } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import portfolioData from '../data/portfolioData.json'
 
@@ -14,8 +14,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
     openWindow,
     theme,
     toggleTheme,
-    windows,
-    closeWindow
+    closeAllWindows,
+    startTour
   } = useOS()
 
   const [search, setSearch] = useState('')
@@ -29,10 +29,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
   }
 
   const handleShutdown = () => {
-    // Close all open windows
-    windows.forEach(win => {
-      if (win.isOpen) closeWindow(win.id)
-    })
+    // Close all open windows (also ends a running tour)
+    closeAllWindows()
     onClose()
   }
 
@@ -53,11 +51,14 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
 
   const appItems = [
     { id: 'about', name: 'About Me', icon: User, color: 'text-blue-500 bg-blue-500/10' },
-    { id: 'projects', name: 'Projects Explorer', icon: FolderOpen, color: 'text-amber-500 bg-amber-500/10' },
+    { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'text-amber-500 bg-amber-500/10' },
+    { id: 'experience', name: 'Experience', icon: Briefcase, color: 'text-sky-500 bg-sky-500/10' },
+    { id: 'chat', name: 'Ask my portfolio', icon: MessageCircle, color: 'text-violet-500 bg-violet-500/10' },
+    { id: 'contact', name: 'Contact / Mail', icon: Mail, color: 'text-purple-500 bg-purple-500/10' },
     { id: 'resume', name: 'Resume.pdf', icon: FileText, color: 'text-emerald-500 bg-emerald-500/10' },
+    { id: 'certifications', name: 'Certifications', icon: Award, color: 'text-fuchsia-500 bg-fuchsia-500/10' },
     { id: 'gallery', name: 'Media Gallery', icon: ImageIcon, color: 'text-pink-500 bg-pink-500/10' },
     { id: 'blog', name: 'Developer Blog', icon: BookOpen, color: 'text-indigo-500 bg-indigo-500/10' },
-    { id: 'contact', name: 'Contact / Mail', icon: Mail, color: 'text-purple-500 bg-purple-500/10' },
     { id: 'settings', name: 'Settings', icon: Settings, color: 'text-teal-500 bg-teal-500/10' }
   ]
 
@@ -74,7 +75,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-          className="absolute bottom-14 left-4 w-96 h-[460px] rounded-2xl glass-panel shadow-2xl flex flex-col overflow-hidden z-[9999]"
+          className="absolute bottom-14 left-4 w-96 h-[560px] max-h-[calc(100vh-72px)] rounded-2xl glass-panel shadow-2xl flex flex-col overflow-hidden z-[9999]"
         >
           {/* Header Profile Section */}
           <div className="p-5 border-b border-slate-200/40 dark:border-slate-800/40 bg-white/10 dark:bg-black/20 flex items-center gap-3">
@@ -103,6 +104,24 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
 
           {/* Apps Grid */}
           <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {!search && (
+              <button
+                type="button"
+                onClick={() => {
+                  startTour()
+                  onClose()
+                }}
+                className="w-full mb-3 flex items-center gap-3 p-3 rounded-xl bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 text-left transition-colors cursor-pointer"
+              >
+                <div className="p-2 rounded-lg bg-violet-600 text-white">
+                  <Compass className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-800 dark:text-white">Take the tour</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">About, projects, experience, chat and contact in 5 steps</p>
+                </div>
+              </button>
+            )}
             <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-2 font-display">
               Pinned Apps
             </h4>

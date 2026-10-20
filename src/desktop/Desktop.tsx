@@ -15,7 +15,11 @@ import {
   Sun,
   Moon,
   Trash2,
-  Award
+  Award,
+  Briefcase,
+  MessageCircle,
+  Compass,
+  X
 } from 'lucide-react'
 import { Github, Linkedin } from '../components/Common/BrandIcons'
 import portfolioData from '../data/portfolioData.json'
@@ -29,6 +33,10 @@ import { BlogApp } from '../components/Apps/BlogApp'
 import { SettingsApp } from '../components/Apps/SettingsApp'
 import { ContactApp } from '../components/Apps/ContactApp'
 import { CertificationsApp } from '../components/Apps/CertificationsApp'
+import { ExperienceApp } from '../components/Apps/ExperienceApp'
+import { ChatApp } from '../components/Apps/ChatApp'
+import { storageClear } from '../utils/storage'
+import { TOUR_STEPS } from '../tour'
 
 export const Desktop: React.FC = () => {
   const {
@@ -43,8 +51,29 @@ export const Desktop: React.FC = () => {
     setGithubUsername,
     startMenuOpen,
     setStartMenuOpen,
-    visitorCount
+    visitorCount,
+    tourStep,
+    nextTourStep,
+    startTour,
+    tourNotice,
+    setTourNotice
   } = useOS()
+
+  // From the chat fallback: continue the tour if Contact is next, otherwise just open it.
+  const openContact = () => {
+    if (tourStep !== null && TOUR_STEPS[tourStep]?.id === 'chat') {
+      nextTourStep()
+    } else {
+      openWindow('contact')
+    }
+  }
+
+  // Auto-dismiss the "tour finished / skipped" notice.
+  useEffect(() => {
+    if (!tourNotice) return
+    const timer = setTimeout(() => setTourNotice(null), 7000)
+    return () => clearTimeout(timer)
+  }, [tourNotice, setTourNotice])
 
   const desktopRef = useRef<HTMLDivElement>(null)
   
@@ -56,15 +85,18 @@ export const Desktop: React.FC = () => {
   })
 
   // Desktop Icons Configuration
+  // Ordered by relevance (same order as the guided tour first).
   const desktopIcons = [
     { id: 'about', name: 'About Me', icon: User, color: 'from-blue-400 to-indigo-500' },
     { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'from-amber-400 to-orange-500' },
+    { id: 'experience', name: 'Experience', icon: Briefcase, color: 'from-sky-400 to-blue-600' },
+    { id: 'chat', name: 'Ask my portfolio', icon: MessageCircle, color: 'from-violet-500 to-indigo-600' },
+    { id: 'contact', name: 'Contact Me', icon: Mail, color: 'from-fuchsia-400 to-pink-500' },
     { id: 'resume', name: 'Resume.pdf', icon: FileText, color: 'from-emerald-400 to-teal-500' },
+    { id: 'certifications', name: 'Certifications', icon: Award, color: 'from-violet-500 to-fuchsia-600' },
     { id: 'gallery', name: 'Media Gallery', icon: ImageIcon, color: 'from-pink-400 to-rose-500' },
     { id: 'blog', name: 'Developer Blog', icon: BookOpen, color: 'from-violet-400 to-purple-500' },
-    { id: 'contact', name: 'Contact Me', icon: Mail, color: 'from-fuchsia-400 to-pink-500' },
     { id: 'settings', name: 'Settings', icon: Settings, color: 'from-slate-400 to-slate-600' },
-    { id: 'certifications', name: 'Certifications', icon: Award, color: 'from-violet-500 to-fuchsia-600' },
     { id: 'github', name: 'GitHub Profile', icon: Github, color: 'from-slate-800 to-black', isExternal: true, url: portfolioData.profile.github },
     { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'from-blue-600 to-blue-800', isExternal: true, url: portfolioData.profile.linkedin }
   ]
@@ -109,7 +141,7 @@ export const Desktop: React.FC = () => {
 
   // Action for context menu: Clear local cache
   const handleClearCache = () => {
-    localStorage.clear()
+    storageClear()
     window.location.reload()
   }
 
@@ -173,16 +205,43 @@ export const Desktop: React.FC = () => {
 
       {/* Dynamic Theme backdrop overlay to soften background contrast */}
       <div className="absolute inset-0 bg-white/5 dark:bg-black/15 -z-19 pointer-events-none transition-colors duration-500" />
-      {/* Visitor Counter (Top Right) */}
-      <div className="absolute top-6 right-6 z-10 select-none">
-        <div className="glass px-3.5 py-1.5 rounded-full border border-white/10 flex items-center gap-2 text-white shadow-lg backdrop-blur-md">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[10px] font-bold tracking-wider uppercase opacity-85">Visitors:</span>
-          <span className="text-xs font-black font-display text-emerald-450">
-            {visitorCount !== null ? visitorCount.toLocaleString() : '...'}
-          </span>
+      {/* Visitor Counter (Top Right): only shown when the real count is available */}
+      {visitorCount !== null && (
+        <div className="absolute top-6 right-6 z-10 select-none">
+          <div className="glass px-3.5 py-1.5 rounded-full border border-white/10 flex items-center gap-2 text-slate-700 dark:text-white shadow-lg backdrop-blur-md">
+            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="text-[10px] font-bold tracking-wider uppercase opacity-85">Visitors:</span>
+            <span className="text-xs font-black font-display">{visitorCount.toLocaleString()}</span>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Tour finished / skipped notice */}
+      {tourNotice && (
+        <div
+          role="status"
+          className="absolute top-6 left-1/2 -translate-x-1/2 z-[99998] max-w-md w-[calc(100%-2rem)] glass-panel rounded-xl shadow-2xl px-4 py-3 flex items-start gap-3 text-xs text-slate-700 dark:text-slate-200 animate-fade-in"
+          onClick={e => e.stopPropagation()}
+        >
+          <Compass className="w-4 h-4 text-violet-500 flex-shrink-0 mt-0.5" />
+          <p className="flex-1 leading-relaxed">{tourNotice}</p>
+          <button
+            type="button"
+            onClick={() => startTour()}
+            className="font-bold text-violet-600 dark:text-violet-400 hover:underline cursor-pointer whitespace-nowrap"
+          >
+            Restart
+          </button>
+          <button
+            type="button"
+            onClick={() => setTourNotice(null)}
+            aria-label="Dismiss"
+            className="text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
       {/* Desktop Icons Grid (Left column layout) */}
       <div className="absolute top-6 left-6 bottom-18 w-32 flex flex-col flex-wrap gap-4 content-start z-10">
         {desktopIcons.map(icon => {
@@ -190,6 +249,15 @@ export const Desktop: React.FC = () => {
           return (
             <div
               key={icon.id}
+              role="button"
+              tabIndex={0}
+              aria-label={`Open ${icon.name}`}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  if (icon.isExternal) window.open(icon.url, '_blank')
+                  else openWindow(icon.id)
+                }
+              }}
               onDoubleClick={() => {
                 if (icon.isExternal) {
                   window.open(icon.url, '_blank')
@@ -234,6 +302,8 @@ export const Desktop: React.FC = () => {
           {win.id === 'contact' && <ContactApp />}
           {win.id === 'settings' && <SettingsApp />}
           {win.id === 'certifications' && <CertificationsApp />}
+          {win.id === 'experience' && <ExperienceApp />}
+          {win.id === 'chat' && <ChatApp onOpenContact={openContact} />}
         </Window>
       ))}
 
