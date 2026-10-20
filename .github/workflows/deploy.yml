@@ -33,6 +33,12 @@ jobs:
         if: env.HAS_CF == 'true'
         uses: actions/checkout@v4
 
+      - name: Build chat knowledge base
+        # Regenerates chat-proxy/knowledge.md from portfolioData.json so the
+        # deployed worker always matches the site's data (Node is preinstalled).
+        if: env.HAS_CF == 'true'
+        run: node scripts/build-knowledge.mjs
+
       - name: Deploy worker
         id: wrangler
         if: env.HAS_CF == 'true'
