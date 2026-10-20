@@ -21,9 +21,8 @@ concurrency:
 
 jobs:
   chat-proxy:
-    # Deploys the Ask-my-portfolio Cloudflare Worker when its secrets are configured.
-    # Required repo secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID,
-    # AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY. Optional variable: AZURE_OPENAI_DEPLOYMENT.
+    # Deploys the Ask-my-portfolio Cloudflare Worker (Workers AI model) when the
+    # repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are configured.
     runs-on: ubuntu-latest
     outputs:
       url: ${{ steps.wrangler.outputs.deployment-url }}
@@ -42,14 +41,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: chat-proxy
-          secrets: |
-            AZURE_OPENAI_API_KEY
-          command: >-
-            deploy
-            --var AZURE_OPENAI_ENDPOINT:${{ secrets.AZURE_OPENAI_ENDPOINT }}
-            --var AZURE_OPENAI_DEPLOYMENT:${{ vars.AZURE_OPENAI_DEPLOYMENT || 'gpt-4o' }}
-        env:
-          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          command: deploy
 
   deploy:
     needs: chat-proxy

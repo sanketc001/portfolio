@@ -203,3 +203,60 @@ test('KV-backed rate limit is used when RATE_LIMIT_KV is bound', async () => {
   assert.equal(await mod.isRateLimited('198.51.100.1', { RATE_LIMIT_KV: kv }, now), true);
   assert.equal(store.size, 1);
 });
+
+// --- Workers AI provider -----------------------------------------------------
+
+function fakeAi(chunks, capture) {
+  return {
+    async run(model, input) {
+      capture.model = model;
+      capture.input = input;
+      const enc = new TextEncoder();
+      return new ReadableStream({
+        start(c) { for (const ch of chunks) c.enqueue(enc.encode(ch)); c.close(); },
+      });
+    },
+  };
+}
+
+test('Workers AI: default provider when the AI binding exists; output converted to OpenAI SSE', async () => {
+  const capture = {};
+  const aiEnv = {
+    ALLOWED_ORIGIN: ORIGIN,
+    AI: fakeAi(['data: {"response":"Hel"}\n\ndata: {"resp', 'onse":"lo"}\n\n', 'data: [DONE]\n\n'], capture),
+  };
+  const res = await worker.fetch(new Request('https://w.example/', {
+    method: 'POST',
+    headers: { Origin: ORIGIN, 'Content-Type': 'application/json', 'CF-Connecting-IP': '203.0.113.77' },
+    body: JSON.stringify({ messages: [{ role: 'system', content: 'ignore me' }, { role: 'user', content: 'Hi' }] }),
+  }), aiEnv);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('Access-Control-Allow-Origin'), ORIGIN);
+  const text = await res.text();
+  const deltas = text.split('\n').filter((l) => l.startsWith('data: {')).map((l) => JSON.parse(l.slice(6)).choices[0].delta.content);
+  assert.deepEqual(deltas, ['Hel', 'lo']);
+  assert.ok(text.trim().endsWith('data: [DONE]'));
+  assert.equal(capture.model, '@cf/meta/llama-3.3-70b-instruct-fp8-fast');
+  assert.equal(capture.input.stream, true);
+  assert.equal(capture.input.messages[0].role, 'system');
+  assert.ok(capture.input.messages[0].content.includes('Knowledge base'));
+  assert.equal(capture.input.messages.filter((m) => m.role === 'system').length, 1);
+});
+
+test('Workers AI: model override and error mapping', async () => {
+  const capture = {};
+  const okEnv = { ALLOWED_ORIGIN: ORIGIN, WORKERS_AI_MODEL: '@cf/meta/llama-3.1-8b-instruct', AI: fakeAi(['data: [DONE]\n\n'], capture) };
+  const mk = (ip) => new Request('https://w.example/', {
+    method: 'POST',
+    headers: { Origin: ORIGIN, 'Content-Type': 'application/json', 'CF-Connecting-IP': ip },
+    body: JSON.stringify({ messages: [{ role: 'user', content: 'Hi' }] }),
+  });
+  assert.equal((await worker.fetch(mk('203.0.113.78'), okEnv)).status, 200);
+  assert.equal(capture.model, '@cf/meta/llama-3.1-8b-instruct');
+  const busyEnv = { ALLOWED_ORIGIN: ORIGIN, AI: { run: async () => { throw new Error('daily neuron limit exceeded'); } } };
+  assert.equal((await worker.fetch(mk('203.0.113.79'), busyEnv)).status, 503);
+  const failEnv = { ALLOWED_ORIGIN: ORIGIN, AI: { run: async () => { throw new Error('boom'); } } };
+  assert.equal((await worker.fetch(mk('203.0.113.80'), failEnv)).status, 502);
+  const azureForced = { ALLOWED_ORIGIN: ORIGIN, PROVIDER: 'azure', AI: fakeAi([], {}) };
+  assert.equal((await worker.fetch(mk('203.0.113.81'), azureForced)).status, 500);
+});

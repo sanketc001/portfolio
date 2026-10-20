@@ -1,15 +1,18 @@
-// "Ask my portfolio" chat proxy: a Cloudflare Worker in front of Azure OpenAI.
+// "Ask my portfolio" chat proxy: a Cloudflare Worker in front of an LLM.
 //
-// - Keeps the Azure key server-side (wrangler secret AZURE_OPENAI_API_KEY)
+// - Default provider: Cloudflare Workers AI through the AI binding (free daily
+//   allowance, no external keys). Set PROVIDER = "azure" to use Azure OpenAI
+//   instead; the key stays server-side (wrangler secret AZURE_OPENAI_API_KEY)
 // - Only answers browsers from ALLOWED_ORIGIN (comma-separated list)
 // - Validates the conversation and prepends a server-side system prompt built
 //   from knowledge.md; client-supplied system messages are dropped
-// - Streams the Azure SSE response straight back to the browser
+// - Streams OpenAI-style SSE back to the browser (Workers AI output is converted)
 // - Applies a simple per-IP rate limit
 
 import knowledge from './knowledge.md';
 
 const DEFAULTS = {
+  WORKERS_AI_MODEL: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
   AZURE_OPENAI_DEPLOYMENT: 'gpt-4o',
   AZURE_OPENAI_API_VERSION: '2024-10-21',
   ALLOWED_ORIGIN: 'https://sanketc001.github.io,http://localhost:5173',
@@ -147,6 +150,55 @@ export function buildAzureRequest(env, messages) {
   return { url, body };
 }
 
+export function useAzure(env) {
+  if (env.PROVIDER === 'azure') return true;
+  if (env.PROVIDER === 'workers-ai') return false;
+  return !env.AI && Boolean(env.AZURE_OPENAI_ENDPOINT && env.AZURE_OPENAI_API_KEY);
+}
+
+// Workers AI streams `data: {"response":"..."}` lines; the browser expects the
+// OpenAI chat-completions shape, so re-emit each token as a delta.
+export function workersAiToOpenAiStream(source) {
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  let buffer = '';
+  const emitLine = (line, controller) => {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith('data:')) return;
+    const payload = trimmed.slice(5).trim();
+    if (payload === '[DONE]') {
+      controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+      return;
+    }
+    try {
+      const token = JSON.parse(payload).response;
+      if (typeof token === 'string' && token.length) {
+        const chunk = { choices: [{ index: 0, delta: { content: token } }] };
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+      }
+    } catch {
+      // ignore keep-alives and partial frames
+    }
+  };
+  return source.pipeThrough(new TransformStream({
+    transform(chunk, controller) {
+      buffer += decoder.decode(chunk, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) emitLine(line, controller);
+    },
+    flush(controller) {
+      if (buffer) emitLine(buffer, controller);
+    },
+  }));
+}
+
+const SSE_HEADERS = {
+  'Content-Type': 'text/event-stream; charset=utf-8',
+  'Cache-Control': 'no-cache, no-transform',
+  'X-Content-Type-Options': 'nosniff',
+};
+
 // ---------------------------------------------------------------------------
 
 export default {
@@ -164,7 +216,8 @@ export default {
     if (!originAllowed) {
       return json(403, { error: 'Origin not allowed.' }, cors);
     }
-    if (!env.AZURE_OPENAI_ENDPOINT || !env.AZURE_OPENAI_API_KEY) {
+    const azure = useAzure(env);
+    if (azure ? !(env.AZURE_OPENAI_ENDPOINT && env.AZURE_OPENAI_API_KEY) : !env.AI) {
       return json(500, { error: 'The chat service is not configured.' }, cors);
     }
 
@@ -191,6 +244,28 @@ export default {
         ...cors,
         'Retry-After': String(Math.ceil(LIMITS.rateLimitWindowMs / 1000)),
       });
+    }
+
+    if (!azure) {
+      try {
+        const stream = await env.AI.run(env.WORKERS_AI_MODEL || DEFAULTS.WORKERS_AI_MODEL, {
+          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+          stream: true,
+          max_tokens: 500,
+          temperature: 0.3,
+        });
+        return new Response(workersAiToOpenAiStream(stream), {
+          status: 200,
+          headers: { ...cors, ...SSE_HEADERS },
+        });
+      } catch (err) {
+        console.error('Workers AI request failed', err);
+        const msg = String(err && err.message || err);
+        if (/limit|quota|429|capacity/i.test(msg)) {
+          return json(503, { error: 'The assistant is busy. Please try again shortly.' }, cors);
+        }
+        return json(502, { error: 'The assistant is unavailable right now.' }, cors);
+      }
     }
 
     const { url, body: azureBody } = buildAzureRequest(env, messages);
@@ -222,12 +297,7 @@ export default {
     // Pass the SSE stream straight through.
     return new Response(upstream.body, {
       status: 200,
-      headers: {
-        ...cors,
-        'Content-Type': 'text/event-stream; charset=utf-8',
-        'Cache-Control': 'no-cache, no-transform',
-        'X-Content-Type-Options': 'nosniff',
-      },
+      headers: { ...cors, ...SSE_HEADERS },
     });
   },
 };

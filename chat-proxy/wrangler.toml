@@ -8,15 +8,18 @@ type = "Text"
 globs = ["**/*.md"]
 fallthrough = true
 
+# Workers AI (free daily allowance) is the default model provider.
+[ai]
+binding = "AI"
+
 [vars]
-# Your Azure OpenAI resource, e.g. https://my-resource.openai.azure.com
-AZURE_OPENAI_ENDPOINT = "https://YOUR-RESOURCE.openai.azure.com"
-AZURE_OPENAI_DEPLOYMENT = "gpt-4o"
-AZURE_OPENAI_API_VERSION = "2024-10-21"
+WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 # Comma-separated list of origins allowed to call the worker
 ALLOWED_ORIGIN = "https://sanketc001.github.io,http://localhost:5173"
 
-# Secret (never commit it): wrangler secret put AZURE_OPENAI_API_KEY
+# Optional Azure OpenAI instead of Workers AI: set PROVIDER = "azure",
+# AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_DEPLOYMENT here, then
+#   wrangler secret put AZURE_OPENAI_API_KEY
 
 # Optional: share the rate limit across isolates with a KV namespace.
 #   wrangler kv namespace create RATE_LIMIT_KV

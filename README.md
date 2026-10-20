@@ -40,7 +40,7 @@ On a first visit the site walks the visitor through the most relevant windows, o
 
 `src/components/Apps/ChatApp.tsx` posts `{messages:[{role,content}]}` (last 10 messages, 1000 characters max per message) to `VITE_CHAT_ENDPOINT` and renders the streamed reply (`text/event-stream` in OpenAI chat-completions format, with a plain JSON fallback). Answers are rendered with a tiny markdown renderer that never injects HTML. If the endpoint is not configured or a request fails, the window points visitors to Contact and email instead.
 
-The endpoint is the Cloudflare Worker in [`chat-proxy/`](chat-proxy/README.md). It holds the Azure OpenAI key, restricts CORS to the site, validates input, adds a server-side system prompt built from `chat-proxy/knowledge.md`, rate-limits per IP and streams the Azure response through.
+The endpoint is the Cloudflare Worker in [`chat-proxy/`](chat-proxy/README.md). It runs Llama 3.3 70B on Cloudflare Workers AI (free daily allowance; Azure OpenAI is a config switch), restricts CORS to the site, validates input, adds a server-side system prompt built from `chat-proxy/knowledge.md`, rate-limits per IP and streams the answer back.
 
 ## Architecture
 
@@ -58,7 +58,7 @@ src/
 └── data/portfolioData.json  all content: profile, skills, featured projects, media registry
 scripts/generate-media-registry.cjs   scans public/{documents,pictures,music,videos}
                                       and writes the gallery entries into portfolioData.json
-chat-proxy/                  Cloudflare Worker for the chat (Azure OpenAI), knowledge.md, tests
+chat-proxy/                  Cloudflare Worker for the chat (Workers AI), knowledge.md, tests
 ```
 
 Content is data-driven: editing `src/data/portfolioData.json` (or dropping files into the `public/` media folders) updates the site without touching components.
@@ -115,18 +115,7 @@ The build reads two repository variables (**Settings → Secrets and variables �
 
 ### Chat proxy
 
-1. Deploy the worker (details in [`chat-proxy/README.md`](chat-proxy/README.md)):
-
-   ```bash
-   npm i -g wrangler
-   wrangler login
-   cd chat-proxy
-   wrangler secret put AZURE_OPENAI_API_KEY
-   # set AZURE_OPENAI_ENDPOINT (and, if different, the deployment / API version / allowed origins) in wrangler.toml
-   wrangler deploy
-   ```
-
-2. Add the worker URL as the `VITE_CHAT_ENDPOINT` repository variable and re-run the deploy workflow.
+The same workflow deploys the worker in `chat-proxy/` and builds the site with its URL, once two repository **secrets** exist: `CLOUDFLARE_API_TOKEN` (template "Edit Cloudflare Workers") and `CLOUDFLARE_ACCOUNT_ID`. No model API key is needed. To deploy by hand instead: `cd chat-proxy && npx wrangler deploy`, then set `VITE_CHAT_ENDPOINT` to the printed URL. Details in [`chat-proxy/README.md`](chat-proxy/README.md).
 
 ## Limitations and next steps
 
