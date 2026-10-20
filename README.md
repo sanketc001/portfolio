@@ -42,7 +42,6 @@ Content is data-driven: editing `src/data/portfolioData.json` (or dropping files
 
 - React 19, TypeScript, Vite
 - Tailwind CSS v4, Framer Motion, Lucide icons
-- React Router
 - Oxlint
 - GitHub Actions → GitHub Pages
 
