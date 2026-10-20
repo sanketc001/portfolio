@@ -40,6 +40,12 @@ jobs:
 
       - name: Build project
         run: npm run build
+        env:
+          # Set these under Settings > Secrets and variables > Actions > Variables.
+          # Both are optional: without them the chat shows an offline notice and
+          # Contact shows an email button instead of the form.
+          VITE_CHAT_ENDPOINT: ${{ vars.VITE_CHAT_ENDPOINT }}
+          VITE_WEB3FORMS_KEY: ${{ vars.VITE_WEB3FORMS_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
