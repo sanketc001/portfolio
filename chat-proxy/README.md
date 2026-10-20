@@ -123,3 +123,20 @@ the function, and return the Azure OpenAI response body as a stream with
 programming model with HTTP streams enabled). Rate limiting can use Azure API
 Management or a small Table Storage counter. Set `VITE_CHAT_ENDPOINT` to the
 function URL as above.
+
+## Deploy from GitHub Actions (no local tooling)
+
+`.github/workflows/deploy.yml` deploys this worker on every push to `main`, then builds the
+site with the worker's URL baked in. Add these under **Settings → Secrets and variables →
+Actions**:
+
+| Name | Kind | Value |
+|------|------|-------|
+| `CLOUDFLARE_API_TOKEN` | secret | Cloudflare API token from the "Edit Cloudflare Workers" template |
+| `CLOUDFLARE_ACCOUNT_ID` | secret | Account ID from the Cloudflare dashboard sidebar |
+| `AZURE_OPENAI_ENDPOINT` | secret | e.g. `https://my-resource.openai.azure.com` |
+| `AZURE_OPENAI_API_KEY` | secret | Key 1 from the Azure OpenAI resource |
+| `AZURE_OPENAI_DEPLOYMENT` | variable (optional) | Deployment name if it is not `gpt-4o` |
+
+The Cloudflare account needs a `workers.dev` subdomain (Workers & Pages → Overview, one-time).
+If the secrets are missing the worker job is skipped and the site builds with the chat offline.
