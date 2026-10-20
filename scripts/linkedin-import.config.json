@@ -1,0 +1,63 @@
+{
+  "profile": {
+    "titleOverride": "GenAI & ML Engineer | Technical Consultant"
+  },
+  "experience": {
+    "merge": [
+      {
+        "companies": ["Quest Global", "Jio"],
+        "company": "Quest Global @ Reliance Jio",
+        "role": "Artificial Intelligence Engineer & Technical Consultant"
+      }
+    ],
+    "rename": {},
+    "roles": {
+      "GDSC DYPIU|Lead": "Developer Student Club Lead",
+      "CodeChef|CP Lead": "Competitive Programming Lead"
+    },
+    "keepCuratedDescription": ["GDSC DYPIU"],
+    "hide": []
+  },
+  "education": {
+    "hide": ["M C Kejriwal Vidyapeeth", "Holy Family Convent School - India"]
+  },
+  "certifications": {
+    "relevantKeywords": ["neural", "deep learning", "tensorflow", "machine learning", "ai", "python", "data"],
+    "hide": []
+  },
+  "skills": {
+    "rename": {
+      "Python (Programming Language)": "Python",
+      "Pandas (Software)": "Pandas",
+      "C (Programming Language)": "C",
+      "Computer Vision": "Computer Vision (CV)"
+    },
+    "hide": ["Voice Acting", "Event Planning", "Event Management", "Community Outreach", "Apache", "Diffusion"],
+    "defaultCategory": "Other",
+    "categories": {
+      "Large Language Models (LLM)": "AI & GenAI",
+      "Stable Diffusion": "AI & GenAI",
+      "Retrieval-Augmented Generation (RAG)": "AI & GenAI",
+      "Machine Learning": "AI & GenAI",
+      "Artificial Intelligence (AI)": "AI & GenAI",
+      "LangChain": "AI & GenAI",
+      "Natural Language Processing (NLP)": "AI & GenAI",
+      "TensorFlow": "AI & GenAI",
+      "Computer Vision": "AI & GenAI",
+      "Conversational User Interfaces (CUI)": "AI & GenAI",
+      "Python": "Engineering",
+      "C": "Engineering",
+      "C++": "Engineering",
+      "SQL": "Engineering",
+      "Async": "Engineering",
+      "Web Scraping": "Engineering",
+      "Data Structures": "Engineering",
+      "Pandas": "Engineering",
+      "Big Data": "Engineering",
+      "Data Analysis": "Engineering",
+      "Team Leadership": "Leadership & Tools",
+      "Training": "Leadership & Tools",
+      "Communication": "Leadership & Tools"
+    }
+  }
+}

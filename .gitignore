@@ -41,3 +41,7 @@ CLAUDE.md
 # Cloudflare Worker local files
 .dev.vars
 .wrangler/
+
+# LinkedIn data exports (personal data; never commit)
+*LinkedInDataExport*
+linkedin-export/
