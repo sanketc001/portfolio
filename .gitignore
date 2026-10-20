@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local assistant/agent config
+.github/instructions/
+AGENTS.md
+CLAUDE.md
+.claude/
+
+# Caches
+.eslintcache
+*.tsbuildinfo
