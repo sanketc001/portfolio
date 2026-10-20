@@ -21,7 +21,7 @@ export const CertificationsApp: React.FC = () => {
         <div className="flex items-center gap-2.5 mb-8 border-b border-slate-200/50 dark:border-slate-800/50 pb-4">
           <Award className="w-7 h-7 text-violet-500" />
           <div>
-            <h2 className="text-xl font-bold font-display text-slate-850 dark:text-white">Professional Certifications</h2>
+            <h2 className="text-xl font-bold font-display text-slate-800 dark:text-white">Professional Certifications</h2>
             <p className="text-xs text-slate-400 mt-0.5">Verified credentials from LinkedIn & resume registries</p>
           </div>
         </div>
@@ -47,12 +47,12 @@ export const CertificationsApp: React.FC = () => {
                   {cert.issuer}
                 </p>
 
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-450 dark:text-slate-500 mt-2 font-medium">
+                <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 mt-2 font-medium">
                   <Calendar className="w-3.5 h-3.5" />
                   <span>Issued: {cert.date}</span>
                 </div>
 
-                <div className="text-[10px] font-mono text-slate-450 dark:text-slate-500 mt-1">
+                <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500 mt-1">
                   ID: {cert.credentialId}
                 </div>
               </div>
@@ -62,7 +62,7 @@ export const CertificationsApp: React.FC = () => {
                 href={cert.url}
                 target="_blank"
                 rel="noreferrer"
-                className="absolute right-4 bottom-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-450 hover:text-slate-800 dark:hover:text-white border border-slate-200/50 dark:border-slate-800/50 hover:border-violet-500/25 transition-all shadow-sm flex items-center justify-center"
+                className="absolute right-4 bottom-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-400 hover:text-slate-800 dark:hover:text-white border border-slate-200/50 dark:border-slate-800/50 hover:border-violet-500/25 transition-all shadow-sm flex items-center justify-center"
                 title="Verify Credential"
               >
                 <ExternalLink className="w-3.5 h-3.5" />

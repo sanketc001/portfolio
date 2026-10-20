@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { fetchGithubProjects } from '../api/github'
 import type { GithubProject } from '../api/github'
 import portfolioData from '../data/portfolioData.json'
+import { storageGet, storageSet } from '../utils/storage'
+import { TOUR_STEPS, TOUR_STORAGE_KEY } from '../tour'
 
 export interface WindowState {
   id: string
@@ -28,51 +30,101 @@ interface OSContextType {
   activeWindowId: string | null
   openWindow: (id: string) => void
   closeWindow: (id: string) => void
+  closeAllWindows: () => void
   minimizeWindow: (id: string) => void
   toggleMaximizeWindow: (id: string) => void
   focusWindow: (id: string) => void
   githubUsername: string
   setGithubUsername: (username: string) => void
   projects: GithubProject[]
+  projectsSource: 'live' | 'fallback'
   loadingProjects: boolean
   startMenuOpen: boolean
   setStartMenuOpen: (open: boolean) => void
   searchQuery: string
   setSearchQuery: (query: string) => void
   visitorCount: number | null
+  // Guided tour
+  tourStep: number | null
+  startTour: () => void
+  nextTourStep: () => void
+  skipTour: () => void
+  tourNotice: string | null
+  setTourNotice: (notice: string | null) => void
 }
 
 const OSContext = createContext<OSContextType | undefined>(undefined)
 
+const TASKBAR_HEIGHT = 48
+
+// w/h are the preferred sizes; windows are centred and clamped to the viewport when opened.
 const DEFAULT_WINDOWS: WindowState[] = [
-  { id: 'about', title: 'About Me', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 80, y: 60, w: 750, h: 500, minW: 400, minH: 300 },
-  { id: 'projects', title: 'Projects Explorer', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 120, y: 90, w: 850, h: 550, minW: 500, minH: 350 },
-  { id: 'resume', title: 'Resume.pdf', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 160, y: 120, w: 800, h: 600, minW: 450, minH: 400 },
-  { id: 'gallery', title: 'Media Gallery', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 200, y: 150, w: 700, h: 480, minW: 400, minH: 300 },
-  { id: 'blog', title: 'Developer Blog', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 240, y: 180, w: 780, h: 520, minW: 400, minH: 300 },
-  { id: 'contact', title: 'Contact / Mail', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 280, y: 210, w: 600, h: 450, minW: 350, minH: 300 },
-  { id: 'settings', title: 'System Settings', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 320, y: 240, w: 600, h: 460, minW: 350, minH: 300 },
-  { id: 'certifications', title: 'Certifications', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 340, y: 260, w: 750, h: 500, minW: 400, minH: 300 }
+  { id: 'about', title: 'About Me', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 80, y: 60, w: 900, h: 620, minW: 400, minH: 300 },
+  { id: 'projects', title: 'Featured Projects', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 120, y: 90, w: 1040, h: 700, minW: 500, minH: 350 },
+  { id: 'experience', title: 'Experience', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 140, y: 100, w: 860, h: 680, minW: 420, minH: 320 },
+  { id: 'chat', title: 'Ask my portfolio', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 150, y: 110, w: 760, h: 680, minW: 380, minH: 400 },
+  { id: 'contact', title: 'Contact / Mail', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 280, y: 210, w: 860, h: 600, minW: 350, minH: 300 },
+  { id: 'resume', title: 'Resume.pdf', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 160, y: 120, w: 880, h: 700, minW: 450, minH: 400 },
+  { id: 'certifications', title: 'Certifications', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 340, y: 260, w: 820, h: 600, minW: 400, minH: 300 },
+  { id: 'gallery', title: 'Media Gallery', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 200, y: 150, w: 940, h: 640, minW: 400, minH: 300 },
+  { id: 'blog', title: 'Developer Blog', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 240, y: 180, w: 840, h: 620, minW: 400, minH: 300 },
+  { id: 'settings', title: 'System Settings', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 320, y: 240, w: 680, h: 560, minW: 350, minH: 300 }
 ]
+
+const PREFERRED_SIZE = Object.fromEntries(DEFAULT_WINDOWS.map(w => [w.id, { w: w.w, h: w.h }]))
+
+/** Centre a window in the visible workspace (above the taskbar), clamped so it fits. */
+function centeredRect(id: string) {
+  const pref = PREFERRED_SIZE[id] || { w: 800, h: 600 }
+  const vw = typeof window !== 'undefined' ? window.innerWidth : 1440
+  const vh = typeof window !== 'undefined' ? window.innerHeight - TASKBAR_HEIGHT : 852
+  const w = Math.max(320, Math.min(pref.w, vw - 48))
+  const h = Math.max(280, Math.min(pref.h, vh - 32))
+  return {
+    w,
+    h,
+    x: Math.max(0, Math.round((vw - w) / 2)),
+    y: Math.max(0, Math.round((vh - h) / 2))
+  }
+}
+
+function isTourDone(): boolean {
+  return storageGet(TOUR_STORAGE_KEY) === '1'
+}
 
 export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Theme state
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('portfolio_theme')
+    const saved = storageGet('portfolio_theme')
     if (saved === 'light' || saved === 'dark') return saved
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    try {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    } catch {
+      return 'dark'
+    }
   })
 
   // Wallpaper state
   const [wallpaper, setWallpaper] = useState<string>(() => {
-    const saved = localStorage.getItem('portfolio_wallpaper')
-    return saved || portfolioData.wallpapers[0].url
+    return storageGet('portfolio_wallpaper') || portfolioData.wallpapers[0].url
   })
 
+  // Guided tour: starts automatically on the first visit (About window open, centred).
+  const [tourStep, setTourStep] = useState<number | null>(() => (isTourDone() ? null : 0))
+  const [tourNotice, setTourNotice] = useState<string | null>(null)
+
   // Windows state
-  const [windows, setWindows] = useState<WindowState[]>(DEFAULT_WINDOWS)
-  const [activeWindowId, setActiveWindowId] = useState<string | null>(null)
-  const [maxZIndex, setMaxZIndex] = useState(10)
+  const zCounter = useRef(20)
+  const [windows, setWindows] = useState<WindowState[]>(() => {
+    if (isTourDone()) return DEFAULT_WINDOWS
+    const firstId = TOUR_STEPS[0].id
+    return DEFAULT_WINDOWS.map(win =>
+      win.id === firstId ? { ...win, ...centeredRect(firstId), isOpen: true, zIndex: 20 } : win
+    )
+  })
+  const [activeWindowId, setActiveWindowId] = useState<string | null>(() =>
+    isTourDone() ? null : TOUR_STEPS[0].id
+  )
 
   // Start menu and Search states
   const [startMenuOpen, setStartMenuOpen] = useState(false)
@@ -80,36 +132,28 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
   // GitHub user and projects
   const [githubUsername, setGithubUsernameState] = useState<string>(() => {
-    return localStorage.getItem('portfolio_github_username') || 'sanketc001' // default to portfolio owner or fallbacks
+    return storageGet('portfolio_github_username') || 'sanketc001'
   })
   const [projects, setProjects] = useState<GithubProject[]>([])
+  const [projectsSource, setProjectsSource] = useState<'live' | 'fallback'>('fallback')
   const [loadingProjects, setLoadingProjects] = useState(false)
+
+  // Real visitor count from CounterAPI. If the request fails (ad blockers, outage)
+  // the count stays null and the badge is hidden; no made-up fallback number.
   const [visitorCount, setVisitorCount] = useState<number | null>(null)
-
-  // Fetch / Increment visitor count with ad-blocker fallback
+  const counted = useRef(false)
   useEffect(() => {
-    const cachedCount = localStorage.getItem('portfolio_visitor_count')
-    const fallbackSeed = cachedCount ? parseInt(cachedCount, 10) : 1482
-    const baseOffset = 1480
-
+    if (counted.current) return
+    counted.current = true
     fetch('https://api.counterapi.dev/v1/sanketc001/portfolio/up')
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json() : null))
       .then(data => {
-        if (data && typeof data.count === 'number') {
-          const totalVisits = data.count + baseOffset
-          setVisitorCount(totalVisits)
-          localStorage.setItem('portfolio_visitor_count', totalVisits.toString())
-        } else {
-          const newVal = fallbackSeed + 1
-          setVisitorCount(newVal)
-          localStorage.setItem('portfolio_visitor_count', newVal.toString())
+        if (data && typeof data.count === 'number' && data.count > 0) {
+          setVisitorCount(data.count)
         }
       })
-      .catch(err => {
-        console.warn("Counter API blocked or failed, using local caching rules:", err)
-        const newVal = fallbackSeed + 1
-        setVisitorCount(newVal)
-        localStorage.setItem('portfolio_visitor_count', newVal.toString())
+      .catch(() => {
+        // counter unavailable: keep the badge hidden
       })
   }, [])
 
@@ -121,19 +165,17 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     } else {
       root.classList.remove('dark')
     }
-    localStorage.setItem('portfolio_theme', theme)
+    storageSet('portfolio_theme', theme)
   }, [theme])
 
-  // Save wallpaper selection
   const setWallpaperAndSave = (url: string) => {
     setWallpaper(url)
-    localStorage.setItem('portfolio_wallpaper', url)
+    storageSet('portfolio_wallpaper', url)
   }
 
-  // Set GitHub username and save
   const setGithubUsername = (username: string) => {
     setGithubUsernameState(username)
-    localStorage.setItem('portfolio_github_username', username)
+    storageSet('portfolio_github_username', username)
   }
 
   // Fetch GitHub projects
@@ -141,9 +183,10 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     let active = true
     const loadProjects = async () => {
       setLoadingProjects(true)
-      const data = await fetchGithubProjects(githubUsername)
+      const result = await fetchGithubProjects(githubUsername)
       if (active) {
-        setProjects(data)
+        setProjects(result.projects)
+        setProjectsSource(result.source)
         setLoadingProjects(false)
       }
     }
@@ -158,89 +201,136 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       const nextTheme = prev === 'light' ? 'dark' : 'light'
       const darkDefault = 'https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&w=1920&q=80'
       const lightDefault = 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1920&q=80'
-      const savedWallpaper = localStorage.getItem('portfolio_wallpaper')
+      const savedWallpaper = storageGet('portfolio_wallpaper')
       if (!savedWallpaper || savedWallpaper === darkDefault || savedWallpaper === lightDefault) {
         const nextWallpaper = nextTheme === 'dark' ? darkDefault : lightDefault
         setWallpaper(nextWallpaper)
-        localStorage.setItem('portfolio_wallpaper', nextWallpaper)
+        storageSet('portfolio_wallpaper', nextWallpaper)
       }
       return nextTheme
     })
   }
 
+  const nextZ = () => {
+    zCounter.current += 1
+    return zCounter.current
+  }
+
   const focusWindow = (id: string) => {
+    const z = nextZ()
     setActiveWindowId(id)
     setWindows(prev =>
-      prev.map(win => {
-        if (win.id === id) {
-          const nextZ = maxZIndex + 1
-          setMaxZIndex(nextZ)
-          return { ...win, zIndex: nextZ, isMinimized: false }
-        }
-        return win
-      })
+      prev.map(win => (win.id === id ? { ...win, zIndex: z, isMinimized: false } : win))
     )
   }
+
+  /** Pure window-list transform: open (centred if it was closed) and bring to front. */
+  const withOpened = (list: WindowState[], id: string, z: number) =>
+    list.map(win => {
+      if (win.id !== id) return win
+      if (win.isOpen) return { ...win, isMinimized: false, zIndex: z }
+      return { ...win, ...centeredRect(id), isOpen: true, isMinimized: false, isMaximized: false, zIndex: z }
+    })
+
+  const withClosed = (list: WindowState[], id: string) =>
+    list.map(win => (win.id === id ? { ...win, isOpen: false } : win))
 
   const openWindow = (id: string) => {
     setStartMenuOpen(false)
-    setWindows(prev =>
-      prev.map(win => {
-        if (win.id === id) {
-          return { ...win, isOpen: true, isMinimized: false }
-        }
-        return win
-      })
-    )
-    focusWindow(id)
+    const z = nextZ()
+    setWindows(prev => withOpened(prev, id, z))
+    setActiveWindowId(id)
   }
 
-  const closeWindow = (id: string) => {
-    setWindows(prev =>
-      prev.map(win => {
-        if (win.id === id) {
-          return { ...win, isOpen: false }
-        }
-        return win
-      })
+  // --- Guided tour -------------------------------------------------------
+
+  const markTourDone = () => storageSet(TOUR_STORAGE_KEY, '1')
+
+  const finishTour = (currentId: string | null, skipped: boolean) => {
+    setTourStep(null)
+    markTourDone()
+    if (currentId) {
+      setWindows(prev => withClosed(prev, currentId))
+      setActiveWindowId(prev => (prev === currentId ? null : prev))
+    }
+    setTourNotice(
+      skipped
+        ? 'Tour skipped. You can restart it any time.'
+        : "That's the tour. Everything else is one click away; you can restart it any time."
     )
+  }
+
+  /** Move from the current tour window to step `index` (or finish past the end). */
+  const goToTourStep = (index: number) => {
+    const currentId = tourStep !== null ? TOUR_STEPS[tourStep].id : null
+    if (index >= TOUR_STEPS.length) {
+      finishTour(currentId, false)
+      return
+    }
+    const nextId = TOUR_STEPS[index].id
+    const z = nextZ()
+    setWindows(prev => withOpened(currentId ? withClosed(prev, currentId) : prev, nextId, z))
+    setActiveWindowId(nextId)
+    setTourStep(index)
+  }
+
+  const startTour = () => {
+    setStartMenuOpen(false)
+    setTourNotice(null)
+    const firstId = TOUR_STEPS[0].id
+    const z = nextZ()
+    // Start from a clean desktop so the visitor sees one window at a time.
+    setWindows(prev => withOpened(prev.map(w => ({ ...w, isOpen: false })), firstId, z))
+    setActiveWindowId(firstId)
+    setTourStep(0)
+  }
+
+  const nextTourStep = () => {
+    if (tourStep === null) return
+    goToTourStep(tourStep + 1)
+  }
+
+  const skipTour = () => {
+    if (tourStep === null) return
+    finishTour(TOUR_STEPS[tourStep].id, true)
+  }
+
+  // ------------------------------------------------------------------------
+
+  const closeWindow = (id: string) => {
+    // Closing the current tour window advances the tour.
+    if (tourStep !== null && TOUR_STEPS[tourStep].id === id) {
+      goToTourStep(tourStep + 1)
+      return
+    }
+    setWindows(prev => withClosed(prev, id))
     if (activeWindowId === id) {
       setActiveWindowId(null)
     }
   }
 
+  const closeAllWindows = () => {
+    if (tourStep !== null) {
+      setTourStep(null)
+      markTourDone()
+    }
+    setWindows(prev => prev.map(w => ({ ...w, isOpen: false })))
+    setActiveWindowId(null)
+  }
+
   const minimizeWindow = (id: string) => {
-    setWindows(prev =>
-      prev.map(win => {
-        if (win.id === id) {
-          return { ...win, isMinimized: true }
-        }
-        return win
-      })
-    )
+    setWindows(prev => prev.map(win => (win.id === id ? { ...win, isMinimized: true } : win)))
     if (activeWindowId === id) {
       // Focus the next highest z-index window that is open and not minimized
       const remaining = windows
         .filter(w => w.id !== id && w.isOpen && !w.isMinimized)
         .sort((a, b) => b.zIndex - a.zIndex)
-      
-      if (remaining.length > 0) {
-        setActiveWindowId(remaining[0].id)
-      } else {
-        setActiveWindowId(null)
-      }
+      setActiveWindowId(remaining.length > 0 ? remaining[0].id : null)
     }
   }
 
   const toggleMaximizeWindow = (id: string) => {
-    setWindows(prev =>
-      prev.map(win => {
-        if (win.id === id) {
-          return { ...win, isMaximized: !win.isMaximized }
-        }
-        return win
-      })
-    )
+    setWindows(prev => prev.map(win => (win.id === id ? { ...win, isMaximized: !win.isMaximized } : win)))
     focusWindow(id)
   }
 
@@ -256,18 +346,26 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         activeWindowId,
         openWindow,
         closeWindow,
+        closeAllWindows,
         minimizeWindow,
         toggleMaximizeWindow,
         focusWindow,
         githubUsername,
         setGithubUsername,
         projects,
+        projectsSource,
         loadingProjects,
         startMenuOpen,
         setStartMenuOpen,
         searchQuery,
         setSearchQuery,
-        visitorCount
+        visitorCount,
+        tourStep,
+        startTour,
+        nextTourStep,
+        skipTour,
+        tourNotice,
+        setTourNotice
       }}
     >
       {children}
@@ -275,6 +373,7 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   )
 }
 
+// eslint-disable-next-line react/only-export-components
 export const useOS = () => {
   const context = useContext(OSContext)
   if (!context) {

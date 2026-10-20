@@ -14,28 +14,44 @@ function getFileSizeString(filePath) {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  } catch (e) {
+  } catch {
     return 'Unknown';
   }
 }
 
 // Read existing portfolio data
 let portfolioData = {};
+let eol = '\n';
 try {
-  portfolioData = JSON.parse(fs.readFileSync(portfolioDataPath, 'utf8'));
+  const raw = fs.readFileSync(portfolioDataPath, 'utf8');
+  // Keep the file's existing line endings so a build does not rewrite every line.
+  if (raw.includes('\r\n')) eol = '\r\n';
+  portfolioData = JSON.parse(raw);
 } catch (e) {
   console.error('Error reading portfolioData.json:', e);
   process.exit(1);
 }
 
 // Keep track of external URLs from the configuration
-const currentMedia = portfolioData.mediaGallery || { documents: [], pictures: [], music: [], videos: [] };
+// Any folder may be missing or empty; treat missing keys as empty lists.
+const currentMedia = portfolioData.mediaGallery || {};
+const isExternal = item => item && typeof item.url === 'string' && /^https?:\/\//.test(item.url);
+const keepExternal = key => (Array.isArray(currentMedia[key]) ? currentMedia[key] : []).filter(isExternal);
 const externalMedia = {
-  documents: currentMedia.documents.filter(item => item.url.startsWith('http://') || item.url.startsWith('https://')),
-  pictures: currentMedia.pictures.filter(item => item.url.startsWith('http://') || item.url.startsWith('https://')),
-  music: currentMedia.music.filter(item => item.url.startsWith('http://') || item.url.startsWith('https://')),
-  videos: currentMedia.videos.filter(item => item.url.startsWith('http://') || item.url.startsWith('https://'))
+  documents: keepExternal('documents'),
+  pictures: keepExternal('pictures'),
+  music: keepExternal('music'),
+  videos: keepExternal('videos')
 };
+
+// Stable id derived from the file path, so rebuilding does not churn the JSON.
+function stableId(prefix, fileUrl) {
+  let hash = 0;
+  for (let i = 0; i < fileUrl.length; i++) {
+    hash = (hash * 31 + fileUrl.charCodeAt(i)) >>> 0;
+  }
+  return `${prefix}-auto-${hash.toString(36)}`;
+}
 
 // Scan folders and merge with external links
 const newMedia = {
@@ -66,8 +82,7 @@ const folders = [
 folders.forEach(({ key, folderName, prefix }) => {
   const dirPath = path.join(projectRoot, 'public', folderName);
   if (fs.existsSync(dirPath)) {
-    const files = fs.readdirSync(dirPath);
-    let counter = 1;
+    const files = fs.readdirSync(dirPath).sort();
     files.forEach(file => {
       // Ignore hidden files / system files
       if (file.startsWith('.')) return;
@@ -83,7 +98,7 @@ folders.forEach(({ key, folderName, prefix }) => {
       if (newMedia[key].some(item => item.url === fileUrl)) return;
 
       newMedia[key].push({
-        id: `${prefix}-auto-${counter++}-${Math.random().toString(36).substr(2, 4)}`,
+        id: stableId(prefix, fileUrl),
         name: file,
         url: fileUrl,
         size: size
@@ -96,5 +111,5 @@ folders.forEach(({ key, folderName, prefix }) => {
 portfolioData.mediaGallery = newMedia;
 
 // Write back to src/data/portfolioData.json
-fs.writeFileSync(portfolioDataPath, JSON.stringify(portfolioData, null, 2), 'utf8');
+fs.writeFileSync(portfolioDataPath, (JSON.stringify(portfolioData, null, 2) + '\n').replace(/\n/g, eol), 'utf8');
 console.log('Successfully scanned physical folders and synchronized src/data/portfolioData.json.');

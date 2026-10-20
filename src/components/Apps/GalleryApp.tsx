@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Plus, X, FileText, Image as ImageIcon, Music, Video, Sparkles, Download, Play, Pause, Folder } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import portfolioData from '../../data/portfolioData.json'
+import { featuredProjects } from '../../api/github'
 
 interface MediaFile {
   id: string
@@ -9,21 +10,53 @@ interface MediaFile {
   url: string
   size: string
   description?: string
+  projectUrl?: string
 }
 
 type MediaFolder = 'documents' | 'pictures' | 'music' | 'videos'
 
+type MediaLibrary = Record<MediaFolder, MediaFile[]>
+
+const BASE = import.meta.env.BASE_URL
+
+/** Files registered from public/ are stored as relative paths; serve them under the site base. */
+const resolveUrl = (url: string) => (/^(https?:)?\/\//.test(url) || url.startsWith(BASE) ? url : `${BASE}${url}`)
+
+/** Real project screenshots (public/gallery/), captioned from featuredProjects. */
+const projectPictures: MediaFile[] = featuredProjects.flatMap(project =>
+  project.images.map(image => ({
+    id: `gallery-${image.file}`,
+    name: project.title,
+    url: `${BASE}gallery/${image.file}`,
+    size: project.name,
+    description: image.caption,
+    projectUrl: project.html_url
+  }))
+)
+
+function buildLibrary(): MediaLibrary {
+  const registry = (portfolioData as { mediaGallery?: Partial<MediaLibrary> }).mediaGallery || {}
+  const fromRegistry = (key: MediaFolder) =>
+    (Array.isArray(registry[key]) ? registry[key] : []).map(file => ({ ...file, url: resolveUrl(file.url) }))
+  return {
+    documents: fromRegistry('documents'),
+    pictures: [...projectPictures, ...fromRegistry('pictures')],
+    music: fromRegistry('music'),
+    videos: fromRegistry('videos')
+  }
+}
+
+const EmptyFolder: React.FC<{ label: string }> = ({ label }) => (
+  <div className="col-span-full flex flex-col items-center justify-center text-center py-16 text-slate-400">
+    <Folder className="w-10 h-10 mb-2 stroke-[1.5]" />
+    <p className="text-sm font-semibold">No {label} here yet.</p>
+    <p className="text-xs mt-1">Project screenshots live under Pictures.</p>
+  </div>
+)
+
 export const GalleryApp: React.FC = () => {
   // Load initial gallery folders from portfolioData or state fallback
-  const [galleryData, setGalleryData] = useState<{
-    documents: MediaFile[]
-    pictures: MediaFile[]
-    music: MediaFile[]
-    videos: MediaFile[]
-  }>(() => {
-    const data = (portfolioData as any).mediaGallery
-    return data || { documents: [], pictures: [], music: [], videos: [] }
-  })
+  const [galleryData, setGalleryData] = useState<MediaLibrary>(buildLibrary)
 
   const [activeFolder, setActiveFolder] = useState<MediaFolder>('pictures')
   const [selectedPicture, setSelectedPicture] = useState<MediaFile | null>(null)
@@ -122,7 +155,7 @@ export const GalleryApp: React.FC = () => {
 
   const getEmbedUrl = (url: string) => {
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
       const match = url.match(regExp)
       if (match && match[2].length === 11) {
         return `https://www.youtube.com/embed/${match[2]}`
@@ -156,8 +189,8 @@ export const GalleryApp: React.FC = () => {
           onClick={() => setActiveFolder('documents')}
           className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeFolder === 'documents'
-              ? 'bg-violet-500/15 text-violet-650 dark:text-violet-400 border border-violet-500/20'
-              : 'text-slate-650 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
+              ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -171,8 +204,8 @@ export const GalleryApp: React.FC = () => {
           onClick={() => setActiveFolder('pictures')}
           className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeFolder === 'pictures'
-              ? 'bg-violet-500/15 text-violet-650 dark:text-violet-400 border border-violet-500/20'
-              : 'text-slate-650 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
+              ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -186,8 +219,8 @@ export const GalleryApp: React.FC = () => {
           onClick={() => setActiveFolder('music')}
           className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeFolder === 'music'
-              ? 'bg-violet-500/15 text-violet-650 dark:text-violet-400 border border-violet-500/20'
-              : 'text-slate-650 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
+              ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -201,8 +234,8 @@ export const GalleryApp: React.FC = () => {
           onClick={() => setActiveFolder('videos')}
           className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeFolder === 'videos'
-              ? 'bg-violet-500/15 text-violet-650 dark:text-violet-400 border border-violet-500/20'
-              : 'text-slate-650 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
+              ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-900/50 border border-transparent'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -219,7 +252,7 @@ export const GalleryApp: React.FC = () => {
               setAddFolder(activeFolder)
               setIsAddOpen(true)
             }}
-            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-violet-605 hover:bg-violet-750 text-white text-xs font-bold transition-all shadow cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold transition-all shadow cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add File URL</span>
@@ -239,7 +272,7 @@ export const GalleryApp: React.FC = () => {
               setAddFolder(activeFolder)
               setIsAddOpen(true)
             }}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-violet-650 hover:bg-violet-700 text-white text-[10px] font-bold cursor-pointer"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-[10px] font-bold cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add File</span>
@@ -251,6 +284,7 @@ export const GalleryApp: React.FC = () => {
           {/* DOCUMENTS FOLDER */}
           {activeFolder === 'documents' && (
             <div className="space-y-3">
+              {galleryData.documents.length === 0 && <EmptyFolder label="documents" />}
               {galleryData.documents.map(doc => (
                 <div
                   key={doc.id}
@@ -261,8 +295,8 @@ export const GalleryApp: React.FC = () => {
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-850 dark:text-slate-250">{doc.name}</h4>
-                      <p className="text-[10px] text-slate-400">{doc.size} • PDF Document</p>
+                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{doc.name}</h4>
+                      <p className="text-[10px] text-slate-400">{doc.size} • {doc.name.split('.').pop()?.toUpperCase()} file</p>
                     </div>
                   </div>
                   <a
@@ -270,7 +304,7 @@ export const GalleryApp: React.FC = () => {
                     download
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-500 hover:text-slate-800 dark:hover:text-white border border-slate-200/50 dark:border-slate-800/50 transition-all flex items-center justify-center cursor-pointer"
+                    className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white border border-slate-200/50 dark:border-slate-800/50 transition-all flex items-center justify-center cursor-pointer"
                   >
                     <Download className="w-4 h-4" />
                   </a>
@@ -282,24 +316,30 @@ export const GalleryApp: React.FC = () => {
           {/* PICTURES FOLDER */}
           {activeFolder === 'pictures' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {galleryData.pictures.length === 0 && <EmptyFolder label="pictures" />}
               {galleryData.pictures.map(pic => (
-                <motion.div
+                <motion.button
+                  type="button"
                   layoutId={`gallery-pic-${pic.id}`}
                   key={pic.id}
                   onClick={() => setSelectedPicture(pic)}
-                  className="group cursor-pointer rounded-xl overflow-hidden glass border border-white/10 dark:border-white/5 hover:border-violet-500/35 hover:shadow-lg transition-all duration-300 relative aspect-video"
+                  className="group text-left cursor-pointer rounded-xl overflow-hidden glass border border-white/10 dark:border-white/5 hover:border-violet-500/35 hover:shadow-lg transition-all duration-300 flex flex-col"
                 >
-                  <img
-                    src={pic.url}
-                    alt={pic.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                    <h4 className="text-white font-bold text-sm tracking-tight">{pic.name}</h4>
-                    <p className="text-white/70 text-[10px] mt-0.5">{pic.size}</p>
+                  <div className="aspect-video overflow-hidden bg-slate-900/80">
+                    <img
+                      src={pic.url}
+                      alt={pic.description || pic.name}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
                   </div>
-                </motion.div>
+                  <div className="p-3">
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-white tracking-tight">{pic.name}</h4>
+                    {pic.description && (
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug line-clamp-2">{pic.description}</p>
+                    )}
+                  </div>
+                </motion.button>
               ))}
             </div>
           )}
@@ -317,7 +357,7 @@ export const GalleryApp: React.FC = () => {
                       </div>
                       <div>
                         <span className="text-[9px] text-violet-500 font-bold uppercase tracking-wider">Now Playing</span>
-                        <h4 className="text-sm font-bold text-slate-805 dark:text-white mt-0.5">{currentPlayingMusic.name}</h4>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-white mt-0.5">{currentPlayingMusic.name}</h4>
                       </div>
                     </div>
                     <button
@@ -342,7 +382,7 @@ export const GalleryApp: React.FC = () => {
                       }}
                       className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500"
                     />
-                    <div className="flex justify-between text-[10px] text-slate-450">
+                    <div className="flex justify-between text-[10px] text-slate-400">
                       <span>{formatTime(currentTime)}</span>
                       <span>{formatTime(duration)}</span>
                     </div>
@@ -352,6 +392,7 @@ export const GalleryApp: React.FC = () => {
 
               {/* Tracks List */}
               <div className="space-y-2">
+                {galleryData.music.length === 0 && <EmptyFolder label="music" />}
                 {galleryData.music.map(track => (
                   <div
                     key={track.id}
@@ -379,7 +420,7 @@ export const GalleryApp: React.FC = () => {
                         <p className="text-[9px] text-slate-400 mt-0.5">{track.size}</p>
                       </div>
                     </div>
-                    <button className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-805 text-slate-450 group-hover:text-slate-800 dark:group-hover:text-white transition-all cursor-pointer">
+                    <button className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white transition-all cursor-pointer">
                       {currentPlayingMusic?.id === track.id && isPlaying ? (
                         <Pause className="w-3.5 h-3.5" />
                       ) : (
@@ -421,7 +462,7 @@ export const GalleryApp: React.FC = () => {
                   </div>
                   <div className="p-4 bg-slate-900/90 text-white flex justify-between items-center">
                     <div>
-                      <span className="text-[9px] text-violet-450 font-bold uppercase tracking-wider">Active Video Screen</span>
+                      <span className="text-[9px] text-violet-400 font-bold uppercase tracking-wider">Active Video Screen</span>
                       <h4 className="text-sm font-bold mt-0.5">{activeVideo.name}</h4>
                     </div>
                     <button
@@ -435,6 +476,7 @@ export const GalleryApp: React.FC = () => {
               )}
 
               {/* Videos Grid list */}
+              {galleryData.videos.length === 0 && <EmptyFolder label="videos" />}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {galleryData.videos.map(vid => (
                   <div
@@ -503,7 +545,7 @@ export const GalleryApp: React.FC = () => {
                     value={newFileName}
                     onChange={e => setNewFileName(e.target.value)}
                     placeholder="E.g., Ambient Coding Beats.mp3"
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-850 dark:text-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
 
@@ -514,7 +556,7 @@ export const GalleryApp: React.FC = () => {
                     value={newFileUrl}
                     onChange={e => setNewFileUrl(e.target.value)}
                     placeholder="https://example.com/media/file.mp3"
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-850 dark:text-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
 
@@ -525,7 +567,7 @@ export const GalleryApp: React.FC = () => {
                     value={newFileSize}
                     onChange={e => setNewFileSize(e.target.value)}
                     placeholder="E.g., 5.4 MB"
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-850 dark:text-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
 
@@ -568,19 +610,29 @@ export const GalleryApp: React.FC = () => {
                 />
               </div>
 
-              <div className="p-6 bg-slate-900 text-white flex justify-between items-center">
-                <div>
+              <div className="p-6 bg-slate-900 text-white flex justify-between items-center gap-4">
+                <div className="min-w-0">
                   <h3 className="text-sm font-bold font-display">{selectedPicture.name}</h3>
-                  <p className="text-[10px] text-slate-400 mt-1">{selectedPicture.size}</p>
+                  <p className="text-[11px] text-slate-400 mt-1">{selectedPicture.description || selectedPicture.size}</p>
                 </div>
+                {selectedPicture.projectUrl && (
+                  <a
+                    href={selectedPicture.projectUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-colors flex-shrink-0 ml-auto"
+                  >
+                    View repository
+                  </a>
+                )}
                 <a
                   href={selectedPicture.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-3.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold transition-colors flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 flex-shrink-0"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download Original</span>
+                  <span>Open original</span>
                 </a>
               </div>
             </motion.div>

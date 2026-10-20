@@ -1,10 +1,99 @@
 import React, { useState, useMemo } from 'react'
 import { useOS } from '../../context/OSContext'
-import { Search, Star, ExternalLink, GitBranch, RefreshCw, FolderOpen } from 'lucide-react'
+import { Search, Star, ExternalLink, GitBranch, RefreshCw, FolderOpen, Sparkles, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { featuredProjects } from '../../api/github'
+import type { FeaturedProject } from '../../api/github'
+
+const BASE = import.meta.env.BASE_URL
+
+const FeaturedCard: React.FC<{ project: FeaturedProject; stars?: number }> = ({ project, stars }) => {
+  const [imageIndex, setImageIndex] = useState(0)
+  const image = project.images[imageIndex]
+
+  return (
+    <article className="flex flex-col rounded-2xl glass border border-white/10 dark:border-white/5 overflow-hidden hover:border-violet-500/40 transition-colors">
+      {image ? (
+        <div className="relative aspect-[2/1] bg-slate-900 overflow-hidden">
+          <img
+            src={`${BASE}gallery/${image.file}`}
+            alt={image.caption}
+            loading="lazy"
+            className="w-full h-full object-cover object-top"
+          />
+          {project.images.length > 1 && (
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 px-2 py-1 rounded-full bg-black/45 backdrop-blur-sm">
+              {project.images.map((img, i) => (
+                <button
+                  key={img.file}
+                  type="button"
+                  onClick={() => setImageIndex(i)}
+                  aria-label={`Show screenshot ${i + 1} of ${project.images.length}: ${img.caption}`}
+                  className={`w-2 h-2 rounded-full cursor-pointer transition-colors ${i === imageIndex ? 'bg-white' : 'bg-white/40 hover:bg-white/70'}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="aspect-[2/1] bg-gradient-to-br from-violet-600/90 via-indigo-700/90 to-slate-900 flex flex-col justify-end p-5">
+          <span className="font-mono text-[11px] text-violet-200/80">github.com/sanketc001/</span>
+          <span className="font-mono text-lg font-bold text-white break-all">{project.name}</span>
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {project.topics.map(t => (
+              <span key={t} className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/15 text-white/90">{t}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="p-5 flex flex-col flex-1">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-base font-bold text-slate-800 dark:text-white tracking-tight font-display">{project.title}</h3>
+          {typeof stars === 'number' && stars > 0 && (
+            <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-semibold bg-slate-100 dark:bg-slate-800/60 px-2 py-0.5 rounded-full" title="Live from GitHub">
+              <Star className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400" />
+              {stars}
+            </span>
+          )}
+        </div>
+
+        <dl className="mt-3 space-y-2.5 text-[13px] leading-relaxed flex-1">
+          <div>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Problem</dt>
+            <dd className="text-slate-600 dark:text-slate-300">{project.problem}</dd>
+          </div>
+          <div>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">What I built</dt>
+            <dd className="text-slate-600 dark:text-slate-300">{project.built}</dd>
+          </div>
+        </dl>
+
+        <div className="flex flex-wrap gap-1.5 mt-4">
+          {project.stack.map(item => (
+            <span key={item} className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-violet-500/10 text-violet-600 dark:text-violet-300 border border-violet-500/20">
+              {item}
+            </span>
+          ))}
+        </div>
+
+        <a
+          href={project.html_url}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 pt-3 border-t border-slate-200/40 dark:border-slate-800/40 inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-violet-500 dark:hover:text-violet-400 transition-colors"
+        >
+          <span>View repository</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
+      </div>
+    </article>
+  )
+}
 
 export const ProjectsApp: React.FC = () => {
-  const { projects, loadingProjects, githubUsername, setGithubUsername } = useOS()
+  const { projects, projectsSource, loadingProjects, githubUsername, setGithubUsername } = useOS()
+  const [tab, setTab] = useState<'featured' | 'all'>('featured')
   const [filterLang, setFilterLang] = useState<string>('All')
   const [searchWord, setSearchWord] = useState<string>('')
   const [usernameInput, setUsernameInput] = useState<string>(githubUsername)
@@ -58,14 +147,69 @@ export const ProjectsApp: React.FC = () => {
     }
   }
 
+  // Star counts are only shown when they came live from the GitHub API.
+  const liveStars = useMemo(() => {
+    const map = new Map<string, number>()
+    if (projectsSource === 'live') {
+      projects.forEach(p => {
+        if (typeof p.stars === 'number') map.set(p.name.toLowerCase(), p.stars)
+      })
+    }
+    return map
+  }, [projects, projectsSource])
+
+  const tabButton = (id: 'featured' | 'all', label: string) => (
+    <button
+      type="button"
+      onClick={() => setTab(id)}
+      className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
+        tab === id
+          ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm'
+          : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+      }`}
+    >
+      {label}
+    </button>
+  )
+
+  if (tab === 'featured') {
+    return (
+      <div className="h-full flex flex-col select-text">
+        <div className="p-3 px-4 border-b border-slate-200/50 dark:border-slate-800/50 flex flex-wrap gap-3 items-center justify-between bg-white/5 backdrop-blur-md">
+          <div className="flex bg-slate-100 dark:bg-slate-800/70 p-1 rounded-lg">
+            {tabButton('featured', 'Featured')}
+            {tabButton('all', 'All repositories')}
+          </div>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <Sparkles className="w-3.5 h-3.5 text-violet-500" />
+            Problem → what I built → stack
+          </span>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {featuredProjects.map(project => (
+              <FeaturedCard key={project.id} project={project} stars={liveStars.get(project.name.toLowerCase())} />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="h-full flex flex-col select-text">
+      <div className="p-3 px-4 border-b border-slate-200/50 dark:border-slate-800/50 flex items-center bg-white/5 backdrop-blur-md">
+        <div className="flex bg-slate-100 dark:bg-slate-800/70 p-1 rounded-lg">
+          {tabButton('featured', 'Featured')}
+          {tabButton('all', 'All repositories')}
+        </div>
+      </div>
       {/* GitHub account sync header */}
       <div className="p-4 border-b border-slate-200/50 dark:border-slate-800/50 flex flex-wrap gap-4 items-center justify-between bg-white/5 backdrop-blur-md">
         <div className="flex items-center gap-2">
           <FolderOpen className="w-5 h-5 text-violet-500" />
           <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Source: GitHub API (@{githubUsername})
+            {projectsSource === 'live' ? `Live from GitHub (@${githubUsername})` : 'Curated list'}
           </span>
         </div>
         
@@ -92,7 +236,7 @@ export const ProjectsApp: React.FC = () => {
                   setUsernameInput(githubUsername)
                   setEditingUsername(false)
                 }}
-                className="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-350 rounded cursor-pointer"
+                className="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded cursor-pointer"
               >
                 Cancel
               </button>
@@ -145,6 +289,12 @@ export const ProjectsApp: React.FC = () => {
 
       {/* Projects Grid */}
       <div className="flex-1 overflow-y-auto p-6">
+        {!loadingProjects && projectsSource === 'fallback' && (
+          <p className="mb-4 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5" />
+            GitHub could not be reached, so this shows the curated project list.
+          </p>
+        )}
         {loadingProjects && projects.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[1, 2, 3, 4].map(idx => (
@@ -176,13 +326,15 @@ export const ProjectsApp: React.FC = () => {
                     <h3 className="text-base font-bold text-slate-800 dark:text-white tracking-tight group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors">
                       {repo.name}
                     </h3>
-                    <div className="flex items-center gap-1 text-slate-400 dark:text-slate-500 text-xs font-semibold bg-slate-100 dark:bg-slate-800/50 px-2 py-0.5 rounded-full">
-                      <Star className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400" />
-                      <span>{repo.stars}</span>
-                    </div>
+                    {projectsSource === 'live' && typeof repo.stars === 'number' && repo.stars > 0 && (
+                      <div className="flex items-center gap-1 text-slate-400 dark:text-slate-500 text-xs font-semibold bg-slate-100 dark:bg-slate-800/50 px-2 py-0.5 rounded-full">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400" />
+                        <span>{repo.stars}</span>
+                      </div>
+                    )}
                   </div>
 
-                  <p className="text-xs text-slate-500 dark:text-slate-350 leading-relaxed mb-4 flex-1 line-clamp-3">
+                  <p className="text-xs text-slate-500 dark:text-slate-300 leading-relaxed mb-4 flex-1 line-clamp-3">
                     {repo.description || 'No description provided.'}
                   </p>
 

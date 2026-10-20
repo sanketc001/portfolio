@@ -3,6 +3,10 @@ import { Mail, MapPin, Send, CheckCircle2, AlertCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import portfolioData from '../../data/portfolioData.json'
 
+// Web3Forms access key comes from the build environment (GitHub repo variable).
+// Without it the form is replaced by a direct email button.
+const WEB3FORMS_KEY = (import.meta.env.VITE_WEB3FORMS_KEY as string | undefined)?.trim() || ''
+
 export const ContactApp: React.FC = () => {
   const { profile } = portfolioData
   const [name, setName] = useState('')
@@ -20,8 +24,8 @@ export const ContactApp: React.FC = () => {
     setStatus('submitting')
 
     try {
-      const accessKey = (profile as any).web3forms_key || "YOUR_ACCESS_KEY_HERE"
-      
+      const accessKey = WEB3FORMS_KEY
+
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
@@ -64,7 +68,7 @@ export const ContactApp: React.FC = () => {
               Let's Connect
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Have a project in mind or want to talk shop? Drop a message in the form, or reach out directly via email.
+              Hiring for an Applied AI or Forward Deployed role, or want to talk shop? {WEB3FORMS_KEY ? 'Drop a message in the form, or email me directly.' : 'The quickest way to reach me is email.'}
             </p>
           </div>
 
@@ -93,7 +97,25 @@ export const ContactApp: React.FC = () => {
         <div className="md:col-span-7">
           <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 relative min-h-[350px] flex flex-col justify-center">
             <AnimatePresence mode="wait">
-              {status === 'success' ? (
+              {!WEB3FORMS_KEY ? (
+                <motion.div key="mailto" className="text-center py-8 space-y-4">
+                  <Mail className="w-12 h-12 text-violet-500 mx-auto" />
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white font-display">Send me an email</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">
+                      Opens your mail app with my address filled in.
+                    </p>
+                  </div>
+                  <a
+                    href={`mailto:${profile.email}?subject=${encodeURIComponent('Hello from your portfolio')}`}
+                    className="inline-flex items-center justify-center gap-1.5 px-5 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-xl transition-all shadow-md text-sm"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>Email {profile.name.split(' ')[0]}</span>
+                  </a>
+                  <p className="text-[11px] text-slate-400 break-all">{profile.email}</p>
+                </motion.div>
+              ) : status === 'success' ? (
                 <motion.div
                   key="success"
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -103,7 +125,7 @@ export const ContactApp: React.FC = () => {
                 >
                   <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto" />
                   <div>
-                    <h3 className="text-lg font-bold text-slate-805 dark:text-white font-display">Message Dispatched!</h3>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white font-display">Message Dispatched!</h3>
                     <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">
                       Thank you for reaching out. A confirmation will be sent shortly, and I'll get back to you soon.
                     </p>
@@ -160,7 +182,11 @@ export const ContactApp: React.FC = () => {
                   {status === 'error' && (
                     <div className="flex items-center gap-1.5 text-xs text-red-500 font-semibold">
                       <AlertCircle className="w-4 h-4" />
-                      <span>Please populate all fields.</span>
+                      <span>
+                        {name.trim() && email.trim() && message.trim()
+                          ? `Could not send right now. Please email ${profile.email} instead.`
+                          : 'Please fill in all fields.'}
+                      </span>
                     </div>
                   )}
 
