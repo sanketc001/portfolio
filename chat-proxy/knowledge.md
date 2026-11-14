@@ -17,7 +17,7 @@ Anything not written here is unknown to the assistant.
 - GitHub: https://github.com/sanketc001
 - LinkedIn: https://linkedin.com/in/sanket-choudhary-243625208
 
-Pitch: GenAI & ML engineer with 3+ years building production AI systems at Reliance Jio (via Quest Global): on-device speech AI, a multimodal ad-creative pipeline and live ad monitoring at IPL scale. Outside work I build LLM agents, MCP servers and local-first AI tools end to end, from model calls to the UI. Open to Applied AI and Forward Deployed Engineer roles.
+Pitch: GenAI & ML engineer with 3+ years building production AI systems at Reliance Jio (via Quest Global). I automated live ad monitoring for IPL 2023 across 17 feeds and 12 languages, which contributed to a 15% increase in ad revenue; built the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives; and now work on on-device speech AI for the JioSphere browser. Outside work I build LLM agents, MCP servers and local-first AI tools end to end, from model calls to the UI. Open to Applied AI and Forward Deployed Engineer roles.
 
 Summary: GenAI & ML Engineer with 3+ years of experience building production-grade AI systems at scale. Currently serving as AI Lead for JioSphere Browser at Reliance Jio via Quest Global, where I lead GenAI innovation across audio, video, and image-based offerings. Recognised as Top Partner Employee twice consecutively (December 2023 & January 2025) for driving measurable impact on GenAI ad products. Won the Jio-wide AI Agent Hackathon (July 2025) competing across one of India's largest technology organisations. Core expertise: Large Language Models, Retrieval-Augmented Generation, Stable Diffusion, multimodal AI, and full-stack AI integration — from research and prototyping through to production deployment. Passionate about applying AI to real-world products, civic infrastructure, and enterprise tooling as well as contributing time and effort for Social Good.
 
@@ -32,15 +32,24 @@ JioSphere Browser (Jan 2025 – Present)
 - Building on-device Speech AI pipeline to replace Web Speech API using model compression & optimization for cross-device in-browser serving
 - Building Chrome extensions for rapid feature deployment and cross-platform testing
 
+Jio AI Agent Hackathon — Winner (July 2025)
+- With a colleague, ideated and built a safety and evacuation push system that reaches people over RCS, SMS and email
+- Each person gets a ping with the exact evacuation path for their building or campus, worked out from their live GPS location taken through the browser
+- The same live locations are shared with the evacuation QRT and crisis response teams, so they can reach anyone who is restricted or whose surroundings are damaged, and the system pushes an updated path when that happens
+
 GenAI Ad Creative Platform — JioAds (2023 – 2024)
-- Built GenAI pipeline for SMB ad creative generation across audio, video & image for GoLocal, JioHalo & Ajio — reaching Jio's 450M+ consumer base
-- Recognised as Top Partner Employee (Dec 2023 & Jan 2025)
+- Set up LoRA and fine-tuning pipelines on Stable Diffusion 1.5 and SDXL so generated creatives matched each customer, cohort and category
+- Built a post-generation aesthetic scorer with automatic regeneration, so only the better-looking images were curated for JioHalo screensavers and GoLocal content
+- Part of the GenAI pipeline for SMB ad creatives across audio, video & image for GoLocal, JioHalo & Ajio
+- Recognised as Top Partner Employee for this work (Dec 2023 & Jan 2025)
 
 IPL 2023 — Live Ad Operations (JioCinema)
-- Contributed to ad infrastructure for IPL 2023 — a world record 32M peak concurrent viewers, 449M total viewers, 800+ advertisers & ~₹2,300 Cr in ad revenue
-- Built Ad Opportunity Loss Metrics — match-wise reporting critical to stakeholders and engineering teams
-- Built ad delivery monitoring across 12 languages & 17 simultaneous feeds using SCTE-35 signal parsing
+- Automated ad tracking and analytics for every stream from SCTE-35 signals, in real time and as post-processing for streams that had already ended, across 12 languages & 17 simultaneous feeds
+- Replaced manual monitoring that needed up to 2 people per language and 2 per stream, and gave accurate start and end times for client-side ad integrations
+- Extended it into Ad Opportunity Loss reporting, daily and per match for all streams, which senior leadership used to spot inventory shortages, onboard campaigns and reset priorities
+- Outcome: contributed to a 15% increase in ad revenue and a sharp cut in the people needed for active monitoring
 - Designed stream preprocessing pipeline for Ad/Non-Ad categorisation and user cohort management
+- Context: IPL 2023 on JioCinema set a world record of 32M peak concurrent viewers, with 449M total viewers and 800+ advertisers
 
 Content Intelligence & Catalogue (JioCinema · Ajio · JioMart · Tira)
 - CV-based content & product extraction for JioCinema
@@ -49,17 +58,7 @@ Content Intelligence & Catalogue (JioCinema · Ajio · JioMart · Tira)
 Ads Monitoring & Observability Platform
 - Built real-time campaign performance tracking platform across Jio's ad network
 
-Achievements
-- Top Partner Employee for both consecutive years— Dec 2023 & Jan 2025
-- Winner — Jio-wide AI Agent Hackathon, July 2025
-
-Tech: Python · LLMs · RAG · Stable Diffusion · Multimodal AI · CV · SCTE-35 · On-device AI · Model Compression · Chrome Extensions (MV3) · FastAPI · Azure · Vector DBs
-
-### Chief Technology Officer, Yugma by STRTRS (October 2020 - Present)
-
-Location: Pune, Maharashtra, India
-
-Leading technical direction, architecture design, and full-stack development. Directing early-stage prototyping and product engineering processes.
+Tech: Python · LLMs · RAG · Stable Diffusion (SD 1.5, SDXL) · LoRA fine-tuning · Multimodal AI · CV · SCTE-35 · On-device AI · Model Compression · Chrome Extensions (MV3) · FastAPI · Azure · Vector DBs
 
 ### Developer Student Club Lead, GDSC DYPIU (August 2021 - May 2022)
 
@@ -90,16 +89,7 @@ Conducted programming challenges, mentored peers on data structures and algorith
 - Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning, Coursera (June 2020): https://www.coursera.org/account/accomplishments/certificate/GGMBMUDHUVR5
 - Crash Course on Python, Coursera (July 2020): https://www.coursera.org/account/accomplishments/certificate/5YK35VKBBFR5
 - Object-Oriented Data Structures in C++, Coursera (July 2020): https://www.coursera.org/account/accomplishments/certificate/FYLKGDC2DUSJ
-- Data Analysis and Representation, Selection and Iteration, Coursera (June 2020): https://www.coursera.org/account/accomplishments/certificate/XW2BPYKZDVT6
-- Algorithms, Data Collection, and Starting to Code, Coursera (June 2020): https://www.coursera.org/account/accomplishments/certificate/9X2N3Y8M27J5
-- Introduction to Genomic Technologies, Coursera (August 2020): https://www.coursera.org/account/accomplishments/certificate/3ZP9QNC3LTLJ
-- Introduction to Virtual Reality, Coursera (August 2020): https://www.coursera.org/account/accomplishments/certificate/M3UBKHZC2W7W
-- Design Thinking for Innovation, Coursera (August 2020): https://www.coursera.org/account/accomplishments/certificate/3PBFA8ANE3C9
-- Design Thinking and Global Startup, Coursera (August 2020): https://www.coursera.org/account/accomplishments/certificate/V9CHD8H597G8
 - Computational Thinking with Beginning C Programming Specialization, Coursera (July 2020): https://www.coursera.org/account/accomplishments/specialization/certificate/DD2TXTBJLPYW
-- Abstraction, Problem Decomposition, and Functions, Coursera (July 2020): https://www.coursera.org/account/accomplishments/certificate/4B82T44DUESP
-- Simulation, Algorithm Analysis, and Pointers, Coursera (July 2020): https://www.coursera.org/account/accomplishments/certificate/MFXBQLXT3E8W
-- Introduction to Augmented Reality and ARCore, Coursera (June 2020): https://www.coursera.org/account/accomplishments/certificate/EK8BS2EYYHM4
 
 ## Featured projects (personal, open source on GitHub)
 
@@ -112,7 +102,7 @@ https://github.com/sanketc001/minimal-agent-harness
 Framework-free LLM agent harness in plain Python: tool-calling loop, raw Chrome DevTools Protocol browser, markdown memory vault, sub-agents and MCP server loading.
 
 - Problem: See and control every step of an LLM agent, with no framework between the model and its tools.
-- Built: A plain-Python harness with its own tool-calling loop, a browser driven over the raw Chrome DevTools Protocol, a markdown memory vault, sub-agents and MCP server loading.
+- Built: About 1,500 lines of plain Python: its own tool-calling loop, 17 browser tools over the raw Chrome DevTools Protocol, a markdown memory vault, sub-agents and a 150-line MCP client.
 - Stack: Python, LLM tool calling, Chrome DevTools Protocol, MCP
 - Topics: llm-agents, tool-calling, mcp, cdp
 
@@ -122,8 +112,8 @@ https://github.com/sanketc001/parsedin
 
 Local-first knowledge graph of a professional network built from a LinkedIn data export, with LLM company resolution grounded in web evidence, an inbox with reply drafts and natural-language search.
 
-- Problem: A LinkedIn data export is a folder of CSVs: it does not show who you know, where they work now, or who is waiting on a reply.
-- Built: A local-first knowledge graph built from the export, with LLM company resolution grounded in web evidence, an inbox with reply drafts and natural-language search.
+- Problem: A LinkedIn data export is a folder of CSVs: it does not show who you know, where they work now, or who is waiting on a reply. In the network this was built on, only 18% of connections had ever exchanged a message.
+- Built: A local-first knowledge graph built from the export. An LLM resolves company names against web evidence: two spellings are merged only with a citation, and subsidiaries are linked to a parent instead of merged. Plus an inbox with reply drafts and natural-language search.
 - Stack: TypeScript, Next.js, LLM entity resolution, Knowledge graph
 - Topics: knowledge-graph, llm, local-first, nextjs
 
@@ -178,7 +168,7 @@ https://github.com/sanketc001/ai-timelines
 Research agent that searches, reads pages with Playwright and files sources into a browsable timeline and graph (Azure OpenAI tool calling).
 
 - Problem: Researching a topic leaves dozens of tabs and no record of how the sources relate over time.
-- Built: A research agent that searches, reads pages with Playwright and files each source into a browsable timeline and graph, using Azure OpenAI tool calling.
+- Built: A research agent that searches, reads pages with Playwright and files each source into a browsable timeline and graph, using Azure OpenAI tool calling. Ships with a seed knowledge base of 139 sources.
 - Stack: Azure OpenAI, Tool calling, Playwright
 - Topics: research-agent, tool-calling, playwright
 
@@ -195,8 +185,26 @@ Research agent that searches, reads pages with Playwright and files sources into
 
 ## Awards
 
-- Winner, Jio AI Agent Hackathon (company-wide across Reliance Jio, July 2025)
-- Top Partner Employee, twice (Dec 2023 and Jan 2025), for GenAI contributions
+- Winner, Jio AI Agent Hackathon (company-wide across Reliance Jio, July 2025).
+  With a colleague he ideated and built a safety and
+  evacuation push system over RCS, SMS and email: each person gets the exact
+  evacuation path for their building or campus from their live GPS location
+  (taken through the browser), the same live locations go to the evacuation
+  QRT and crisis response teams, and an updated path is pushed if someone is
+  restricted or their surroundings are damaged.
+- Top Partner Employee, twice (Dec 2023 and Jan 2025), for the GenAI ad
+  creative work: LoRA and fine-tuning pipelines on Stable Diffusion 1.5 and
+  SDXL, and an aesthetic scorer with automatic regeneration that curated
+  images for JioHalo screensavers and GoLocal content.
+
+## Outcomes worth quoting
+
+- IPL 2023 ad monitoring: manual monitoring needed up to 2 people per language
+  and 2 per stream. He automated ad tracking and analytics for every stream
+  from SCTE-35 signals (real time and post-processing), then turned it into
+  daily and per-match Ad Opportunity Loss reports for senior leadership. That
+  contributed to a 15% increase in ad revenue and sharply cut the people
+  needed for active monitoring.
 
 ## Project notes
 

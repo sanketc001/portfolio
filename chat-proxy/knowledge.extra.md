@@ -17,8 +17,26 @@ chat-proxy/knowledge.md. Edit here, then run `npm run knowledge`.
 
 ## Awards
 
-- Winner, Jio AI Agent Hackathon (company-wide across Reliance Jio, July 2025)
-- Top Partner Employee, twice (Dec 2023 and Jan 2025), for GenAI contributions
+- Winner, Jio AI Agent Hackathon (company-wide across Reliance Jio, July 2025).
+  With a colleague he ideated and built a safety and
+  evacuation push system over RCS, SMS and email: each person gets the exact
+  evacuation path for their building or campus from their live GPS location
+  (taken through the browser), the same live locations go to the evacuation
+  QRT and crisis response teams, and an updated path is pushed if someone is
+  restricted or their surroundings are damaged.
+- Top Partner Employee, twice (Dec 2023 and Jan 2025), for the GenAI ad
+  creative work: LoRA and fine-tuning pipelines on Stable Diffusion 1.5 and
+  SDXL, and an aesthetic scorer with automatic regeneration that curated
+  images for JioHalo screensavers and GoLocal content.
+
+## Outcomes worth quoting
+
+- IPL 2023 ad monitoring: manual monitoring needed up to 2 people per language
+  and 2 per stream. He automated ad tracking and analytics for every stream
+  from SCTE-35 signals (real time and post-processing), then turned it into
+  daily and per-match Ad Opportunity Loss reports for senior leadership. That
+  contributed to a 15% increase in ad revenue and sharply cut the people
+  needed for active monitoring.
 
 ## Project notes
 

@@ -5,7 +5,10 @@
   "experience": {
     "merge": [
       {
-        "companies": ["Quest Global", "Jio"],
+        "companies": [
+          "Quest Global",
+          "Jio"
+        ],
         "company": "Quest Global @ Reliance Jio",
         "role": "Artificial Intelligence Engineer & Technical Consultant"
       }
@@ -15,15 +18,41 @@
       "GDSC DYPIU|Lead": "Developer Student Club Lead",
       "CodeChef|CP Lead": "Competitive Programming Lead"
     },
-    "keepCuratedDescription": ["GDSC DYPIU"],
-    "hide": []
+    "keepCuratedDescription": [
+      "GDSC DYPIU",
+      "Quest Global @ Reliance Jio"
+    ],
+    "hide": [
+      "Yugma by STRTRS"
+    ]
   },
   "education": {
-    "hide": ["M C Kejriwal Vidyapeeth", "Holy Family Convent School - India"]
+    "hide": [
+      "M C Kejriwal Vidyapeeth",
+      "Holy Family Convent School - India"
+    ]
   },
   "certifications": {
-    "relevantKeywords": ["neural", "deep learning", "tensorflow", "machine learning", "ai", "python", "data"],
-    "hide": []
+    "relevantKeywords": [
+      "neural",
+      "deep learning",
+      "tensorflow",
+      "machine learning",
+      "ai",
+      "python",
+      "data"
+    ],
+    "hide": [
+      "Introduction to Genomic Technologies",
+      "Introduction to Virtual Reality",
+      "Introduction to Augmented Reality and ARCore",
+      "Design Thinking for Innovation",
+      "Design Thinking and Global Startup",
+      "Data Analysis and Representation, Selection and Iteration",
+      "Algorithms, Data Collection, and Starting to Code",
+      "Abstraction, Problem Decomposition, and Functions",
+      "Simulation, Algorithm Analysis, and Pointers"
+    ]
   },
   "skills": {
     "rename": {
@@ -32,7 +61,14 @@
       "C (Programming Language)": "C",
       "Computer Vision": "Computer Vision (CV)"
     },
-    "hide": ["Voice Acting", "Event Planning", "Event Management", "Community Outreach", "Apache", "Diffusion"],
+    "hide": [
+      "Voice Acting",
+      "Event Planning",
+      "Event Management",
+      "Community Outreach",
+      "Apache",
+      "Diffusion"
+    ],
     "defaultCategory": "Other",
     "categories": {
       "Large Language Models (LLM)": "AI & GenAI",
