@@ -48,7 +48,7 @@ export const BlogApp: React.FC = () => {
               <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
                 <div className="flex items-center gap-2">
                   {activeTab === 'blog' ? (
-                    <BookOpen className="w-6 h-6 text-violet-500" />
+                    <BookOpen className="w-6 h-6 text-accent-500" />
                   ) : (
                     <span className="text-xl">💬</span>
                   )}
@@ -62,7 +62,7 @@ export const BlogApp: React.FC = () => {
                     onClick={() => setActiveTab('blog')}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeTab === 'blog'
-                        ? 'bg-white dark:bg-slate-900 text-violet-600 dark:text-violet-400 shadow-sm'
+                        ? 'bg-white dark:bg-slate-900 text-accent-600 dark:text-accent-400 shadow-sm'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                     }`}
                   >
@@ -73,7 +73,7 @@ export const BlogApp: React.FC = () => {
                     onClick={() => setActiveTab('linkedin')}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeTab === 'linkedin'
-                        ? 'bg-white dark:bg-slate-900 text-violet-600 dark:text-violet-400 shadow-sm'
+                        ? 'bg-white dark:bg-slate-900 text-accent-600 dark:text-accent-400 shadow-sm'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                     }`}
                   >
@@ -92,7 +92,7 @@ export const BlogApp: React.FC = () => {
                     <div
                       key={post.id}
                       onClick={() => setSelectedPost(post)}
-                      className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 hover:border-violet-500/30 hover:shadow-md cursor-pointer transition-all duration-300 group"
+                      className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 hover:border-accent-500/30 hover:shadow-md cursor-pointer transition-all duration-300 group"
                     >
                       <div className="flex gap-4 text-xs font-semibold text-slate-400 dark:text-slate-500 mb-2.5">
                         <span className="flex items-center gap-1">
@@ -105,7 +105,7 @@ export const BlogApp: React.FC = () => {
                         </span>
                       </div>
 
-                      <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors font-display">
+                      <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-accent-500 dark:group-hover:text-accent-400 transition-colors font-display">
                         {post.title}
                       </h3>
                       
@@ -113,7 +113,7 @@ export const BlogApp: React.FC = () => {
                         {post.excerpt}
                       </p>
                       
-                      <div className="text-xs font-bold text-violet-500 dark:text-violet-400 mt-4 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      <div className="text-xs font-bold text-accent-500 dark:text-accent-400 mt-4 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                         <span>Read Article</span>
                         <span>&rarr;</span>
                       </div>
@@ -150,7 +150,7 @@ export const BlogApp: React.FC = () => {
                           href={profile.linkedin}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-violet-500 hover:text-violet-600 transition-colors p-1.5 rounded-full hover:bg-violet-500/10 flex-shrink-0"
+                          className="text-accent-500 hover:text-accent-600 transition-colors p-1.5 rounded-full hover:bg-accent-500/10 flex-shrink-0"
                           title="View on LinkedIn"
                         >
                           <ExternalLink className="w-4 h-4" />

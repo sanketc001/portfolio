@@ -1,46 +1,25 @@
 import React, { useState } from 'react'
-import { useOS } from '../../context/OSContext'
-import { 
-  Settings, Moon, Sun, Check, RefreshCw,
-  Cpu, HardDrive, Monitor, Globe, Clock, Languages, Wifi, Fingerprint
-} from 'lucide-react'
+import { useOS, DYNAMIC_WALLPAPER } from '../../context/OSContext'
+import { Moon, Sun, Check, RefreshCw } from 'lucide-react'
 import { Github } from '../Common/BrandIcons'
-import { useDetectOS } from '../../hooks/useDetectOS'
+import { SKIN_NAMES, skinFor } from '../../system/detect'
+import type { OSId } from '../../system/detect'
 
-const getBrowserInfo = () => {
-  const ua = navigator.userAgent
-  let name = "Unknown Browser"
-  let version = ""
-
-  if (ua.includes("Firefox/")) {
-    name = "Mozilla Firefox"
-    version = ua.split("Firefox/")[1]
-  } else if (ua.includes("SamsungBrowser/")) {
-    name = "Samsung Internet"
-    version = ua.split("SamsungBrowser/")[1].split(" ")[0]
-  } else if (ua.includes("Opera/") || ua.includes("OPR/")) {
-    name = "Opera"
-    version = ua.includes("OPR/") ? ua.split("OPR/")[1] : ua.split("Opera/")[1]
-  } else if (ua.includes("Edge/") || ua.includes("Edg/")) {
-    name = "Microsoft Edge"
-    version = ua.includes("Edg/") ? ua.split("Edg/")[1] : ua.split("Edge/")[1]
-  } else if (ua.includes("Chrome/")) {
-    name = "Google Chrome"
-    version = ua.split("Chrome/")[1].split(" ")[0]
-  } else if (ua.includes("Safari/")) {
-    name = "Apple Safari"
-    version = ua.split("Version/")[1]?.split(" ")[0] || ""
-  }
-  
-  if (version.includes(" ")) {
-    version = version.split(" ")[0]
-  }
-  return { name, version }
-}
+const DESKTOP_SKINS: OSId[] = ['windows', 'macos', 'linux']
+const MOBILE_SKINS: OSId[] = ['ios', 'android']
 
 export const SettingsApp: React.FC = () => {
-  const detectedOS = useDetectOS()
   const {
+    os,
+    system,
+    osOverride,
+    setOsOverride,
+    isMobile,
+    battery,
+    online,
+    systemAccent,
+    useSystemAccent,
+    setUseSystemAccent,
     theme,
     toggleTheme,
     wallpaper,
@@ -54,32 +33,6 @@ export const SettingsApp: React.FC = () => {
   const [usernameInput, setUsernameInput] = useState(githubUsername)
   const [saveSuccess, setSaveSuccess] = useState(false)
 
-  // Hardware Diagnostics and Device info state
-  const [deviceInfo] = useState(() => {
-    const browser = getBrowserInfo()
-    const conn = (navigator as any).connection
-    const connectionType = conn 
-      ? `${conn.effectiveType?.toUpperCase() || ''} (${conn.downlink || 0} Mbps)` 
-      : 'Active (Broadband)'
-    const touchSupport = navigator.maxTouchPoints > 0 ? 'Supported' : 'Not Supported'
-    const ram = (navigator as any).deviceMemory ? `${(navigator as any).deviceMemory} GB` : 'N/A (Standard)'
-    
-    return {
-      os: detectedOS,
-      browser: `${browser.name} v${browser.version || 'Latest'}`,
-      screen: `${window.screen.width} × ${window.screen.height} px`,
-      viewport: `${window.innerWidth} × ${window.innerHeight} px`,
-      language: navigator.language || 'en-US',
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-      cores: navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Cores` : 'N/A',
-      memory: ram,
-      dpr: `${window.devicePixelRatio.toFixed(1)}x`,
-      touch: touchSupport,
-      connection: connectionType,
-      cookies: navigator.cookieEnabled ? 'Enabled' : 'Disabled'
-    }
-  })
-
   const handleSyncSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (usernameInput.trim()) {
@@ -89,233 +42,189 @@ export const SettingsApp: React.FC = () => {
     }
   }
 
+  const skins = isMobile ? MOBILE_SKINS : DESKTOP_SKINS
+  const detectedSkin = skinFor(system.os, isMobile)
+
+  // Only what the browser actually reports; rows it withholds are left out.
+  const conn = (navigator as Navigator & { connection?: { effectiveType?: string; downlink?: number } }).connection
+  const device: [string, string][] = [
+    ['System', system.osLabel],
+    ['Browser', `${system.browserName}${system.browserVersion ? ' ' + system.browserVersion : ''}`]
+  ]
+  if (system.model) device.push(['Device', system.model])
+  device.push(['Screen', `${system.screen} at ${system.pixelRatio.toFixed(system.pixelRatio % 1 ? 2 : 0)}x`])
+  if (system.cores) device.push(['Processor threads', String(system.cores)])
+  if (system.memoryGb) device.push(['Memory', `${system.memoryGb >= 8 ? 'at least 8' : system.memoryGb} GB`])
+  if (battery) device.push(['Battery', `${Math.round(battery.level * 100)}%${battery.charging ? ', charging' : ''}`])
+  device.push([
+    'Network',
+    !online ? 'Offline' : conn?.effectiveType ? `Online, ${conn.effectiveType.toUpperCase()}-class${conn.downlink ? `, about ${conn.downlink} Mbps` : ''}` : 'Online'
+  ])
+  device.push(['Language', system.language])
+  device.push(['Time zone', system.timeZone.replace(/_/g, ' ')])
+  device.push(['Touch screen', system.touch ? 'Yes' : 'No'])
+
+  const section = 'p-5 rounded-2xl glass space-y-4'
+  const heading = 'text-sm font-semibold text-slate-800 dark:text-white font-display'
+  const hint = 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed'
+  const choice = (selected: boolean) =>
+    `px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
+      selected
+        ? 'bg-accent-600 border-accent-600 text-white'
+        : 'border-slate-300/70 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-500/10'
+    }`
+
   return (
-    <div className="h-full overflow-y-auto p-6 md:p-8 select-text bg-slate-50/50 dark:bg-slate-950/20">
-      <div className="max-w-2xl mx-auto space-y-8">
-        
-        {/* Title */}
-        <div className="flex items-center gap-2 mb-6">
-          <Settings className="w-6 h-6 text-violet-500" />
-          <h2 className="text-xl font-bold font-display text-slate-800 dark:text-white">System Settings</h2>
-        </div>
+    <div className="h-full overflow-y-auto p-5 md:p-8 select-text">
+      <div className="max-w-2xl mx-auto space-y-5">
+        <h2 className="text-2xl font-semibold font-display text-slate-800 dark:text-white">Settings</h2>
 
-        {/* Section 1: Themes */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4 shadow-sm">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">Personalization</h3>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold text-slate-800 dark:text-white">Color Mode</p>
-              <p className="text-xs text-slate-400 mt-0.5">Toggle between dark and light aesthetics</p>
-            </div>
-            
-            <button
-              onClick={toggleTheme}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors cursor-pointer"
-            >
-              {theme === 'dark' ? (
-                <>
-                  <Moon className="w-4 h-4 text-violet-400" />
-                  <span>Dark Mode</span>
-                </>
-              ) : (
-                <>
-                  <Sun className="w-4 h-4 text-amber-500" />
-                  <span>Light Mode</span>
-                </>
-              )}
+        {/* Look */}
+        <div className={section}>
+          <h3 className={heading}>Look</h3>
+          <p className={hint}>
+            {system.os
+              ? `Your browser says you're on ${system.osLabel}, so this portfolio drew itself as ${SKIN_NAMES[detectedSkin]}.`
+              : `Your browser didn't say which system you're on, so this portfolio fell back to ${SKIN_NAMES[detectedSkin]}.`}{' '}
+            Try another if you're curious.
+          </p>
+
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Desktop style">
+            <button type="button" role="radio" aria-checked={!osOverride} onClick={() => setOsOverride(null)} className={choice(!osOverride)}>
+              Match my system
             </button>
-          </div>
-        </div>
-
-        {/* Section 2: Wallpaper Selector */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4 shadow-sm">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">Desktop Wallpaper</h3>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {wallpapers.map(wp => (
-              <div
-                key={wp.id}
-                onClick={() => setWallpaper(wp.url)}
-                className="group cursor-pointer flex flex-col gap-1.5"
+            {skins.map(id => (
+              <button
+                key={id}
+                type="button"
+                role="radio"
+                aria-checked={!!osOverride && os === id}
+                onClick={() => setOsOverride(id)}
+                className={choice(!!osOverride && os === id)}
               >
-                <div className={`relative aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                  wallpaper === wp.url ? 'border-violet-500 ring-2 ring-violet-500/20' : 'border-transparent hover:border-slate-300 dark:hover:border-slate-700'
-                }`}>
-                  <img
-                    src={wp.url}
-                    alt={wp.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  {wallpaper === wp.url && (
-                    <div className="absolute inset-0 bg-violet-600/30 backdrop-blur-[1px] flex items-center justify-center">
-                      <div className="p-1 rounded-full bg-violet-600 text-white">
-                        <Check className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <span className="text-[10px] text-center font-bold text-slate-500 dark:text-slate-400 truncate">{wp.name}</span>
-              </div>
+                {SKIN_NAMES[id]}
+              </button>
             ))}
           </div>
-        </div>
 
-        {/* Section 3: GitHub Username Sync */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-4 shadow-sm">
-          <div className="flex items-center gap-2">
-            <Github className="w-5 h-5 text-slate-700 dark:text-slate-200" />
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">GitHub Sync</h3>
+          <div className="flex items-center justify-between gap-4 pt-1">
+            <div>
+              <p className="text-sm font-medium text-slate-800 dark:text-white">Colour mode</p>
+              <p className={hint}>Starts on whichever your system uses.</p>
+            </div>
+            <button type="button" onClick={toggleTheme} className={`${choice(false)} flex items-center gap-2`}>
+              {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              {theme === 'dark' ? 'Dark' : 'Light'}
+            </button>
           </div>
 
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            Enter your GitHub username to dynamically populate the projects catalog with your public repositories.
-          </p>
+          {systemAccent && (
+            <label className="flex items-center justify-between gap-4 cursor-pointer">
+              <span>
+                <span className="block text-sm font-medium text-slate-800 dark:text-white">Use my system accent colour</span>
+                <span className={hint}>
+                  Your system's accent is{' '}
+                  <span className="inline-block w-2.5 h-2.5 rounded-full align-middle" style={{ background: systemAccent }} />. Turn this off for
+                  the {SKIN_NAMES[os]} default.
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                checked={useSystemAccent}
+                onChange={e => setUseSystemAccent(e.target.checked)}
+                className="w-4 h-4 accent-[var(--accent)]"
+              />
+            </label>
+          )}
+        </div>
+
+        {/* Wallpaper */}
+        <div className={section}>
+          <h3 className={heading}>Wallpaper</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[{ id: 'dynamic', name: 'Live, follows your time of day', url: DYNAMIC_WALLPAPER }, ...wallpapers].map(wp => {
+              const selected = wallpaper === wp.url
+              return (
+                <button key={wp.id} type="button" onClick={() => setWallpaper(wp.url)} aria-pressed={selected} className="group cursor-pointer flex flex-col gap-1.5 text-left">
+                  <span
+                    className={`relative block aspect-video rounded-lg overflow-hidden border-2 transition-colors ${
+                      selected ? 'border-accent-500' : 'border-transparent group-hover:border-slate-400/50'
+                    }`}
+                  >
+                    {wp.url === DYNAMIC_WALLPAPER ? (
+                      <span
+                        className="absolute inset-0"
+                        style={{
+                          background:
+                            'radial-gradient(circle at 20% 10%, var(--wp-a), transparent 60%), radial-gradient(circle at 85% 90%, var(--wp-b), transparent 60%), var(--wp-base)'
+                        }}
+                      />
+                    ) : (
+                      <img src={wp.url.replace('w=1920', 'w=400')} alt="" loading="lazy" className="w-full h-full object-cover" />
+                    )}
+                    {selected && (
+                      <span className="absolute top-1.5 right-1.5 p-1 rounded-full bg-accent-600 text-white">
+                        <Check className="w-3 h-3" />
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-[11px] text-slate-600 dark:text-slate-400 truncate">{wp.name}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* GitHub sync */}
+        <div className={section}>
+          <div className="flex items-center gap-2">
+            <Github className="w-4 h-4 text-slate-700 dark:text-slate-200" />
+            <h3 className={heading}>GitHub projects</h3>
+          </div>
+          <p className={hint}>Enter a GitHub username to fill the Projects app with that account's public repositories.</p>
 
           <form onSubmit={handleSyncSubmit} className="flex gap-2 max-w-md">
             <input
               type="text"
               value={usernameInput}
               onChange={e => setUsernameInput(e.target.value)}
-              placeholder="E.g., octocat"
-              className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              placeholder="octocat"
+              aria-label="GitHub username"
+              className="flex-1 text-xs px-3.5 py-2.5 rounded-lg"
             />
-            
             <button
               type="submit"
               disabled={loadingProjects}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-400 text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md"
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-accent-600 hover:bg-accent-700 disabled:opacity-60 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
             >
-              {loadingProjects ? (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <span>Sync</span>
-              )}
+              {loadingProjects ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : 'Load projects'}
             </button>
           </form>
 
           {saveSuccess && (
-            <p className="text-xs font-semibold text-emerald-500 dark:text-emerald-400 animate-fade-in">
-              Successfully synced! Repositories are reloading...
+            <p role="status" className="text-xs font-medium text-emerald-600 dark:text-emerald-400 animate-fade-in">
+              Loading projects from {githubUsername}.
             </p>
           )}
         </div>
 
-        {/* Section 4: Advanced System Information */}
-        <div className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5 space-y-5 shadow-sm">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest font-display">
-            Hardware & Device Diagnostics
-          </h3>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            
-            {/* OS Card */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">OS Environment</span>
-                <Monitor className="w-4 h-4 text-blue-500" />
+        {/* Device */}
+        <div className={section}>
+          <h3 className={heading}>Your device</h3>
+          <p className={hint}>
+            What your browser told this page. It is used to style the desktop and stays here: none of it is stored or sent anywhere.
+          </p>
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 text-xs">
+            {device.map(([label, value]) => (
+              <div key={label} className="flex justify-between gap-4 py-2 border-b border-slate-500/15">
+                <dt className="text-slate-500 dark:text-slate-400">{label}</dt>
+                <dd className="font-medium text-slate-800 dark:text-white text-right truncate" title={value}>
+                  {value}
+                </dd>
               </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
-                {deviceInfo.os}
-              </p>
-            </div>
-
-            {/* Browser Card */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">Browser Engine</span>
-                <Globe className="w-4 h-4 text-violet-500" />
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate" title={deviceInfo.browser}>
-                {deviceInfo.browser}
-              </p>
-            </div>
-
-            {/* CPU Cores */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">CPU Threads</span>
-                <Cpu className="w-4 h-4 text-emerald-500" />
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
-                {deviceInfo.cores}
-              </p>
-            </div>
-
-            {/* Device Memory */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">Device RAM</span>
-                <HardDrive className="w-4 h-4 text-amber-500" />
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
-                {deviceInfo.memory}
-              </p>
-            </div>
-
-            {/* Timezone */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">Timezone</span>
-                <Clock className="w-4 h-4 text-pink-500" />
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate" title={deviceInfo.timezone}>
-                {deviceInfo.timezone}
-              </p>
-            </div>
-
-            {/* Screen Resolution */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">Resolution</span>
-                <span className="text-[9px] font-black text-rose-500 font-mono">DPR {deviceInfo.dpr}</span>
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
-                {deviceInfo.screen}
-              </p>
-            </div>
-
-            {/* Connection Speed */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">Connection</span>
-                <Wifi className="w-4 h-4 text-indigo-500" />
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
-                {deviceInfo.connection}
-              </p>
-            </div>
-
-            {/* Language */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">Language</span>
-                <Languages className="w-4 h-4 text-teal-500" />
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
-                {deviceInfo.language}
-              </p>
-            </div>
-
-            {/* Touch Screen */}
-            <div className="p-4 rounded-xl bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between min-h-[90px]">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="text-[9px] font-bold uppercase tracking-wider">Touch Input</span>
-                <Fingerprint className="w-4 h-4 text-fuchsia-500" />
-              </div>
-              <p className="text-xs font-bold text-slate-800 dark:text-white mt-2 truncate">
-                {deviceInfo.touch}
-              </p>
-            </div>
-
-          </div>
-          
-          <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[10px] font-semibold text-slate-400">
-            <span>Environment Host: {import.meta.env.DEV ? 'Local Development' : 'GitHub Pages (sanketc001.github.io)'}</span>
-            <span>Vite Subpath: {import.meta.env.BASE_URL}</span>
-          </div>
+            ))}
+          </dl>
         </div>
-
       </div>
     </div>
   )

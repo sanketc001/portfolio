@@ -2,8 +2,32 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { fetchGithubProjects } from '../api/github'
 import type { GithubProject } from '../api/github'
 import portfolioData from '../data/portfolioData.json'
-import { storageGet, storageSet } from '../utils/storage'
+import { storageGet, storageSet, storageRemove } from '../utils/storage'
 import { TOUR_STEPS, TOUR_STORAGE_KEY } from '../tour'
+import { readSystemInfo, refineSystemInfo, readSystemAccent, skinFor } from '../system/detect'
+import type { OSId, SystemInfo } from '../system/detect'
+import { useBattery, useOnline, useIsMobile } from '../system/hooks'
+import type { BatteryState } from '../system/hooks'
+
+/** Wallpaper value for the animated, skin-coloured backdrop (anything else is an image URL). */
+export const DYNAMIC_WALLPAPER = 'dynamic'
+
+export interface Insets {
+  top: number
+  bottom: number
+  left: number
+}
+
+/** Space each desktop shell reserves for its bars and dock. */
+const SHELL_INSETS: Record<OSId, Insets> = {
+  windows: { top: 0, bottom: 48, left: 0 },
+  macos: { top: 28, bottom: 78, left: 0 },
+  linux: { top: 30, bottom: 0, left: 68 },
+  ios: { top: 0, bottom: 0, left: 0 },
+  android: { top: 0, bottom: 0, left: 0 }
+}
+
+const OS_IDS: OSId[] = ['windows', 'macos', 'linux', 'ios', 'android']
 
 export interface WindowState {
   id: string
@@ -21,6 +45,21 @@ export interface WindowState {
 }
 
 interface OSContextType {
+  /** The shell being drawn: follows the visitor's OS unless they picked another in Settings. */
+  os: OSId
+  /** What the browser reports about the visitor's device. */
+  system: SystemInfo
+  /** Visitor's manual shell choice; null follows the detected OS. */
+  osOverride: OSId | null
+  setOsOverride: (os: OSId | null) => void
+  isMobile: boolean
+  insets: Insets
+  battery: BatteryState | null
+  online: boolean
+  /** Accent colour from the visitor's OS settings, when the browser exposes it. */
+  systemAccent: string | null
+  useSystemAccent: boolean
+  setUseSystemAccent: (on: boolean) => void
   theme: 'light' | 'dark'
   toggleTheme: () => void
   wallpaper: string
@@ -55,8 +94,6 @@ interface OSContextType {
 
 const OSContext = createContext<OSContextType | undefined>(undefined)
 
-const TASKBAR_HEIGHT = 48
-
 // w/h are the preferred sizes; windows are centred and clamped to the viewport when opened.
 const DEFAULT_WINDOWS: WindowState[] = [
   { id: 'about', title: 'About Me', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1, x: 80, y: 60, w: 900, h: 620, minW: 400, minH: 300 },
@@ -74,17 +111,17 @@ const DEFAULT_WINDOWS: WindowState[] = [
 const PREFERRED_SIZE = Object.fromEntries(DEFAULT_WINDOWS.map(w => [w.id, { w: w.w, h: w.h }]))
 
 /** Centre a window in the visible workspace (above the taskbar), clamped so it fits. */
-function centeredRect(id: string) {
+function centeredRect(id: string, insets: Insets) {
   const pref = PREFERRED_SIZE[id] || { w: 800, h: 600 }
-  const vw = typeof window !== 'undefined' ? window.innerWidth : 1440
-  const vh = typeof window !== 'undefined' ? window.innerHeight - TASKBAR_HEIGHT : 852
+  const vw = window.innerWidth - insets.left
+  const vh = window.innerHeight - insets.top - insets.bottom
   const w = Math.max(320, Math.min(pref.w, vw - 48))
   const h = Math.max(280, Math.min(pref.h, vh - 32))
   return {
     w,
     h,
-    x: Math.max(0, Math.round((vw - w) / 2)),
-    y: Math.max(0, Math.round((vh - h) / 2))
+    x: insets.left + Math.max(0, Math.round((vw - w) / 2)),
+    y: insets.top + Math.max(0, Math.round((vh - h) / 2))
   }
 }
 
@@ -93,6 +130,50 @@ function isTourDone(): boolean {
 }
 
 export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Visitor's device: read once, then refined with client hints where available.
+  const [system, setSystem] = useState<SystemInfo>(readSystemInfo)
+  useEffect(() => {
+    let active = true
+    refineSystemInfo(system).then(extra => {
+      if (active && Object.keys(extra).length > 0) setSystem(prev => ({ ...prev, ...extra }))
+    })
+    return () => {
+      active = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const isMobile = useIsMobile()
+  const battery = useBattery()
+  const online = useOnline()
+
+  const [osOverride, setOsOverrideState] = useState<OSId | null>(() => {
+    const saved = storageGet('portfolio_os') as OSId | null
+    return saved && OS_IDS.includes(saved) ? saved : null
+  })
+  const setOsOverride = (next: OSId | null) => {
+    setOsOverrideState(next)
+    if (next) storageSet('portfolio_os', next)
+    else storageRemove('portfolio_os')
+  }
+  const os = skinFor(osOverride ?? system.os, isMobile)
+  const insets = SHELL_INSETS[os]
+
+  const [systemAccent] = useState<string | null>(readSystemAccent)
+  const [useSystemAccent, setUseSystemAccentState] = useState(() => storageGet('portfolio_system_accent') !== '0')
+  const setUseSystemAccent = (on: boolean) => {
+    setUseSystemAccentState(on)
+    storageSet('portfolio_system_accent', on ? '1' : '0')
+  }
+
+  // The stylesheet keys every skin off <html data-os>; the visitor's accent overrides the skin's.
+  useEffect(() => {
+    const root = document.documentElement
+    root.dataset.os = os
+    if (systemAccent && useSystemAccent) root.style.setProperty('--accent', systemAccent)
+    else root.style.removeProperty('--accent')
+  }, [os, systemAccent, useSystemAccent])
+
   // Theme state
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = storageGet('portfolio_theme')
@@ -106,7 +187,7 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
   // Wallpaper state
   const [wallpaper, setWallpaper] = useState<string>(() => {
-    return storageGet('portfolio_wallpaper') || portfolioData.wallpapers[0].url
+    return storageGet('portfolio_wallpaper') || DYNAMIC_WALLPAPER
   })
 
   // Guided tour: starts automatically on the first visit (About window open, centred).
@@ -119,7 +200,7 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     if (isTourDone()) return DEFAULT_WINDOWS
     const firstId = TOUR_STEPS[0].id
     return DEFAULT_WINDOWS.map(win =>
-      win.id === firstId ? { ...win, ...centeredRect(firstId), isOpen: true, zIndex: 20 } : win
+      win.id === firstId ? { ...win, ...centeredRect(firstId, insets), isOpen: true, zIndex: 20 } : win
     )
   })
   const [activeWindowId, setActiveWindowId] = useState<string | null>(() =>
@@ -196,20 +277,7 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     }
   }, [githubUsername])
 
-  const toggleTheme = () => {
-    setTheme(prev => {
-      const nextTheme = prev === 'light' ? 'dark' : 'light'
-      const darkDefault = 'https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&w=1920&q=80'
-      const lightDefault = 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1920&q=80'
-      const savedWallpaper = storageGet('portfolio_wallpaper')
-      if (!savedWallpaper || savedWallpaper === darkDefault || savedWallpaper === lightDefault) {
-        const nextWallpaper = nextTheme === 'dark' ? darkDefault : lightDefault
-        setWallpaper(nextWallpaper)
-        storageSet('portfolio_wallpaper', nextWallpaper)
-      }
-      return nextTheme
-    })
-  }
+  const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'))
 
   const nextZ = () => {
     zCounter.current += 1
@@ -229,7 +297,7 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     list.map(win => {
       if (win.id !== id) return win
       if (win.isOpen) return { ...win, isMinimized: false, zIndex: z }
-      return { ...win, ...centeredRect(id), isOpen: true, isMinimized: false, isMaximized: false, zIndex: z }
+      return { ...win, ...centeredRect(id, insets), isOpen: true, isMinimized: false, isMaximized: false, zIndex: z }
     })
 
   const withClosed = (list: WindowState[], id: string) =>
@@ -337,6 +405,17 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   return (
     <OSContext.Provider
       value={{
+        os,
+        system,
+        osOverride,
+        setOsOverride,
+        isMobile,
+        insets,
+        battery,
+        online,
+        systemAccent,
+        useSystemAccent,
+        setUseSystemAccent,
         theme,
         toggleTheme,
         wallpaper,

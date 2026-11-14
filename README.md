@@ -1,6 +1,6 @@
 # Sanket Choudhary – Portfolio
 
-**An interactive portfolio that runs like a desktop operating system in the browser: draggable app windows, a taskbar and start menu on desktop, and a phone-style home screen on mobile.**
+**An interactive portfolio that runs like a desktop operating system in the browser, and dresses itself as the visitor's own: Windows 11, macOS or GNOME on desktop, iOS or Android on a phone.**
 
 Live site: https://sanketc001.github.io/portfolio/
 
@@ -19,9 +19,32 @@ Instead of a single scrolling page, each section of the portfolio is an "app" th
 | Certifications | Certificates with issuer, date, credential ID and link |
 | Media Gallery | Project screenshots from `public/gallery/` plus anything in `public/{documents,pictures,music,videos}` |
 | Developer Blog | Short posts |
-| Settings | Light/dark mode and wallpaper selection |
+| Settings | Desktop style (match my system, or pick one), light/dark mode, system accent colour, wallpaper, and what the browser reported about the device |
 
-The layout adapts to the device: a windowed desktop (taskbar, start menu with search, window management) on larger screens and an app-grid home screen on mobile. A visitor counter from CounterAPI is shown when the real count can be fetched; otherwise it is hidden.
+The layout adapts to the device: a windowed desktop on larger screens and an app-grid home screen on mobile. A visitor counter from CounterAPI is shown when the real count can be fetched; otherwise it is hidden.
+
+## It looks like your system
+
+The shell is chosen from the visitor's user agent (plus client hints where the browser offers them) and can be overridden in Settings.
+
+| Detected | Shell |
+|---|---|
+| Windows | Mica taskbar with centred apps, Start menu, tray clock, title-bar buttons on the right |
+| macOS, iPadOS at desktop width | Menu bar, magnifying dock, Spotlight-style search, traffic lights on the left |
+| Linux, ChromeOS, unrecognised | GNOME top bar, dock down the left edge, full-screen Activities overview |
+| iOS | Widget card, squircle icons, glass dock, home indicator |
+| Android | "At a glance" header, round icons, search pill, gesture bar |
+
+Each shell uses the system's own font stack, so there are no web fonts to download. Details that come from the visitor's device, all read in the page and never stored or sent anywhere:
+
+- OS name and version, browser and version, device model when shared (`src/system/detect.ts`)
+- Battery level and charging state, online/offline (`src/system/hooks.ts`); the battery glyph is simply left out in browsers that don't expose it
+- Clock and dates in the visitor's locale, and a time-of-day tint on the animated default wallpaper
+- Light or dark mode from `prefers-color-scheme`, and the OS accent colour where the browser exposes the CSS `AccentColor` system colour
+
+The first load of a session opens with a short greeting that says what was detected; any click or key skips it and it is not shown under `prefers-reduced-motion`.
+
+The accent is one CSS variable, `--accent`; the `accent-*` Tailwind palette in `src/index.css` is derived from it, and each shell sets its own tokens under `html[data-os]`.
 
 ## Guided tour
 
@@ -32,7 +55,7 @@ On a first visit the site walks the visitor through the most relevant windows, o
 - Desktop: each window opens centred and large enough to read. A footer shows progress (`2 / 5`), a primary **Next: <title> →** button and **Skip tour**. Closing the window with the red button also moves to the next step. After the last step (or a skip) the normal desktop is left as it is.
 - Mobile: the About app opens first with the same footer; **Next** walks the same sequence and the back button leaves the tour.
 - Completion is stored in `localStorage` (`portfolio_tour_done`). Every storage call is wrapped, so the site works when storage is blocked (the tour then simply shows again on the next visit).
-- Restart it from the Start menu (**Take the tour**), the notice shown after the tour, or the **Tour** icon on mobile.
+- Restart it from the app launcher (**Take the tour**), the notice shown after the tour, or the **Tour** icon on mobile.
 - Animations respect `prefers-reduced-motion`.
 - Steps are defined in `src/tour.ts`; the window manager logic is in `src/context/OSContext.tsx`.
 
@@ -46,11 +69,14 @@ The endpoint is the Cloudflare Worker in [`chat-proxy/`](chat-proxy/README.md). 
 
 ```
 src/
-├── main.tsx / App.tsx       entry; chooses Desktop or HomeScreen via useDevice()
-├── context/OSContext.tsx    window manager state, guided tour, theme, wallpaper, visit counter
+├── main.tsx / App.tsx       entry; boot greeting, then Desktop or HomeScreen by viewport width
+├── context/OSContext.tsx    window manager state, active shell, device info, guided tour, theme, wallpaper, visit counter
+├── system/                  OS/browser detection, battery/network/clock hooks, boot flag
+├── appRegistry.ts / apps.tsx  the app list (names, icons, colours) and the icon/content components
 ├── tour.ts                  tour steps (order of the guided tour)
-├── desktop/                 Desktop, Window, Taskbar, StartMenu
-├── mobile/HomeScreen.tsx    mobile launcher
+├── desktop/                 Desktop, Window, Launcher, DeviceWidget
+├── desktop/shells/          WindowsShell, MacShell, LinuxShell (bars and docks)
+├── mobile/HomeScreen.tsx    iOS / Android home screen
 ├── components/Apps/         one component per "app"
 ├── api/github.ts            featured projects + GitHub repos fetch (30-minute cache)
 ├── api/chat.ts              streaming client for the chat proxy

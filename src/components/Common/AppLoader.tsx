@@ -9,7 +9,7 @@ export const AppLoader: React.FC = () => (
       animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center gap-3 text-center"
     >
-      <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+      <Loader2 className="w-8 h-8 text-accent-500 animate-spin" />
       <p className="text-xs font-semibold text-slate-400 tracking-wide">Loading application...</p>
     </motion.div>
   </div>

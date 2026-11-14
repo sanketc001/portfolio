@@ -74,17 +74,17 @@ export const ContactApp: React.FC = () => {
 
           <div className="space-y-4 text-xs md:text-sm">
             <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200/20 min-w-0 w-full">
-              <Mail className="w-5 h-5 text-violet-500 flex-shrink-0" />
+              <Mail className="w-5 h-5 text-accent-500 flex-shrink-0" />
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-slate-400">Email Address</p>
-                <a href={`mailto:${profile.email}`} className="text-slate-700 dark:text-slate-200 font-medium hover:text-violet-500 transition-colors block truncate" title={profile.email}>
+                <a href={`mailto:${profile.email}`} className="text-slate-700 dark:text-slate-200 font-medium hover:text-accent-500 transition-colors block truncate" title={profile.email}>
                   {profile.email}
                 </a>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200/20">
-              <MapPin className="w-5 h-5 text-violet-500 flex-shrink-0" />
+              <MapPin className="w-5 h-5 text-accent-500 flex-shrink-0" />
               <div>
                 <p className="font-semibold text-slate-400">Location</p>
                 <p className="text-slate-700 dark:text-slate-200 font-medium">{profile.location}</p>
@@ -99,7 +99,7 @@ export const ContactApp: React.FC = () => {
             <AnimatePresence mode="wait">
               {!WEB3FORMS_KEY ? (
                 <motion.div key="mailto" className="text-center py-8 space-y-4">
-                  <Mail className="w-12 h-12 text-violet-500 mx-auto" />
+                  <Mail className="w-12 h-12 text-accent-500 mx-auto" />
                   <div>
                     <h3 className="text-lg font-bold text-slate-800 dark:text-white font-display">Send me an email</h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">
@@ -108,7 +108,7 @@ export const ContactApp: React.FC = () => {
                   </div>
                   <a
                     href={`mailto:${profile.email}?subject=${encodeURIComponent('Hello from your portfolio')}`}
-                    className="inline-flex items-center justify-center gap-1.5 px-5 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-xl transition-all shadow-md text-sm"
+                    className="inline-flex items-center justify-center gap-1.5 px-5 py-3 bg-accent-600 hover:bg-accent-700 text-white font-bold rounded-xl transition-all shadow-md text-sm"
                   >
                     <Send className="w-4 h-4" />
                     <span>Email {profile.name.split(' ')[0]}</span>
@@ -151,7 +151,7 @@ export const ContactApp: React.FC = () => {
                        onChange={e => setName(e.target.value)}
                        placeholder="Jane Doe"
                        disabled={status === 'submitting'}
-                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                   </div>
 
@@ -163,7 +163,7 @@ export const ContactApp: React.FC = () => {
                        onChange={e => setEmail(e.target.value)}
                        placeholder="jane@example.com"
                        disabled={status === 'submitting'}
-                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                   </div>
 
@@ -175,7 +175,7 @@ export const ContactApp: React.FC = () => {
                        placeholder="Hi! I'd love to collaborate on a new project..."
                        rows={4}
                        disabled={status === 'submitting'}
-                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
+                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
                     />
                   </div>
 
@@ -193,7 +193,7 @@ export const ContactApp: React.FC = () => {
                   <button
                     type="submit"
                     disabled={status === 'submitting'}
-                    className="w-full flex items-center justify-center gap-1.5 py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-400 text-white font-bold rounded-xl transition-all cursor-pointer shadow-md"
+                    className="w-full flex items-center justify-center gap-1.5 py-3 bg-accent-600 hover:bg-accent-700 disabled:bg-accent-400 text-white font-bold rounded-xl transition-all cursor-pointer shadow-md"
                   >
                     {status === 'submitting' ? (
                       <span>Sending...</span>

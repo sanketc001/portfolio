@@ -33,7 +33,7 @@ export const ExperienceApp: React.FC = () => {
       <div className="max-w-3xl mx-auto space-y-6">
         <section className="p-6 rounded-2xl glass border border-white/10 dark:border-white/5">
           <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 font-display flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-violet-500" />
+            <Briefcase className="w-5 h-5 text-accent-500" />
             <span>Work Experience</span>
           </h3>
 
@@ -48,11 +48,11 @@ export const ExperienceApp: React.FC = () => {
                   transition={{ delay: index * 0.06 }}
                   className="relative"
                 >
-                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-violet-500 border-4 border-white dark:border-[#171c29]" />
+                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-accent-500 border-4 border-white dark:border-[#171c29]" />
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
                     <div>
                       <h4 className="text-base font-bold text-slate-800 dark:text-white">{exp.role}</h4>
-                      <p className="text-sm font-medium text-violet-600 dark:text-violet-400">{exp.company}</p>
+                      <p className="text-sm font-medium text-accent-600 dark:text-accent-400">{exp.company}</p>
                       {exp.location && (
                         <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
@@ -82,7 +82,7 @@ export const ExperienceApp: React.FC = () => {
                           <ul className="list-none space-y-1.5">
                             {block.bullets.map((bullet, i) => (
                               <li key={i} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex items-start gap-2">
-                                <span className="text-violet-500 mt-1 flex-shrink-0 text-[10px]">▸</span>
+                                <span className="text-accent-500 mt-1 flex-shrink-0 text-[10px]">▸</span>
                                 <span>{bullet}</span>
                               </li>
                             ))}
@@ -140,11 +140,11 @@ export const ExperienceApp: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-500/5 border border-amber-200/50 dark:border-amber-500/20">
               <p className="text-sm font-bold text-slate-800 dark:text-white">Winner — Jio AI Agent Hackathon</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Company-wide hackathon across Reliance Jio, July 2025</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Company-wide across Reliance Jio, July 2025. Built with a colleague: an evacuation system that sends each person the exit path for their building from their live location, and shows responders where everyone is.</p>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-500/5 border border-violet-200/50 dark:border-violet-500/20">
+            <div className="p-4 rounded-xl bg-gradient-to-br from-accent-50 to-accent-100/50 dark:from-accent-500/10 dark:to-accent-500/5 border border-accent-200/50 dark:border-accent-500/20">
               <p className="text-sm font-bold text-slate-800 dark:text-white">Top Partner Employee ×2</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Dec 2023 & Jan 2025 — Recognized for GenAI contributions</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Dec 2023 & Jan 2025, for the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives.</p>
             </div>
           </div>
         </section>

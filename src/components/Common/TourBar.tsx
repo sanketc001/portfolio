@@ -19,13 +19,13 @@ export const TourBar: React.FC<TourBarProps> = ({ step, onNext, onSkip, compact 
     <div
       role="region"
       aria-label="Guided tour"
-      className={`flex-shrink-0 flex items-center justify-between gap-3 border-t border-violet-500/20 bg-violet-50/90 dark:bg-[#1a1730]/95 ${
+      className={`flex-shrink-0 flex items-center justify-between gap-3 border-t border-accent-500/20 bg-accent-50/90 dark:bg-[#1a1730]/95 ${
         compact ? 'px-3 py-2.5' : 'px-4 py-2.5'
       }`}
     >
       <div className="flex items-center gap-3 min-w-0">
         <span
-          className="text-[11px] font-bold text-violet-700 dark:text-violet-300 tabular-nums whitespace-nowrap"
+          className="text-[11px] font-bold text-accent-700 dark:text-accent-300 tabular-nums whitespace-nowrap"
           aria-label={`Tour step ${step + 1} of ${total}`}
         >
           {step + 1} / {total}
@@ -35,7 +35,7 @@ export const TourBar: React.FC<TourBarProps> = ({ step, onNext, onSkip, compact 
             <span
               key={s.id}
               className={`h-1.5 rounded-full transition-all ${
-                i === step ? 'w-4 bg-violet-600 dark:bg-violet-400' : i < step ? 'w-1.5 bg-violet-400/70' : 'w-1.5 bg-slate-300 dark:bg-slate-600'
+                i === step ? 'w-4 bg-accent-600 dark:bg-accent-400' : i < step ? 'w-1.5 bg-accent-400/70' : 'w-1.5 bg-slate-300 dark:bg-slate-600'
               }`}
             />
           ))}
@@ -53,7 +53,7 @@ export const TourBar: React.FC<TourBarProps> = ({ step, onNext, onSkip, compact 
         type="button"
         onClick={onNext}
         autoFocus={!compact}
-        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-md transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-1"
+        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-accent-600 hover:bg-accent-700 text-white text-xs font-bold shadow-md transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:ring-offset-1"
       >
         {isLast ? (
           <>

@@ -1,49 +1,28 @@
 import React, { useState, useEffect } from 'react'
-import { useOS } from '../context/OSContext'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  User,
-  FolderOpen,
-  FileText,
-  Image as ImageIcon,
-  BookOpen,
-  Mail,
-  Settings,
-  Wifi,
-  Signal,
-  Battery,
-  ChevronLeft,
-  Search,
-  Award,
-  Briefcase,
-  MessageCircle,
-  Compass,
-  X
-} from 'lucide-react'
-import { Github, Linkedin } from '../components/Common/BrandIcons'
-
-// App components
-import { AboutApp } from '../components/Apps/AboutApp'
-import { ProjectsApp } from '../components/Apps/ProjectsApp'
-import { ResumeApp } from '../components/Apps/ResumeApp'
-import { GalleryApp } from '../components/Apps/GalleryApp'
-import { BlogApp } from '../components/Apps/BlogApp'
-import { SettingsApp } from '../components/Apps/SettingsApp'
-import { ContactApp } from '../components/Apps/ContactApp'
-import { CertificationsApp } from '../components/Apps/CertificationsApp'
-import { ExperienceApp } from '../components/Apps/ExperienceApp'
-import { ChatApp } from '../components/Apps/ChatApp'
+import { ChevronLeft, ArrowLeft, Search, Compass, X } from 'lucide-react'
+import { useOS } from '../context/OSContext'
+import { AppIcon, AppContent } from '../apps'
+import { APPS, LINKS, appById } from '../appRegistry'
+import type { AppDef } from '../appRegistry'
+import { Wallpaper } from '../components/Common/Wallpaper'
+import { NetworkIcon, BatteryIcon } from '../components/Common/StatusIcons'
 import { TourBar } from '../components/Common/TourBar'
+import { useNow, formatTime, formatDate, greetingFor } from '../system/hooks'
 import { TOUR_STEPS } from '../tour'
-import portfolioData from '../data/portfolioData.json'
 
-export const HomeScreen: React.FC = () => {
-  const { wallpaper, theme, visitorCount, tourStep, nextTourStep, skipTour, startTour, tourNotice, setTourNotice } = useOS()
-  const [activeApp, setActiveApp] = useState<string | null>(() =>
-    tourStep !== null ? TOUR_STEPS[tourStep].id : null
-  )
+const TOUR_APP: AppDef = { id: 'tour', name: 'Tour', title: 'Take the tour', icon: Compass, tile: ['#f59e0b', '#ea580c'] }
+const DOCK_IDS = ['about', 'projects', 'chat', 'contact']
 
-  // Follow the guided tour: each step opens its app; ending the tour returns to the launcher.
+export const HomeScreen: React.FC<{ booted: boolean }> = ({ booted }) => {
+  const { os, system, battery, visitorCount, tourStep, nextTourStep, skipTour, startTour, tourNotice, setTourNotice } = useOS()
+  const isIOS = os === 'ios'
+  const now = useNow()
+
+  const [activeApp, setActiveApp] = useState<string | null>(() => (tourStep !== null ? TOUR_STEPS[tourStep].id : null))
+  const [search, setSearch] = useState('')
+
+  // Follow the guided tour: each step opens its app; ending the tour returns home.
   const [followedTourStep, setFollowedTourStep] = useState(tourStep)
   if (tourStep !== followedTourStep) {
     setFollowedTourStep(tourStep)
@@ -53,11 +32,8 @@ export const HomeScreen: React.FC = () => {
 
   const closeApp = () => {
     // Leaving the current tour app ends the tour (it can be restarted from the Tour icon).
-    if (tourAppId && activeApp === tourAppId) {
-      skipTour()
-    } else {
-      setActiveApp(null)
-    }
+    if (tourAppId && activeApp === tourAppId) skipTour()
+    else setActiveApp(null)
   }
 
   const openContact = () => {
@@ -70,282 +46,197 @@ export const HomeScreen: React.FC = () => {
     const timer = setTimeout(() => setTourNotice(null), 6000)
     return () => clearTimeout(timer)
   }, [tourNotice, setTourNotice])
-  const [searchQuery, setSearchQuery] = useState('')
-  const [time, setTime] = useState('')
-  const [dateStr, setDateStr] = useState('')
 
-  // Track wallpaper fade state on mobile
-  const [prevWallpaper, setPrevWallpaper] = useState(wallpaper)
-  const [fade, setFade] = useState(false)
-
-  useEffect(() => {
-    if (wallpaper !== prevWallpaper) {
-      setFade(true)
-      const timer = setTimeout(() => {
-        setPrevWallpaper(wallpaper)
-        setFade(false)
-      }, 550)
-      return () => clearTimeout(timer)
-    }
-  }, [wallpaper, prevWallpaper])
-
-  // Update clock & date
-  useEffect(() => {
-    const updateTime = () => {
-      const date = new Date()
-      setTime(
-        date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: false })
-      )
-      setDateStr(
-        date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
-      )
-    }
-
-    updateTime()
-    const timer = setInterval(updateTime, 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  // App catalog
-  const apps = [
-    { id: 'about', name: 'About Me', icon: User, color: 'from-blue-400 to-indigo-500' },
-    { id: 'projects', name: 'Projects', title: 'Featured Projects', icon: FolderOpen, color: 'from-amber-400 to-orange-500' },
-    { id: 'experience', name: 'Experience', icon: Briefcase, color: 'from-sky-400 to-blue-600' },
-    { id: 'chat', name: 'Ask', title: 'Ask my portfolio', icon: MessageCircle, color: 'from-violet-500 to-indigo-600' },
-    { id: 'contact', name: 'Contact', icon: Mail, color: 'from-purple-400 to-pink-500' },
-    { id: 'resume', name: 'Resume', icon: FileText, color: 'from-emerald-400 to-teal-500' },
-    { id: 'certifications', name: 'Credentials', icon: Award, color: 'from-violet-400 to-fuchsia-500' },
-    { id: 'gallery', name: 'Gallery', icon: ImageIcon, color: 'from-pink-400 to-rose-500' },
-    { id: 'blog', name: 'Blog', icon: BookOpen, color: 'from-indigo-400 to-purple-500' },
-    { id: 'settings', name: 'Settings', icon: Settings, color: 'from-teal-400 to-emerald-500' },
-    { id: 'tour', name: 'Tour', icon: Compass, color: 'from-fuchsia-500 to-violet-600', isAction: true },
-    { id: 'github', name: 'GitHub', icon: Github, color: 'bg-slate-900 text-white', isExternal: true, url: portfolioData.profile.github },
-    { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'bg-blue-600 text-white', isExternal: true, url: portfolioData.profile.linkedin }
-  ]
-
-  // Dock apps (pinned bottom apps)
-  const dockApps = [
-    { id: 'about', name: 'About', icon: User, color: 'bg-blue-500 text-white' },
-    { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'bg-amber-500 text-white' },
-    { id: 'chat', name: 'Ask my portfolio', icon: MessageCircle, color: 'bg-violet-600 text-white' },
-    { id: 'contact', name: 'Contact', icon: Mail, color: 'bg-purple-500 text-white' }
-  ]
-
-  const handleAppLaunch = (id: string, isExternal?: boolean, url?: string) => {
-    if (id === 'tour') {
-      startTour()
-    } else if (isExternal && url) {
-      window.open(url, '_blank')
-    } else {
-      setActiveApp(id)
-    }
+  const launch = (app: AppDef) => {
+    if (app.id === 'tour') startTour()
+    else if (app.url) window.open(app.url, '_blank', 'noopener')
+    else setActiveApp(app.id)
   }
 
-  const filteredApps = apps.filter(app =>
-    app.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const q = search.trim().toLowerCase()
+  const dockApps = DOCK_IDS.map(id => appById(id)!)
+  const gridApps = [...APPS.filter(a => q || !DOCK_IDS.includes(a.id)), TOUR_APP, ...LINKS].filter(
+    a => !q || a.name.toLowerCase().includes(q) || a.title.toLowerCase().includes(q)
+  )
+
+  const browser = `${system.browserName}${system.browserVersion ? ' ' + system.browserVersion : ''}`
+  const deviceLine = system.model ? `${system.model}, ${system.osLabel}` : system.osLabel
+  const iconSize = isIOS ? 60 : 56
+
+  const searchField = (
+    <div className="relative">
+      <input
+        type="search"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Search apps"
+        aria-label="Search apps"
+        className={`w-full h-11 pl-11 pr-4 text-sm text-white placeholder-white/70 bg-white/18 backdrop-blur-xl border border-white/15 focus:outline-none focus:border-white/60 ${
+          isIOS ? 'rounded-2xl' : 'rounded-full'
+        }`}
+      />
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/80 pointer-events-none" />
+    </div>
   )
 
   return (
-    <div className="h-full w-full relative flex flex-col justify-between overflow-hidden select-none bg-slate-950 font-sans">
-      {/* Mobile background wallpaper layers with cross-fade transition */}
-      <div className="absolute inset-0 -z-20 overflow-hidden bg-slate-900 pointer-events-none">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${prevWallpaper})` }}
-        />
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-500 ease-in-out"
-          style={{ 
-            backgroundImage: `url(${wallpaper})`,
-            opacity: fade ? 1 : 0
-          }}
-        />
+    <div className="h-full w-full relative isolate flex flex-col overflow-hidden select-none">
+      <Wallpaper />
+
+      {/* Status bar: the visitor's real clock, connection and battery */}
+      <div
+        className={`flex items-center justify-between flex-shrink-0 z-[200] transition-colors duration-300 ${
+          isIOS ? 'h-11 px-7 text-[15px] font-semibold' : 'h-9 px-5 text-[13px] font-medium'
+        } ${activeApp ? 'surface text-[var(--bar-ink)]' : 'text-white'}`}
+      >
+        <span className="tabular-nums">{formatTime(now)}</span>
+        <span className="flex items-center gap-2">
+          <NetworkIcon className="w-4 h-4" />
+          <BatteryIcon showPercent={!isIOS} />
+        </span>
       </div>
 
-      {/* Dynamic Theme backdrop overlay to soften background contrast */}
-      <div className="absolute inset-0 bg-white/5 dark:bg-black/15 -z-19 pointer-events-none transition-colors duration-500" />
-      {/* 1. Android/iOS Status Bar (Sticky at top, adapts theme) */}
-      <div className={`h-8 px-4 flex items-center justify-between text-[11px] font-semibold z-[200] transition-all duration-300 ${
-        activeApp 
-          ? theme === 'light'
-            ? 'text-slate-700 bg-[#f9f6f0] border-b border-[#e4ded0]'
-            : 'text-slate-200 bg-slate-900 border-b border-slate-800'
-          : 'text-white bg-black/10 backdrop-blur-[1px]'
-      }`}>
-        <div className="flex items-center gap-2">
-          <span>{time}</span>
-          {visitorCount !== null && <span className="opacity-45">•</span>}
-          {visitorCount !== null && (
-            <span className="text-[10px] tracking-wide font-medium flex items-center gap-0.5" title="Visitors">
-              👥 {visitorCount.toLocaleString()}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-1.5">
-          <Signal className="w-3.5 h-3.5" />
-          <Wifi className="w-3.5 h-3.5" />
-          <Battery className="w-4 h-4 rotate-90" />
-        </div>
-      </div>
-
-      {/* Main Screenspace Container */}
       <div className="flex-1 relative flex flex-col overflow-hidden">
-        {/* Clock, Widgets, Apps & Dock (only when no app is open) */}
         {!activeApp && (
-          <>
-            <div className="flex-1 flex flex-col px-6 pt-4 relative overflow-y-auto pb-20">
-              {/* 2. Clock & Date Widget (Pixel style) */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-white mt-4 mb-6 flex flex-col items-center text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] font-display"
-              >
-                <h1 className="text-5xl font-bold tracking-tight">{time}</h1>
-                <p className="text-sm font-medium mt-1 opacity-90">{dateStr}</p>
-              </motion.div>
+          <motion.div
+            initial={false}
+            animate={{ opacity: booted ? 1 : 0, scale: booted ? 1 : 1.06 }}
+            transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+            className="flex-1 flex flex-col min-h-0"
+          >
+            <div className="flex-1 overflow-y-auto px-6 pt-3 pb-4">
+              <div className="max-w-sm mx-auto w-full">
+                {isIOS ? (
+                  /* iOS: a widget card */
+                  <section aria-label="Your device" className="glass-panel rounded-[26px] p-4 mb-7 text-[var(--bar-ink)]">
+                    <p className="text-xs opacity-60">{greetingFor(now)}</p>
+                    <p className="font-display text-[22px] font-semibold tracking-tight leading-tight mt-0.5">{formatDate(now, 'long')}</p>
+                    <p className="text-xs opacity-70 mt-2">
+                      {browser} on {deviceLine}
+                      {battery ? `, battery at ${Math.round(battery.level * 100)}%` : ''}
+                    </p>
+                    {visitorCount !== null && <p className="text-xs opacity-55 mt-0.5">Visit number {visitorCount.toLocaleString()}</p>}
+                  </section>
+                ) : (
+                  /* Android: "At a glance" sitting straight on the wallpaper */
+                  <section aria-label="Your device" className="on-wallpaper mb-9 mt-3">
+                    <p className="font-display text-[30px] leading-tight">{formatDate(now)}</p>
+                    <p className="text-sm opacity-90 mt-1">
+                      {greetingFor(now)}. {browser} on {deviceLine}
+                      {battery ? `, ${Math.round(battery.level * 100)}%` : ''}
+                    </p>
+                    {visitorCount !== null && <p className="text-xs opacity-75 mt-0.5">Visit number {visitorCount.toLocaleString()}</p>}
+                  </section>
+                )}
 
-              {/* 3. Aesthetic Google Search Bar */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="w-full max-w-sm mx-auto mb-8"
-              >
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search apps..."
-                    className="w-full text-xs pl-9 pr-4 py-2.5 rounded-full border border-white/15 bg-white/20 dark:bg-black/20 backdrop-blur-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                  />
-                  <Search className="absolute left-3 top-3 w-4 h-4 text-white/70" />
-                </div>
-              </motion.div>
-
-              {/* 4. Applications Grid */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="grid grid-cols-4 gap-y-6 gap-x-4 max-w-sm mx-auto w-full"
-              >
-                {filteredApps.map(app => {
-                  const Icon = app.icon
-                  return (
-                    <button
-                      key={app.id}
-                      onClick={() => handleAppLaunch(app.id, app.isExternal, app.url)}
-                      aria-label={app.id === 'tour' ? 'Take the tour' : `Open ${app.name}`}
-                      className="flex flex-col items-center cursor-pointer group active:scale-90 transition-transform"
-                    >
-                      <div className={`w-12 h-12 rounded-2xl ${app.color.startsWith('from-') ? 'bg-gradient-to-tr text-white' : ''} ${app.color} shadow-lg shadow-black/10 flex items-center justify-center mb-1.5`}>
-                        <Icon className="w-5.5 h-5.5 stroke-[1.8]" />
-                      </div>
-                      <span className="text-[10px] font-bold text-white text-center tracking-wide leading-tight line-clamp-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                        {app.name}
-                      </span>
-                    </button>
-                  )
-                })}
-              </motion.div>
+                {gridApps.length === 0 ? (
+                  <p className="on-wallpaper text-sm text-center py-10">Nothing here is called “{search}”.</p>
+                ) : (
+                  <div className="grid grid-cols-4 gap-y-6 gap-x-3">
+                    {gridApps.map(app => (
+                      <button
+                        key={app.id}
+                        type="button"
+                        onClick={() => launch(app)}
+                        aria-label={app.id === 'tour' ? 'Take the tour' : `Open ${app.title}`}
+                        className="flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform duration-150"
+                      >
+                        <AppIcon app={app} size={iconSize} />
+                        <span className="on-wallpaper text-[11.5px] leading-tight line-clamp-1">{app.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Tour finished / skipped notice */}
             {tourNotice && (
-              <div role="status" className="mx-6 mb-3 max-w-sm self-center w-[calc(100%-3rem)] glass-panel rounded-2xl px-4 py-3 flex items-start gap-3 text-xs text-slate-700 dark:text-slate-200 shadow-xl">
-                <Compass className="w-4 h-4 text-violet-500 flex-shrink-0 mt-0.5" />
+              <div role="status" className="mx-6 mb-3 max-w-sm self-center w-[calc(100%-3rem)] glass-panel rounded-2xl px-4 py-3 flex items-start gap-3 text-xs text-[var(--bar-ink)]">
+                <Compass className="w-4 h-4 text-accent-500 flex-shrink-0 mt-0.5" />
                 <p className="flex-1 leading-relaxed">{tourNotice}</p>
-                <button type="button" onClick={() => startTour()} className="font-bold text-violet-600 dark:text-violet-400 cursor-pointer whitespace-nowrap">
-                  Restart
+                <button type="button" onClick={() => startTour()} className="font-semibold text-accent-600 dark:text-accent-400 cursor-pointer whitespace-nowrap">
+                  Restart tour
                 </button>
-                <button type="button" onClick={() => setTourNotice(null)} aria-label="Dismiss" className="text-slate-400 cursor-pointer">
+                <button type="button" onClick={() => setTourNotice(null)} aria-label="Dismiss" className="opacity-50 cursor-pointer">
                   <X className="w-4 h-4" />
                 </button>
               </div>
             )}
 
-            {/* 5. Mobile Dock (Bottom pinned launcher apps) */}
-            <div className="px-6 pb-6 w-full z-10">
-              <div className="max-w-sm mx-auto p-3.5 rounded-3xl glass backdrop-blur-2xl flex justify-around shadow-2xl border border-white/15 dark:border-white/5">
-                {dockApps.map(app => {
-                  const Icon = app.icon
-                  return (
+            {/* Dock and search: iOS puts search above a glass dock, Android below a bare one */}
+            <div className="px-5 pb-3 w-full flex-shrink-0">
+              <div className="max-w-sm mx-auto flex flex-col gap-3">
+                {isIOS && searchField}
+                <div className={`flex justify-around ${isIOS ? 'p-3.5 rounded-[34px] glass-panel' : 'px-1 py-1'}`}>
+                  {dockApps.map(app => (
                     <button
                       key={app.id}
-                      onClick={() => handleAppLaunch(app.id)}
-                      aria-label={`Open ${app.name}`}
-                      className="flex flex-col items-center cursor-pointer active:scale-90 transition-transform"
+                      type="button"
+                      onClick={() => launch(app)}
+                      aria-label={`Open ${app.title}`}
+                      className="cursor-pointer active:scale-90 transition-transform duration-150"
                     >
-                      <div className={`w-11 h-11 rounded-2xl ${app.color} shadow flex items-center justify-center`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
+                      <AppIcon app={app} size={iconSize} />
                     </button>
-                  )
-                })}
+                  ))}
+                </div>
+                {!isIOS && searchField}
               </div>
             </div>
-          </>
+          </motion.div>
         )}
 
-        {/* 6. Active App Fullscreen Panel Overlay */}
+        {/* Open app */}
         <AnimatePresence>
           {activeApp && (
             <motion.div
-              initial={{ opacity: 0, y: 60, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 60, scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 220, damping: 24 }}
-              className="absolute inset-0 bg-slate-50 dark:bg-[#0f121d] flex flex-col z-[100]"
+              key="app"
+              initial={isIOS ? { opacity: 0, scale: 0.82, borderRadius: 44 } : { opacity: 0, y: 70 }}
+              animate={isIOS ? { opacity: 1, scale: 1, borderRadius: 0 } : { opacity: 1, y: 0 }}
+              exit={isIOS ? { opacity: 0, scale: 0.82, borderRadius: 44 } : { opacity: 0, y: 70 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="absolute inset-0 surface glass !border-0 !shadow-none flex flex-col z-[100] overflow-hidden"
             >
-              {/* Native App Top Navigation Bar */}
-              <div className="h-14 px-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md flex-shrink-0 select-none">
-                <button
-                  onClick={closeApp}
-                  className="flex items-center gap-1 text-slate-600 dark:text-slate-300 text-xs font-bold py-2 pr-3 cursor-pointer"
-                >
-                  <ChevronLeft className="w-5 h-5 text-violet-500" />
-                  <span>Launcher</span>
-                </button>
+              {isIOS ? (
+                <div className="relative h-11 px-2 flex items-center flex-shrink-0 border-b border-[var(--glass-border)] text-[var(--bar-ink)]">
+                  <button type="button" onClick={closeApp} className="flex items-center text-accent-500 text-[17px] py-2 pr-3 cursor-pointer">
+                    <ChevronLeft className="w-6 h-6 -mr-0.5" />
+                    Home
+                  </button>
+                  <span className="absolute left-1/2 -translate-x-1/2 text-[17px] font-semibold pointer-events-none">
+                    {appById(activeApp)?.title}
+                  </span>
+                </div>
+              ) : (
+                <div className="h-14 px-2 flex items-center gap-2 flex-shrink-0 text-[var(--bar-ink)]">
+                  <button type="button" onClick={closeApp} aria-label="Back to home" className="w-11 h-11 rounded-full flex items-center justify-center active:bg-current/10 cursor-pointer">
+                    <ArrowLeft className="w-6 h-6" />
+                  </button>
+                  <span className="font-display text-[20px]">{appById(activeApp)?.title}</span>
+                </div>
+              )}
 
-                <span className="text-sm font-bold text-slate-800 dark:text-white font-display">
-                  {(() => {
-                    const app = apps.find(a => a.id === activeApp)
-                    return app?.title || app?.name
-                  })()}
-                </span>
-                
-                {/* placeholder for symmetrical design */}
-                <div className="w-12 h-6" />
-              </div>
-
-              {/* App Viewport Container */}
               <div className="flex-1 overflow-hidden relative">
-                {activeApp === 'about' && <AboutApp />}
-                {activeApp === 'projects' && <ProjectsApp />}
-                {activeApp === 'resume' && <ResumeApp />}
-                {activeApp === 'gallery' && <GalleryApp />}
-                {activeApp === 'blog' && <BlogApp />}
-                {activeApp === 'settings' && <SettingsApp />}
-                {activeApp === 'contact' && <ContactApp />}
-                {activeApp === 'certifications' && <CertificationsApp />}
-                {activeApp === 'experience' && <ExperienceApp />}
-                {activeApp === 'chat' && <ChatApp onOpenContact={openContact} />}
+                <AppContent id={activeApp} onOpenContact={openContact} />
               </div>
 
-              {/* Guided tour controls */}
               {tourStep !== null && activeApp === tourAppId && (
                 <TourBar step={tourStep} onNext={nextTourStep} onSkip={skipTour} compact />
               )}
-
-              {/* Android Navigation Bar Pill at Bottom */}
-              <div className="h-6 w-full flex items-center justify-center bg-transparent select-none flex-shrink-0">
-                <div 
-                  onClick={closeApp}
-                  className="w-28 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 opacity-60 active:scale-95 cursor-pointer"
-                />
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Home indicator / gesture pill */}
+      <div className={`h-6 flex items-center justify-center flex-shrink-0 z-[200] ${activeApp ? 'surface' : ''}`}>
+        <button
+          type="button"
+          onClick={() => activeApp && closeApp()}
+          aria-label="Home"
+          tabIndex={activeApp ? 0 : -1}
+          className={`h-[5px] rounded-full cursor-pointer ${isIOS ? 'w-36' : 'w-24'} ${activeApp ? 'bg-[var(--bar-ink)] opacity-70' : 'bg-white/80'}`}
+        />
       </div>
     </div>
   )

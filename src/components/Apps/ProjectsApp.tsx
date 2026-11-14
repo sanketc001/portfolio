@@ -12,7 +12,7 @@ const FeaturedCard: React.FC<{ project: FeaturedProject; stars?: number }> = ({ 
   const image = project.images[imageIndex]
 
   return (
-    <article className="flex flex-col rounded-2xl glass border border-white/10 dark:border-white/5 overflow-hidden hover:border-violet-500/40 transition-colors">
+    <article className="flex flex-col rounded-2xl glass border border-white/10 dark:border-white/5 overflow-hidden hover:border-accent-500/40 transition-colors">
       {image ? (
         <div className="relative aspect-[2/1] bg-slate-900 overflow-hidden">
           <img
@@ -36,8 +36,8 @@ const FeaturedCard: React.FC<{ project: FeaturedProject; stars?: number }> = ({ 
           )}
         </div>
       ) : (
-        <div className="aspect-[2/1] bg-gradient-to-br from-violet-600/90 via-indigo-700/90 to-slate-900 flex flex-col justify-end p-5">
-          <span className="font-mono text-[11px] text-violet-200/80">github.com/sanketc001/</span>
+        <div className="aspect-[2/1] bg-gradient-to-br from-accent-600/90 via-indigo-700/90 to-slate-900 flex flex-col justify-end p-5">
+          <span className="font-mono text-[11px] text-accent-200/80">github.com/sanketc001/</span>
           <span className="font-mono text-lg font-bold text-white break-all">{project.name}</span>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {project.topics.map(t => (
@@ -71,7 +71,7 @@ const FeaturedCard: React.FC<{ project: FeaturedProject; stars?: number }> = ({ 
 
         <div className="flex flex-wrap gap-1.5 mt-4">
           {project.stack.map(item => (
-            <span key={item} className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-violet-500/10 text-violet-600 dark:text-violet-300 border border-violet-500/20">
+            <span key={item} className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-accent-500/10 text-accent-600 dark:text-accent-300 border border-accent-500/20">
               {item}
             </span>
           ))}
@@ -81,7 +81,7 @@ const FeaturedCard: React.FC<{ project: FeaturedProject; stars?: number }> = ({ 
           href={project.html_url}
           target="_blank"
           rel="noreferrer"
-          className="mt-4 pt-3 border-t border-slate-200/40 dark:border-slate-800/40 inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-violet-500 dark:hover:text-violet-400 transition-colors"
+          className="mt-4 pt-3 border-t border-slate-200/40 dark:border-slate-800/40 inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-accent-500 dark:hover:text-accent-400 transition-colors"
         >
           <span>View repository</span>
           <ExternalLink className="w-3.5 h-3.5" />
@@ -181,7 +181,7 @@ export const ProjectsApp: React.FC = () => {
             {tabButton('all', 'All repositories')}
           </div>
           <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-violet-500" />
+            <Sparkles className="w-3.5 h-3.5 text-accent-500" />
             Problem → what I built → stack
           </span>
         </div>
@@ -207,7 +207,7 @@ export const ProjectsApp: React.FC = () => {
       {/* GitHub account sync header */}
       <div className="p-4 border-b border-slate-200/50 dark:border-slate-800/50 flex flex-wrap gap-4 items-center justify-between bg-white/5 backdrop-blur-md">
         <div className="flex items-center gap-2">
-          <FolderOpen className="w-5 h-5 text-violet-500" />
+          <FolderOpen className="w-5 h-5 text-accent-500" />
           <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
             {projectsSource === 'live' ? `Live from GitHub (@${githubUsername})` : 'Curated list'}
           </span>
@@ -220,13 +220,13 @@ export const ProjectsApp: React.FC = () => {
                 type="text"
                 value={usernameInput}
                 onChange={e => setUsernameInput(e.target.value)}
-                className="px-2 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500"
+                className="px-2 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-accent-500"
                 placeholder="GitHub Username"
                 autoFocus
               />
               <button
                 type="submit"
-                className="px-2 py-1 text-xs bg-violet-600 hover:bg-violet-700 text-white rounded font-medium cursor-pointer"
+                className="px-2 py-1 text-xs bg-accent-600 hover:bg-accent-700 text-white rounded font-medium cursor-pointer"
               >
                 Sync
               </button>
@@ -245,11 +245,11 @@ export const ProjectsApp: React.FC = () => {
             <>
               <button
                 onClick={() => setEditingUsername(true)}
-                className="px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-violet-500 hover:text-white dark:hover:bg-violet-600 transition-colors font-medium cursor-pointer"
+                className="px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-accent-500 hover:text-white dark:hover:bg-accent-600 transition-colors font-medium cursor-pointer"
               >
                 Change Account
               </button>
-              {loadingProjects && <RefreshCw className="w-4 h-4 text-violet-500 animate-spin" />}
+              {loadingProjects && <RefreshCw className="w-4 h-4 text-accent-500 animate-spin" />}
             </>
           )}
         </div>
@@ -265,7 +265,7 @@ export const ProjectsApp: React.FC = () => {
               onClick={() => setFilterLang(lang)}
               className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap cursor-pointer transition-all ${
                 filterLang === lang
-                  ? 'bg-violet-600 text-white shadow-md'
+                  ? 'bg-accent-600 text-white shadow-md'
                   : 'bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'
               }`}
             >
@@ -281,7 +281,7 @@ export const ProjectsApp: React.FC = () => {
             value={searchWord}
             onChange={e => setSearchWord(e.target.value)}
             placeholder="Search projects..."
-            className="w-full text-xs pl-8 pr-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+            className="w-full text-xs pl-8 pr-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
           />
           <Search className="absolute left-2.5 top-2 w-4 h-4 text-slate-400" />
         </div>
@@ -320,10 +320,10 @@ export const ProjectsApp: React.FC = () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   key={repo.id}
-                  className="group relative flex flex-col p-5 rounded-2xl glass border border-white/10 dark:border-white/5 hover:border-violet-500/40 dark:hover:border-violet-500/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+                  className="group relative flex flex-col p-5 rounded-2xl glass border border-white/10 dark:border-white/5 hover:border-accent-500/40 dark:hover:border-accent-500/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-base font-bold text-slate-800 dark:text-white tracking-tight group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors">
+                    <h3 className="text-base font-bold text-slate-800 dark:text-white tracking-tight group-hover:text-accent-500 dark:group-hover:text-accent-400 transition-colors">
                       {repo.name}
                     </h3>
                     {projectsSource === 'live' && typeof repo.stars === 'number' && repo.stars > 0 && (
@@ -356,7 +356,7 @@ export const ProjectsApp: React.FC = () => {
                       href={repo.html_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-violet-500 dark:hover:text-violet-400 transition-colors"
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-accent-500 dark:hover:text-accent-400 transition-colors"
                     >
                       <span>Repository</span>
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -366,7 +366,7 @@ export const ProjectsApp: React.FC = () => {
                         href={repo.homepage}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-violet-500 dark:hover:text-violet-400 transition-colors ml-auto"
+                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-accent-500 dark:hover:text-accent-400 transition-colors ml-auto"
                       >
                         <span>Live Demo</span>
                         <ExternalLink className="w-3.5 h-3.5" />

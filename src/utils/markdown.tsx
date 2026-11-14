@@ -13,7 +13,7 @@ function safeHref(url: string): string | null {
   return null
 }
 
-const linkClass = 'text-violet-600 dark:text-violet-400 underline underline-offset-2 hover:text-violet-500 break-words'
+const linkClass = 'text-accent-600 dark:text-accent-400 underline underline-offset-2 hover:text-accent-500 break-words'
 
 function renderInline(text: string, keyPrefix = 'i'): React.ReactNode[] {
   const nodes: React.ReactNode[] = []

@@ -2,7 +2,9 @@ import React, { useRef, useState, useEffect } from 'react'
 import { motion, useDragControls, useMotionValue } from 'framer-motion'
 import { useOS } from '../context/OSContext'
 import type { WindowState } from '../context/OSContext'
-import { X, Minus, Square, Minimize2, Move } from 'lucide-react'
+import { X, Minus, Square, Copy, Maximize2, Minimize2 } from 'lucide-react'
+import { AppIcon } from '../apps'
+import { appById } from '../appRegistry'
 import { TourBar } from '../components/Common/TourBar'
 import { TOUR_STEPS } from '../tour'
 
@@ -19,6 +21,8 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
     closeWindow,
     minimizeWindow,
     toggleMaximizeWindow,
+    os,
+    insets,
     tourStep,
     nextTourStep,
     skipTour
@@ -43,6 +47,23 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
     setSize({ w: windowState.w, h: windowState.h })
     setPosition({ x: windowState.x, y: windowState.y })
   }
+
+  // Keep the window inside the workspace when the browser is resized. Runs a frame
+  // late so it also settles the drag offsets after the drag layer has re-measured.
+  useEffect(() => {
+    const onResize = () => {
+      requestAnimationFrame(() => {
+        dragX.set(0)
+        dragY.set(0)
+        setPosition(prev => ({
+          x: Math.max(insets.left, Math.min(prev.x, window.innerWidth - 160)),
+          y: Math.max(insets.top, Math.min(prev.y, window.innerHeight - insets.bottom - 60))
+        }))
+      })
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [dragX, dragY, insets])
 
   // Track mode transition (maximize/minimize) to disable spring animations during manual drags
   const prevMaximized = useRef(isMaximized)
@@ -116,6 +137,11 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
 
   if (!isOpen) return null
 
+  const app = appById(id)
+  const closeTitle = tourStep !== null && TOUR_STEPS[tourStep]?.id === id ? 'Close (continues the tour)' : 'Close'
+  // Title-bar buttons must not start a window drag.
+  const noDrag = (e: React.PointerEvent) => e.stopPropagation()
+
   const isFocused = activeWindowId === id
   const isTourWindow = tourStep !== null && TOUR_STEPS[tourStep]?.id === id
 
@@ -125,23 +151,31 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
       onMouseDown={handleMouseDown}
       role="dialog"
       aria-label={title}
-      initial={{ opacity: 0, scale: 0.97 }}
+      initial={{ opacity: 0, scale: 0.94 }}
       animate={
         isMinimized
-          ? { opacity: 0, scale: 0.8, y: 150, pointerEvents: 'none' }
+          ? os === 'linux'
+            ? { opacity: 0, scale: 0.6, x: -220, pointerEvents: 'none' }
+            : { opacity: 0, scale: 0.5, y: 320, pointerEvents: 'none' }
           : isMaximized
           ? {
               opacity: 1,
               scale: 1,
-              left: 0,
-              top: 0,
-              width: '100%',
-              height: 'calc(100% - 48px)', // Subtract taskbar height
+              // Explicit so the minimise offset is animated back out on restore
+              x: 0,
+              y: 0,
+              left: insets.left,
+              top: insets.top,
+              width: `calc(100% - ${insets.left}px)`,
+              height: `calc(100% - ${insets.top + insets.bottom}px)`,
               pointerEvents: 'auto'
             }
           : {
               opacity: 1,
               scale: 1,
+              // Explicit so the minimise offset is animated back out on restore
+              x: 0,
+              y: 0,
               left: position.x,
               top: position.y,
               width: size.w,
@@ -165,8 +199,8 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
       drag={!isMaximized}
       dragListener={false}
       dragControls={dragControls}
-      dragConstraints={containerRef}
-      dragElastic={0.02}
+      // No ref constraints: the drag layer re-measures them mid open-animation and
+      // shoves the window into a corner. Bounds are enforced in onDragEnd instead.
       dragMomentum={false}
       onDragEnd={() => {
         const dx = dragX.get()
@@ -184,7 +218,7 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
             // Keep at least 150px of the window width visible on screen
             newX = Math.max(150 - size.w, Math.min(containerWidth - 150, newX))
             // Keep title bar within the vertical workspace bounds
-            newY = Math.max(0, Math.min(containerHeight - 100, newY))
+            newY = Math.max(insets.top, Math.min(containerHeight - insets.bottom - 60, newY))
           }
 
           return { x: newX, y: newY }
@@ -194,66 +228,96 @@ export const Window: React.FC<WindowProps> = ({ windowState, children, container
         dragX.set(0)
         dragY.set(0)
       }}
-      className={`absolute rounded-xl overflow-hidden shadow-2xl flex flex-col glass border transition-shadow duration-300 ${
-        isFocused
-          ? 'ring-1 ring-violet-500/20 shadow-violet-500/5 border-white/20 dark:border-white/10'
-          : 'border-white/10 dark:border-white/5 opacity-90'
-      }`}
+      className={`absolute overflow-hidden flex flex-col glass transition-shadow duration-300 ${
+        isMaximized ? 'rounded-none' : 'rounded-[var(--win-radius)]'
+      } ${isFocused ? '' : '!shadow-lg'}`}
     >
-      {/* Title Bar */}
+      {/* Title bar, laid out the way the active skin does it */}
       <div
         onDoubleClick={() => toggleMaximizeWindow(id)}
-        onPointerDown={(e) => {
+        onPointerDown={e => {
           focusWindow(id)
           dragControls.start(e)
         }}
-        className="h-10 px-4 flex items-center justify-between border-b border-slate-200/30 dark:border-slate-800/30 bg-slate-100/40 dark:bg-slate-900/40 cursor-default select-none flex-shrink-0"
+        className={`relative flex items-center flex-shrink-0 cursor-default select-none text-[var(--bar-ink)] ${
+          os === 'windows' ? 'h-9 pl-3' : os === 'macos' ? 'h-9 px-3.5' : 'h-10 px-2.5'
+        }`}
       >
-        {/* Windows-like OS Control Dots on Left */}
-        <div className="flex gap-2 items-center">
-          <button
-            onClick={() => closeWindow(id)}
-            className="w-3 h-3 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center group cursor-pointer transition-colors"
-            title={isTourWindow ? 'Close (continues the tour)' : 'Close'}
-            aria-label="Close window"
-          >
-            <X className="w-2 h-2 text-rose-950 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
-          
-          <button
-            onClick={() => minimizeWindow(id)}
-            className="w-3 h-3 rounded-full bg-amber-500 hover:bg-amber-600 flex items-center justify-center group cursor-pointer transition-colors"
-            title="Minimize"
-            aria-label="Minimize window"
-          >
-            <Minus className="w-2 h-2 text-amber-950 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
+        {os === 'macos' && (
+          <div className="group flex gap-2 items-center" onPointerDown={noDrag}>
+            {[
+              { label: 'Close window', title: closeTitle, on: () => closeWindow(id), color: 'bg-[#ff5f57]', Glyph: X },
+              { label: 'Minimize window', title: 'Minimize', on: () => minimizeWindow(id), color: 'bg-[#febc2e]', Glyph: Minus },
+              {
+                label: isMaximized ? 'Restore window' : 'Maximize window',
+                title: isMaximized ? 'Restore' : 'Maximize',
+                on: () => toggleMaximizeWindow(id),
+                color: 'bg-[#28c840]',
+                Glyph: isMaximized ? Minimize2 : Maximize2
+              }
+            ].map(b => (
+              <button
+                key={b.label}
+                type="button"
+                onClick={b.on}
+                title={b.title}
+                aria-label={b.label}
+                className={`w-3 h-3 rounded-full flex items-center justify-center cursor-default border border-black/10 ${
+                  isFocused ? b.color : 'bg-current/20'
+                }`}
+              >
+                <b.Glyph className="w-2 h-2 text-black/60 stroke-[3] opacity-0 group-hover:opacity-100" />
+              </button>
+            ))}
+          </div>
+        )}
 
-          <button
-            onClick={() => toggleMaximizeWindow(id)}
-            className="w-3 h-3 rounded-full bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center group group-hover:scale-100 cursor-pointer transition-colors"
-            title="Maximize"
-            aria-label="Maximize window"
+        {os === 'windows' ? (
+          <span className={`flex items-center gap-2 text-xs ${isFocused ? '' : 'opacity-55'}`}>
+            {app && <AppIcon app={app} size={16} className="!shadow-none" />}
+            {title}
+          </span>
+        ) : (
+          <span
+            className={`absolute left-1/2 -translate-x-1/2 text-[13px] font-semibold pointer-events-none whitespace-nowrap ${
+              isFocused ? 'opacity-85' : 'opacity-45'
+            }`}
           >
-            {isMaximized ? (
-              <Minimize2 className="w-2 h-2 text-emerald-950 opacity-0 group-hover:opacity-100 transition-opacity" />
-            ) : (
-              <Square className="w-1.5 h-1.5 text-emerald-950 opacity-0 group-hover:opacity-100 transition-opacity" />
-            )}
-          </button>
-        </div>
+            {title}
+          </span>
+        )}
 
-        {/* Window Title */}
-        <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 tracking-wide font-sans">
-          {title}
-        </span>
+        {os === 'windows' && (
+          <div className="ml-auto flex self-stretch" onPointerDown={noDrag}>
+            <button type="button" onClick={() => minimizeWindow(id)} title="Minimize" aria-label="Minimize window" className="w-[46px] flex items-center justify-center hover:bg-current/10 cursor-default transition-colors">
+              <Minus className="w-4 h-4 stroke-[1.25]" />
+            </button>
+            <button type="button" onClick={() => toggleMaximizeWindow(id)} title={isMaximized ? 'Restore' : 'Maximize'} aria-label={isMaximized ? 'Restore window' : 'Maximize window'} className="w-[46px] flex items-center justify-center hover:bg-current/10 cursor-default transition-colors">
+              {isMaximized ? <Copy className="w-3 h-3 stroke-[1.5] -scale-x-100" /> : <Square className="w-3 h-3 stroke-[1.5]" />}
+            </button>
+            <button type="button" onClick={() => closeWindow(id)} title={closeTitle} aria-label="Close window" className="w-[46px] flex items-center justify-center hover:bg-[#c42b1c] hover:text-white cursor-default transition-colors">
+              <X className="w-4 h-4 stroke-[1.25]" />
+            </button>
+          </div>
+        )}
 
-        {/* Utility Icon */}
-        <Move className="w-3.5 h-3.5 text-slate-400 opacity-30 pointer-events-none" />
+        {os === 'linux' && (
+          <div className="ml-auto flex items-center gap-2" onPointerDown={noDrag}>
+            <button type="button" onClick={() => minimizeWindow(id)} title="Minimize" aria-label="Minimize window" className="w-6 h-6 rounded-full flex items-center justify-center bg-current/10 hover:bg-current/20 cursor-pointer transition-colors">
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <button type="button" onClick={() => toggleMaximizeWindow(id)} title={isMaximized ? 'Restore' : 'Maximize'} aria-label={isMaximized ? 'Restore window' : 'Maximize window'} className="w-6 h-6 rounded-full flex items-center justify-center bg-current/10 hover:bg-current/20 cursor-pointer transition-colors">
+              {isMaximized ? <Copy className="w-3 h-3 -scale-x-100" /> : <Square className="w-3 h-3" />}
+            </button>
+            <button type="button" onClick={() => closeWindow(id)} title={closeTitle} aria-label="Close window" className="w-6 h-6 rounded-full flex items-center justify-center bg-current/10 hover:bg-current/20 cursor-pointer transition-colors">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Window Content */}
-      <div className="flex-1 overflow-hidden bg-[#faf8f4]/95 dark:bg-[#131722]/95 relative">
+      <div className="flex-1 overflow-hidden surface border-t border-[var(--glass-border)] relative">
         {children}
       </div>
 
