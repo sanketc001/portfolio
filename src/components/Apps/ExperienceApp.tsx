@@ -144,7 +144,15 @@ export const ExperienceApp: React.FC = () => {
             </div>
             <div className="p-4 rounded-xl bg-gradient-to-br from-accent-50 to-accent-100/50 dark:from-accent-500/10 dark:to-accent-500/5 border border-accent-200/50 dark:border-accent-500/20">
               <p className="text-sm font-bold text-slate-800 dark:text-white">Top Partner Employee ×2</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Dec 2023 & Jan 2025, for the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Dec 2023 & Jan 2025, for the IPL 2023 ad analytics and the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives.</p>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60">
+              <p className="text-sm font-bold text-slate-800 dark:text-white">On-the-Fly Awards</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">From Quest Global for the Philips GenAI PoC and internal SDLC automation, and from the Jio team in November 2026.</p>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60">
+              <p className="text-sm font-bold text-slate-800 dark:text-white">Quest–Jio AI Demo Day</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Owned the demos and presentation; the day won 4 new projects and expanded 2 ongoing ones.</p>
             </div>
           </div>
         </section>

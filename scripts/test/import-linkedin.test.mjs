@@ -333,6 +333,26 @@ test('certifications are replaced, trimmed and sorted by relevance then date', (
   assert.deepEqual(summary.certifications.removed, ['Placeholder']);
 });
 
+test('certifications listed twice with one credential ID keep the issuer entry', () => {
+  const csv =
+    'Name,Url,Authority,Started On,Finished On,License Number\r\n' +
+    'Neural Networks and Deep Learning,https://example.com/c,Coursera,Jun 2020,,BBB\r\n' +
+    'Neural Networks and Deep Learning,,DeepLearning.AI,Jun 2020,,BBB\r\n' +
+    'C Programming Specialization,https://example.com/s,Coursera,Jul 2020,,DDD\r\n' +
+    'C Programming,https://example.com/u,University of Colorado System,Jul 2020,,DDD\r\n' +
+    'Design Thinking,https://example.com/1,Coursera,Aug 2020,,AAA\r\n';
+  const parsed = parseExport({ ...exportFiles, certifications: csv });
+  const { data } = applyImport(structuredClone(BASE_DATA), parsed, CONFIG);
+  assert.deepEqual(
+    data.certifications.map((c) => [c.title, c.issuer, c.credentialId, c.url]),
+    [
+      ['Neural Networks and Deep Learning', 'DeepLearning.AI', 'BBB', 'https://example.com/c'],
+      ['Design Thinking', 'Coursera', 'AAA', 'https://example.com/1'],
+      ['C Programming', 'University of Colorado System', 'DDD', 'https://example.com/u'],
+    ],
+  );
+});
+
 test('skills: rename, hide, map categories, no case-insensitive duplicates', () => {
   const { data, summary } = run();
   assert.deepEqual(data.skills, { AI: ['RAG', 'LangChain'], Engineering: ['python'], Other: ['Knitting'] });

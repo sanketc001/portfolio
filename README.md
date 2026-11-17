@@ -15,7 +15,7 @@ Instead of a single scrolling page, each section of the portfolio is an "app" th
 | Experience | Work timeline, education and awards |
 | Ask my portfolio | Chat that answers questions about the portfolio through the `chat-proxy` worker |
 | Contact / Mail | Contact form backed by Web3Forms, or a mailto button when no key is configured |
-| Resume.pdf | Embedded resume viewer |
+| Resume.pdf | Interactive resume and the master resume PDF (`public/Resume.pdf`), with links to role-specific versions in `public/resumes/` |
 | Certifications | Certificates with issuer, date, credential ID and link |
 | Media Gallery | Project screenshots from `public/gallery/` plus anything in `public/{documents,pictures,music,videos}` |
 | Developer Blog | Short posts |

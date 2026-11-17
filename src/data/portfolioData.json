@@ -3,9 +3,9 @@
     "name": "Sanket Choudhary",
     "title": "GenAI & ML Engineer | Technical Consultant",
     "headline": "GenAI & ML Engineer | Technical Consultant @ Reliance Jio via Quest Global | Building Production AI Systems | LLM · Stable Diffusion",
-    "pitch": "GenAI & ML engineer with 3+ years building production AI systems at Reliance Jio (via Quest Global). I automated live ad monitoring for IPL 2023 across 17 feeds and 12 languages, which contributed to a 15% increase in ad revenue; built the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives; and now work on on-device speech AI for the JioSphere browser. Outside work I build LLM agents, MCP servers and local-first AI tools end to end, from model calls to the UI. Open to Applied AI and Forward Deployed Engineer roles.",
+    "pitch": "GenAI & ML engineer with 3.5+ years building production AI systems at Reliance Jio (via Quest Global). I automated live ad monitoring for IPL 2023 across 17 feeds and 12 languages, which contributed to a 15% increase in ad revenue; built the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives; and now lead AI for the JioSphere browser. Client-facing by default: I owned the Quest–Jio AI Demo Day that won 4 new projects and delivered GenAI PoCs for Philips, GE Aerospace and Halliburton. Outside work I build LLM agents, MCP servers and local-first AI tools end to end, from model calls to the UI. Open to Applied AI, Forward Deployed Engineer and Senior Technical Consultant roles.",
     "avatar": "https://github.com/sanketc001.png",
-    "bio": "GenAI & ML Engineer with 3+ years of experience building production-grade AI systems at scale. Currently serving as AI Lead for JioSphere Browser at Reliance Jio via Quest Global, where I lead GenAI innovation across audio, video, and image-based offerings. Recognised as Top Partner Employee twice consecutively (December 2023 & January 2025) for driving measurable impact on GenAI ad products. Won the Jio-wide AI Agent Hackathon (July 2025) competing across one of India's largest technology organisations. Core expertise: Large Language Models, Retrieval-Augmented Generation, Stable Diffusion, multimodal AI, and full-stack AI integration — from research and prototyping through to production deployment. Passionate about applying AI to real-world products, civic infrastructure, and enterprise tooling as well as contributing time and effort for Social Good.",
+    "bio": "GenAI and ML engineer with 3.5+ years shipping production AI at Reliance Jio via Quest Global. Built live ad analytics for IPL 2023 (contributed to a 15% ad-revenue lift), Stable Diffusion fine-tuning for JioAds creatives, and now lead AI for the JioSphere browser. Client-facing by default: owned the Quest–Jio AI Demo Day that won 4 new projects, delivered GenAI PoCs for Philips, GE Aerospace and Halliburton, and mentored 17 engineers. Outside work I build agents, MCP servers and local-first AI tools end to end, from model calls to UI. Winner, Jio AI Agent Hackathon (2025, 80+ entries); Top Partner Employee twice.",
     "location": "Navi Mumbai, Maharashtra, India",
     "email": "sanketkumarchoudhary@gmail.com",
     "github": "https://github.com/sanketc001",
@@ -24,7 +24,14 @@
       "LangChain",
       "Natural Language Processing (NLP)",
       "TensorFlow",
-      "Conversational User Interfaces (CUI)"
+      "Conversational User Interfaces (CUI)",
+      "AI Agents & Tool Calling",
+      "Model Context Protocol (MCP)",
+      "LlamaIndex",
+      "LangGraph",
+      "LoRA Fine-tuning",
+      "ComfyUI",
+      "Eval & Ablation"
     ],
     "Engineering": [
       "Python",
@@ -41,7 +48,13 @@
       "C++",
       "C",
       "SQL",
-      "Web Scraping"
+      "Web Scraping",
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Playwright",
+      "Chrome DevTools Protocol",
+      "OpenTelemetry"
     ],
     "Media & Streaming": [
       "SCTE-35 Signal Parsing",
@@ -58,7 +71,10 @@
       "Data Collection",
       "Communication",
       "Team Leadership",
-      "Training"
+      "Training",
+      "Pre-sales & Solutioning",
+      "Client Demos",
+      "Mentoring"
     ]
   },
   "experience": [
@@ -67,7 +83,7 @@
       "company": "Quest Global @ Reliance Jio",
       "period": "March 2023 - Present",
       "location": "Navi Mumbai",
-      "description": "JioSphere Browser (Jan 2025 – Present)\n• Leading AI strategy for Jio's Chromium-based browser — the first Jio Platforms product on Linux, available across Android, iOS, Windows, macOS, Linux, KaiOS & Android TV\n• Building on-device Speech AI pipeline to replace Web Speech API using model compression & optimization for cross-device in-browser serving\n• Building Chrome extensions for rapid feature deployment and cross-platform testing\n\nJio AI Agent Hackathon — Winner (July 2025)\n• With a colleague, ideated and built a safety and evacuation push system that reaches people over RCS, SMS and email\n• Each person gets a ping with the exact evacuation path for their building or campus, worked out from their live GPS location taken through the browser\n• The same live locations are shared with the evacuation QRT and crisis response teams, so they can reach anyone who is restricted or whose surroundings are damaged, and the system pushes an updated path when that happens\n\nGenAI Ad Creative Platform — JioAds (2023 – 2024)\n• Set up LoRA and fine-tuning pipelines on Stable Diffusion 1.5 and SDXL so generated creatives matched each customer, cohort and category\n• Built a post-generation aesthetic scorer with automatic regeneration, so only the better-looking images were curated for JioHalo screensavers and GoLocal content\n• Part of the GenAI pipeline for SMB ad creatives across audio, video & image for GoLocal, JioHalo & Ajio\n• Recognised as Top Partner Employee for this work (Dec 2023 & Jan 2025)\n\nIPL 2023 — Live Ad Operations (JioCinema)\n• Automated ad tracking and analytics for every stream from SCTE-35 signals, in real time and as post-processing for streams that had already ended, across 12 languages & 17 simultaneous feeds\n• Replaced manual monitoring that needed up to 2 people per language and 2 per stream, and gave accurate start and end times for client-side ad integrations\n• Extended it into Ad Opportunity Loss reporting, daily and per match for all streams, which senior leadership used to spot inventory shortages, onboard campaigns and reset priorities\n• Outcome: contributed to a 15% increase in ad revenue and a sharp cut in the people needed for active monitoring\n• Designed stream preprocessing pipeline for Ad/Non-Ad categorisation and user cohort management\n• Context: IPL 2023 on JioCinema set a world record of 32M peak concurrent viewers, with 449M total viewers and 800+ advertisers\n\nContent Intelligence & Catalogue (JioCinema · Ajio · JioMart · Tira)\n• CV-based content & product extraction for JioCinema\n• Product catalogue, inventory, retargeting & recommendation systems across 3 commerce platforms\n\nAds Monitoring & Observability Platform\n• Built real-time campaign performance tracking platform across Jio's ad network\n\nTech: Python · LLMs · RAG · Stable Diffusion (SD 1.5, SDXL) · LoRA fine-tuning · Multimodal AI · CV · SCTE-35 · On-device AI · Model Compression · Chrome Extensions (MV3) · FastAPI · Azure · Vector DBs"
+      "description": "JioSphere Browser — AI Lead (Jan 2025 – Present)\n• Leading AI strategy for Jio's Chromium-based browser — the first Jio Platforms product on Linux, available across Android, iOS, Windows, macOS, Linux, KaiOS & Android TV\n• Building on-device Speech AI pipeline to replace Web Speech API using model compression & optimization for cross-device in-browser serving\n• Building Chrome extensions for rapid feature deployment and cross-platform testing\n• Self-initiated a Jio Design System (JDS) MCP solution that turns a business PRD into JDS-compliant design documents and flows for web and Android (React), cutting the long back-and-forth between business and design teams\n\nQA & Messaging Automation\n• Helped a DGM QA lead stand up a fully automated test harness for Jio Business Messaging and RCS\n• Trained 5 QA engineers on agent-based web UI automation (Playwright, CDP) and telco Voice AI testing over adb with Claude\n\nJio AI Agent Hackathon — Winner (July 2025, 80+ entries)\n• With a colleague, ideated and built a safety and evacuation push system that reaches people over RCS, SMS and email\n• Each person gets a ping with the exact evacuation path for their building or campus, worked out from their live GPS location taken through the browser\n• The same live locations are shared with the evacuation QRT and crisis response teams, so they can reach anyone who is restricted or whose surroundings are damaged, and the system pushes an updated path when that happens\n\nGenAI Ad Creative Platform — JioAds (2023 – 2024)\n• Set up LoRA and fine-tuning pipelines on Stable Diffusion 1.5 and SDXL so generated creatives matched each customer, cohort and category\n• Built a post-generation aesthetic scorer with automatic regeneration, so only the better-looking images were curated for JioHalo screensavers and GoLocal content\n• Part of the GenAI pipeline for SMB ad creatives across audio, video & image for GoLocal, JioHalo & Ajio\n• Mentored ~12 developers on diffusion-based image, audio and video generation\n• Recognised as Top Partner Employee (Dec 2023 & Jan 2025) for this and the IPL 2023 ad work\n\nIPL 2023 — Live Ad Operations (JioCinema)\n• Automated ad tracking and analytics for every stream from SCTE-35 signals, in real time and as post-processing for streams that had already ended, across 12 languages & 17 simultaneous feeds\n• Replaced manual monitoring that needed up to 2 people per language and 2 per stream, and gave accurate start and end times for client-side ad integrations\n• Extended it into Ad Opportunity Loss reporting, daily and per match for all streams, which senior leadership used to spot inventory shortages, onboard campaigns and reset priorities\n• Outcome: contributed to a 15% increase in ad revenue and a sharp cut in the people needed for active monitoring\n• Designed stream preprocessing pipeline for Ad/Non-Ad categorisation and user cohort management\n• Context: IPL 2023 on JioCinema set a world record of 32M peak concurrent viewers, with 449M total viewers and 800+ advertisers\n\nContent Intelligence & Catalogue (JioCinema · Ajio · JioMart · Tira)\n• CV-based content & product extraction for JioCinema\n• Product catalogue, inventory, retargeting & recommendation systems across 3 commerce platforms\n\nAds Monitoring & Observability Platform\n• Built real-time campaign performance tracking platform across Jio's ad network\n\nClient PoCs & Pre-sales (Quest Global)\n• Solely owned the demos and presentation for the Quest–Jio AI Demo Day, winning 4 new projects and expanding 2 ongoing ones\n• Philips: agent-based UI automation for WinForms-style desktop apps, with cross-language translation verification and text extraction (On-the-Fly Award)\n• GE Aerospace: document RAG that finds similar past engineering documents and advises engineers on the next step (BM25 hybrid retrieval, LlamaIndex, ChromaDB)\n• Halliburton: agent pipeline over design docs, technical docs and bill-of-materials reports to speed up custom drill-part creation\n• Automated internal Quest SDLC workflows (On-the-Fly Award)\n\nTech: Python · LLMs · RAG · Agents & MCP · Stable Diffusion (SD 1.5, SDXL) · LoRA fine-tuning · Multimodal AI · CV · SCTE-35 · On-device AI · Model Compression · Playwright · CDP · Chrome Extensions (MV3) · FastAPI · Azure · Vector DBs"
     },
     {
       "role": "Developer Student Club Lead",
@@ -90,7 +106,8 @@
       "degree": "Bachelor of Technology - BTech",
       "start": "August 2019",
       "end": "August 2023",
-      "activities": "GDSC, Codechef Chapter, Drama Club, Journal Club, Mehfil"
+      "activities": "GDSC, Codechef Chapter, Drama Club, Journal Club, Mehfil",
+      "notes": "CGPA 8.08"
     }
   ],
   "featuredProjects": [
@@ -384,7 +401,7 @@
     {
       "id": "neural-networks-and-deep-learning",
       "title": "Neural Networks and Deep Learning",
-      "issuer": "Coursera",
+      "issuer": "DeepLearning.AI",
       "date": "June 2020",
       "credentialId": "U8S3KP4ZRPLM",
       "url": "https://www.coursera.org/account/accomplishments/certificate/U8S3KP4ZRPLM"
@@ -392,7 +409,7 @@
     {
       "id": "introduction-to-tensorflow-for-artificial-intelligence-machine-learning-and-deep-learning",
       "title": "Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning",
-      "issuer": "Coursera",
+      "issuer": "DeepLearning.AI",
       "date": "June 2020",
       "credentialId": "GGMBMUDHUVR5",
       "url": "https://www.coursera.org/account/accomplishments/certificate/GGMBMUDHUVR5"
@@ -400,7 +417,7 @@
     {
       "id": "crash-course-on-python",
       "title": "Crash Course on Python",
-      "issuer": "Coursera",
+      "issuer": "Google",
       "date": "July 2020",
       "credentialId": "5YK35VKBBFR5",
       "url": "https://www.coursera.org/account/accomplishments/certificate/5YK35VKBBFR5"
@@ -408,18 +425,58 @@
     {
       "id": "object-oriented-data-structures-in-c",
       "title": "Object-Oriented Data Structures in C++",
-      "issuer": "Coursera",
+      "issuer": "University of Illinois Urbana-Champaign",
       "date": "July 2020",
       "credentialId": "FYLKGDC2DUSJ",
       "url": "https://www.coursera.org/account/accomplishments/certificate/FYLKGDC2DUSJ"
     },
     {
-      "id": "computational-thinking-with-beginning-c-programming-specialization",
-      "title": "Computational Thinking with Beginning C Programming Specialization",
-      "issuer": "Coursera",
+      "id": "design-thinking-and-global-startup",
+      "title": "Design Thinking and Global Startup",
+      "issuer": "Korea Advanced Institute of Science and Technology (KAIST)",
+      "date": "August 2020",
+      "credentialId": "V9CHD8H597G8",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/V9CHD8H597G8"
+    },
+    {
+      "id": "design-thinking-for-innovation",
+      "title": "Design Thinking for Innovation",
+      "issuer": "University of Virginia",
+      "date": "August 2020",
+      "credentialId": "3PBFA8ANE3C9",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/3PBFA8ANE3C9"
+    },
+    {
+      "id": "introduction-to-genomic-technologies",
+      "title": "Introduction to Genomic Technologies",
+      "issuer": "Johns Hopkins University",
+      "date": "August 2020",
+      "credentialId": "3ZP9QNC3LTLJ",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/3ZP9QNC3LTLJ"
+    },
+    {
+      "id": "introduction-to-virtual-reality",
+      "title": "Introduction to Virtual Reality",
+      "issuer": "University of London",
+      "date": "August 2020",
+      "credentialId": "M3UBKHZC2W7W",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/M3UBKHZC2W7W"
+    },
+    {
+      "id": "computational-thinking-with-beginning-c-programming",
+      "title": "Computational Thinking with Beginning C Programming",
+      "issuer": "University of Colorado System",
       "date": "July 2020",
       "credentialId": "DD2TXTBJLPYW",
       "url": "https://www.coursera.org/account/accomplishments/specialization/certificate/DD2TXTBJLPYW"
+    },
+    {
+      "id": "introduction-to-augmented-reality-and-arcore",
+      "title": "Introduction to Augmented Reality and ARCore",
+      "issuer": "Google AR & VR",
+      "date": "June 2020",
+      "credentialId": "EK8BS2EYYHM4",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/EK8BS2EYYHM4"
     }
   ],
   "mediaGallery": {
@@ -428,7 +485,7 @@
         "id": "doc-resume-auto",
         "name": "Resume.pdf",
         "url": "Resume.pdf",
-        "size": "55 KB"
+        "size": "168.9 KB"
       }
     ],
     "pictures": [],

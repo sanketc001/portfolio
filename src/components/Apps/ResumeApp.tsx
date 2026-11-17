@@ -1,7 +1,14 @@
 import React, { useState } from 'react'
-import { Download, Printer, Eye, Award, Trophy, Star } from 'lucide-react'
+import { Download, Printer, Eye, Award, Trophy, Star, FileText } from 'lucide-react'
 import portfolioData from '../../data/portfolioData.json'
 import { parseDescription } from '../../utils/description'
+
+// Role-specific one-to-two-page versions of the master resume (public/resumes/)
+const ROLE_RESUMES = [
+  { label: 'Applied AI Engineer', file: 'Sanket_Choudhary_Resume_Applied_AI_Engineer.pdf' },
+  { label: 'Forward Deployed Engineer', file: 'Sanket_Choudhary_Resume_Forward_Deployed_Engineer.pdf' },
+  { label: 'Technical Consultant', file: 'Sanket_Choudhary_Resume_Senior_Technical_Consultant.pdf' },
+]
 
 export const ResumeApp: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'interactive' | 'pdf'>('interactive')
@@ -97,6 +104,23 @@ export const ResumeApp: React.FC = () => {
         </div>
       </div>
 
+      {/* Role-specific versions */}
+      <div className="px-3 py-2 border-b border-slate-200/50 dark:border-slate-800/50 flex flex-wrap items-center gap-2 text-xs">
+        <span className="font-semibold text-slate-500 dark:text-slate-400">Role versions:</span>
+        {ROLE_RESUMES.map(r => (
+          <a
+            key={r.file}
+            href={`${import.meta.env.BASE_URL}resumes/${r.file}`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-accent-500 hover:text-white dark:hover:bg-accent-600 transition-colors"
+          >
+            <FileText className="w-3 h-3" />
+            {r.label}
+          </a>
+        ))}
+      </div>
+
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900/60 p-6 md:p-10">
         {activeTab === 'interactive' ? (
@@ -173,7 +197,15 @@ export const ResumeApp: React.FC = () => {
                   <div>
                     <span className="font-bold text-slate-800 dark:text-white">Top Partner Employee of the Month (×2)</span>
                     <span className="text-slate-400 ml-2">December 2023 & January 2025</span>
-                    <p className="text-slate-500 dark:text-slate-400 mt-0.5">Recognized twice at Reliance Jio for exceptional contributions to JioAds GenAI creative platform.</p>
+                    <p className="text-slate-500 dark:text-slate-400 mt-0.5">Recognized twice at Reliance Jio for the IPL 2023 ad analytics and the JioAds GenAI creative platform.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-slate-50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-800/50">
+                  <Star className="w-4 h-4 text-sky-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-bold text-slate-800 dark:text-white">On-the-Fly Awards</span>
+                    <span className="text-slate-400 ml-2">Quest Global & Jio</span>
+                    <p className="text-slate-500 dark:text-slate-400 mt-0.5">From Quest Global for the Philips GenAI PoC and internal SDLC automation, and from the Jio team (November 2026).</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 p-3 rounded-lg bg-slate-50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-800/50">
@@ -192,7 +224,7 @@ export const ResumeApp: React.FC = () => {
               <div className="border border-slate-100 dark:border-slate-800 p-4 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
                 <h3 className="text-sm font-bold text-slate-800 dark:text-white">B.Tech in Computer Science & Engineering</h3>
                 <p className="text-xs text-accent-500 dark:text-accent-400 font-semibold mt-0.5">Dr. D. Y. Patil International University, Pune</p>
-                <p className="text-xs text-slate-400 mt-0.5">2019 – 2023</p>
+                <p className="text-xs text-slate-400 mt-0.5">2019 – 2023 · CGPA 8.08</p>
               </div>
             </div>
           </div>

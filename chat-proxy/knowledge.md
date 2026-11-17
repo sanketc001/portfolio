@@ -17,9 +17,9 @@ Anything not written here is unknown to the assistant.
 - GitHub: https://github.com/sanketc001
 - LinkedIn: https://linkedin.com/in/sanket-choudhary-243625208
 
-Pitch: GenAI & ML engineer with 3+ years building production AI systems at Reliance Jio (via Quest Global). I automated live ad monitoring for IPL 2023 across 17 feeds and 12 languages, which contributed to a 15% increase in ad revenue; built the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives; and now work on on-device speech AI for the JioSphere browser. Outside work I build LLM agents, MCP servers and local-first AI tools end to end, from model calls to the UI. Open to Applied AI and Forward Deployed Engineer roles.
+Pitch: GenAI & ML engineer with 3.5+ years building production AI systems at Reliance Jio (via Quest Global). I automated live ad monitoring for IPL 2023 across 17 feeds and 12 languages, which contributed to a 15% increase in ad revenue; built the fine-tuning and image-curation pipelines behind Jio's GenAI ad creatives; and now lead AI for the JioSphere browser. Client-facing by default: I owned the Quest–Jio AI Demo Day that won 4 new projects and delivered GenAI PoCs for Philips, GE Aerospace and Halliburton. Outside work I build LLM agents, MCP servers and local-first AI tools end to end, from model calls to the UI. Open to Applied AI, Forward Deployed Engineer and Senior Technical Consultant roles.
 
-Summary: GenAI & ML Engineer with 3+ years of experience building production-grade AI systems at scale. Currently serving as AI Lead for JioSphere Browser at Reliance Jio via Quest Global, where I lead GenAI innovation across audio, video, and image-based offerings. Recognised as Top Partner Employee twice consecutively (December 2023 & January 2025) for driving measurable impact on GenAI ad products. Won the Jio-wide AI Agent Hackathon (July 2025) competing across one of India's largest technology organisations. Core expertise: Large Language Models, Retrieval-Augmented Generation, Stable Diffusion, multimodal AI, and full-stack AI integration — from research and prototyping through to production deployment. Passionate about applying AI to real-world products, civic infrastructure, and enterprise tooling as well as contributing time and effort for Social Good.
+Summary: GenAI and ML engineer with 3.5+ years shipping production AI at Reliance Jio via Quest Global. Built live ad analytics for IPL 2023 (contributed to a 15% ad-revenue lift), Stable Diffusion fine-tuning for JioAds creatives, and now lead AI for the JioSphere browser. Client-facing by default: owned the Quest–Jio AI Demo Day that won 4 new projects, delivered GenAI PoCs for Philips, GE Aerospace and Halliburton, and mentored 17 engineers. Outside work I build agents, MCP servers and local-first AI tools end to end, from model calls to UI. Winner, Jio AI Agent Hackathon (2025, 80+ entries); Top Partner Employee twice.
 
 ## Experience
 
@@ -27,12 +27,17 @@ Summary: GenAI & ML Engineer with 3+ years of experience building production-gra
 
 Location: Navi Mumbai
 
-JioSphere Browser (Jan 2025 – Present)
+JioSphere Browser — AI Lead (Jan 2025 – Present)
 - Leading AI strategy for Jio's Chromium-based browser — the first Jio Platforms product on Linux, available across Android, iOS, Windows, macOS, Linux, KaiOS & Android TV
 - Building on-device Speech AI pipeline to replace Web Speech API using model compression & optimization for cross-device in-browser serving
 - Building Chrome extensions for rapid feature deployment and cross-platform testing
+- Self-initiated a Jio Design System (JDS) MCP solution that turns a business PRD into JDS-compliant design documents and flows for web and Android (React), cutting the long back-and-forth between business and design teams
 
-Jio AI Agent Hackathon — Winner (July 2025)
+QA & Messaging Automation
+- Helped a DGM QA lead stand up a fully automated test harness for Jio Business Messaging and RCS
+- Trained 5 QA engineers on agent-based web UI automation (Playwright, CDP) and telco Voice AI testing over adb with Claude
+
+Jio AI Agent Hackathon — Winner (July 2025, 80+ entries)
 - With a colleague, ideated and built a safety and evacuation push system that reaches people over RCS, SMS and email
 - Each person gets a ping with the exact evacuation path for their building or campus, worked out from their live GPS location taken through the browser
 - The same live locations are shared with the evacuation QRT and crisis response teams, so they can reach anyone who is restricted or whose surroundings are damaged, and the system pushes an updated path when that happens
@@ -41,7 +46,8 @@ GenAI Ad Creative Platform — JioAds (2023 – 2024)
 - Set up LoRA and fine-tuning pipelines on Stable Diffusion 1.5 and SDXL so generated creatives matched each customer, cohort and category
 - Built a post-generation aesthetic scorer with automatic regeneration, so only the better-looking images were curated for JioHalo screensavers and GoLocal content
 - Part of the GenAI pipeline for SMB ad creatives across audio, video & image for GoLocal, JioHalo & Ajio
-- Recognised as Top Partner Employee for this work (Dec 2023 & Jan 2025)
+- Mentored ~12 developers on diffusion-based image, audio and video generation
+- Recognised as Top Partner Employee (Dec 2023 & Jan 2025) for this and the IPL 2023 ad work
 
 IPL 2023 — Live Ad Operations (JioCinema)
 - Automated ad tracking and analytics for every stream from SCTE-35 signals, in real time and as post-processing for streams that had already ended, across 12 languages & 17 simultaneous feeds
@@ -58,7 +64,14 @@ Content Intelligence & Catalogue (JioCinema · Ajio · JioMart · Tira)
 Ads Monitoring & Observability Platform
 - Built real-time campaign performance tracking platform across Jio's ad network
 
-Tech: Python · LLMs · RAG · Stable Diffusion (SD 1.5, SDXL) · LoRA fine-tuning · Multimodal AI · CV · SCTE-35 · On-device AI · Model Compression · Chrome Extensions (MV3) · FastAPI · Azure · Vector DBs
+Client PoCs & Pre-sales (Quest Global)
+- Solely owned the demos and presentation for the Quest–Jio AI Demo Day, winning 4 new projects and expanding 2 ongoing ones
+- Philips: agent-based UI automation for WinForms-style desktop apps, with cross-language translation verification and text extraction (On-the-Fly Award)
+- GE Aerospace: document RAG that finds similar past engineering documents and advises engineers on the next step (BM25 hybrid retrieval, LlamaIndex, ChromaDB)
+- Halliburton: agent pipeline over design docs, technical docs and bill-of-materials reports to speed up custom drill-part creation
+- Automated internal Quest SDLC workflows (On-the-Fly Award)
+
+Tech: Python · LLMs · RAG · Agents & MCP · Stable Diffusion (SD 1.5, SDXL) · LoRA fine-tuning · Multimodal AI · CV · SCTE-35 · On-device AI · Model Compression · Playwright · CDP · Chrome Extensions (MV3) · FastAPI · Azure · Vector DBs
 
 ### Developer Student Club Lead, GDSC DYPIU (August 2021 - May 2022)
 
@@ -74,22 +87,27 @@ Conducted programming challenges, mentored peers on data structures and algorith
 
 ## Education
 
-- Bachelor of Technology - BTech, D Y Patil International University (August 2019 – August 2023). Activities: GDSC, Codechef Chapter, Drama Club, Journal Club, Mehfil
+- Bachelor of Technology - BTech, D Y Patil International University (August 2019 – August 2023). CGPA 8.08. Activities: GDSC, Codechef Chapter, Drama Club, Journal Club, Mehfil
 
 ## Skills
 
-- AI & GenAI: Large Language Models (LLM), Stable Diffusion, Retrieval-Augmented Generation (RAG), Multimodal AI, Computer Vision (CV), Vector DBs, Machine Learning, Artificial Intelligence (AI), LangChain, Natural Language Processing (NLP), TensorFlow, Conversational User Interfaces (CUI)
-- Engineering: Python, FastAPI, On-device AI, Model Compression, Chrome Extensions (MV3), Azure, Big Data, Async, Pandas, Data Analysis, Data Structures, C++, C, SQL, Web Scraping
+- AI & GenAI: Large Language Models (LLM), Stable Diffusion, Retrieval-Augmented Generation (RAG), Multimodal AI, Computer Vision (CV), Vector DBs, Machine Learning, Artificial Intelligence (AI), LangChain, Natural Language Processing (NLP), TensorFlow, Conversational User Interfaces (CUI), AI Agents & Tool Calling, Model Context Protocol (MCP), LlamaIndex, LangGraph, LoRA Fine-tuning, ComfyUI, Eval & Ablation
+- Engineering: Python, FastAPI, On-device AI, Model Compression, Chrome Extensions (MV3), Azure, Big Data, Async, Pandas, Data Analysis, Data Structures, C++, C, SQL, Web Scraping, TypeScript, React, Next.js, Playwright, Chrome DevTools Protocol, OpenTelemetry
 - Media & Streaming: SCTE-35 Signal Parsing, Stream Preprocessing, Speech AI, Ad Delivery Monitoring
-- Leadership & Tools: Technical Consulting, System Architecture, Git, Docker, Algorithms, Data Collection, Communication, Team Leadership, Training
+- Leadership & Tools: Technical Consulting, System Architecture, Git, Docker, Algorithms, Data Collection, Communication, Team Leadership, Training, Pre-sales & Solutioning, Client Demos, Mentoring
 
 ## Certifications
 
-- Neural Networks and Deep Learning, Coursera (June 2020): https://www.coursera.org/account/accomplishments/certificate/U8S3KP4ZRPLM
-- Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning, Coursera (June 2020): https://www.coursera.org/account/accomplishments/certificate/GGMBMUDHUVR5
-- Crash Course on Python, Coursera (July 2020): https://www.coursera.org/account/accomplishments/certificate/5YK35VKBBFR5
-- Object-Oriented Data Structures in C++, Coursera (July 2020): https://www.coursera.org/account/accomplishments/certificate/FYLKGDC2DUSJ
-- Computational Thinking with Beginning C Programming Specialization, Coursera (July 2020): https://www.coursera.org/account/accomplishments/specialization/certificate/DD2TXTBJLPYW
+- Neural Networks and Deep Learning, DeepLearning.AI (June 2020): https://www.coursera.org/account/accomplishments/certificate/U8S3KP4ZRPLM
+- Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning, DeepLearning.AI (June 2020): https://www.coursera.org/account/accomplishments/certificate/GGMBMUDHUVR5
+- Crash Course on Python, Google (July 2020): https://www.coursera.org/account/accomplishments/certificate/5YK35VKBBFR5
+- Object-Oriented Data Structures in C++, University of Illinois Urbana-Champaign (July 2020): https://www.coursera.org/account/accomplishments/certificate/FYLKGDC2DUSJ
+- Design Thinking and Global Startup, Korea Advanced Institute of Science and Technology (KAIST) (August 2020): https://www.coursera.org/account/accomplishments/certificate/V9CHD8H597G8
+- Design Thinking for Innovation, University of Virginia (August 2020): https://www.coursera.org/account/accomplishments/certificate/3PBFA8ANE3C9
+- Introduction to Genomic Technologies, Johns Hopkins University (August 2020): https://www.coursera.org/account/accomplishments/certificate/3ZP9QNC3LTLJ
+- Introduction to Virtual Reality, University of London (August 2020): https://www.coursera.org/account/accomplishments/certificate/M3UBKHZC2W7W
+- Computational Thinking with Beginning C Programming, University of Colorado System (July 2020): https://www.coursera.org/account/accomplishments/specialization/certificate/DD2TXTBJLPYW
+- Introduction to Augmented Reality and ARCore, Google AR & VR (June 2020): https://www.coursera.org/account/accomplishments/certificate/EK8BS2EYYHM4
 
 ## Featured projects (personal, open source on GitHub)
 
@@ -178,7 +196,10 @@ Research agent that searches, reads pages with Playwright and files sources into
 
 ## Availability
 
-- Open to Applied AI and Forward Deployed Engineer (FDE) roles.
+- Open to Applied AI, Forward Deployed Engineer (FDE) and Senior Technical
+  Consultant roles, in India or remote.
+- Role-specific resumes (Applied AI, FDE, Technical Consultant) are linked in
+  the Resume.pdf window; Resume.pdf itself is the full master resume.
 - Notice period, relocation, visa, compensation and start dates are not in
   this file: the assistant does not know them and should point people to
   email (sanketkumarchoudhary@gmail.com) or the Contact window.
@@ -192,10 +213,12 @@ Research agent that searches, reads pages with Playwright and files sources into
   (taken through the browser), the same live locations go to the evacuation
   QRT and crisis response teams, and an updated path is pushed if someone is
   restricted or their surroundings are damaged.
-- Top Partner Employee, twice (Dec 2023 and Jan 2025), for the GenAI ad
-  creative work: LoRA and fine-tuning pipelines on Stable Diffusion 1.5 and
-  SDXL, and an aesthetic scorer with automatic regeneration that curated
-  images for JioHalo screensavers and GoLocal content.
+- Top Partner Employee, twice (Dec 2023 and Jan 2025), for the IPL 2023 ad
+  analytics and the GenAI ad creative work: LoRA and fine-tuning pipelines on
+  Stable Diffusion 1.5 and SDXL, and an aesthetic scorer with automatic
+  regeneration that curated images for JioHalo screensavers and GoLocal content.
+- On-the-Fly Awards: from Quest Global for the Philips GenAI PoC and for
+  automating internal Quest SDLC workflows, and from the Jio team (November 2026).
 
 ## Outcomes worth quoting
 
@@ -205,6 +228,23 @@ Research agent that searches, reads pages with Playwright and files sources into
   daily and per-match Ad Opportunity Loss reports for senior leadership. That
   contributed to a 15% increase in ad revenue and sharply cut the people
   needed for active monitoring.
+- Quest–Jio AI Demo Day: he was solely responsible for the demos and the
+  presentation, which secured 4 new projects and more traction on 2 ongoing ones.
+- Client GenAI PoCs through Quest Global: Philips (agent-based UI automation for
+  WinForms-style desktop apps with cross-language translation verification),
+  GE Aerospace (document RAG with BM25, LlamaIndex and ChromaDB that finds similar
+  past engineering documents and advises engineers on the next step) and
+  Halliburton (agent pipeline over design docs, technical docs and bill-of-materials
+  reports to speed up custom drill-part creation).
+- Jio Design System MCP: self-initiated a solution that turns a business PRD into
+  JDS-compliant design documents and flows for web and Android, after seeing how
+  long business teams waited on design iterations.
+- Mentoring: about 12 developers on diffusion-based image, audio and video
+  generation, and 5 QA engineers on agent-based web UI automation (Playwright,
+  CDP) and Voice AI testing over adb. He also helped a DGM QA lead set up a fully
+  automated test harness for Jio Business Messaging and RCS.
+- Speech AI metrics for JioSphere are under NDA: the assistant should say so
+  rather than guess numbers.
 
 ## Project notes
 
@@ -215,6 +255,23 @@ described: the LinkedIn export is imported locally into a graph of people,
 companies and schools; an LLM resolves company names using web evidence; the
 app offers an overview dashboard, a graph view, an inbox with reply drafts and
 natural-language search. Finer implementation details are not in this file.
+
+### Projects not on GitHub yet (no public repository or screenshots)
+
+- Gap Map Reference Apps: three deployable apps (insurance Claims Desk, Private
+  Knowledge Assistant with cited answers, Creative Studio with Content
+  Credentials) composed from open-source AI products scored on the AI Potluck
+  Gap Map. Every request gets an OpenTelemetry trace of which product did each
+  step, with time, tokens and cost; ablation evals switch each product off and
+  can gate a release. Independent project, not affiliated with AI Potluck.
+- Hands-free Voice Agent (in progress): a voice-only device-control experiment
+  that already works on the web through a custom harness around the Chrome
+  DevTools Protocol (similar to browser-use), being extended to Android via adb
+  and accessibility services.
+- AIAssist: local-first notes, calendar, maps, web capture and search with
+  strict Personal / Work separation and an assistant that works over the user's
+  data through a permission-checked tool layer; Android, web and desktop from one
+  React Native (Expo) codebase.
 
 ## LLM agent work at a glance
 

@@ -472,8 +472,24 @@ function buildCertifications(certs, cfg = {}) {
     const i = keywords.findIndex((re) => re.test(c.title));
     return i < 0 ? keywords.length : i;
   };
+  // LinkedIn can list one certificate twice, under its issuer and under "Coursera", with
+  // the same credential ID: keep one entry, preferring the issuer's (its title and authority).
+  const byCredential = new Map();
+  const unique = [];
+  for (const c of certs) {
+    const key = c.licenseNumber ? lc(c.licenseNumber) : '';
+    const prev = key && byCredential.get(key);
+    if (!prev) {
+      if (key) byCredential.set(key, c);
+      unique.push(c);
+    } else if (lc(prev.issuer) === 'coursera' && lc(c.issuer) !== 'coursera') {
+      const kept = { ...c, url: c.url || prev.url };
+      unique[unique.indexOf(prev)] = kept;
+      byCredential.set(key, kept);
+    }
+  }
   const ids = new Set();
-  return certs
+  return unique
     .filter((c) => !inList(cfg.hide, c.title))
     .map((c, i) => ({ c, i }))
     .sort((a, b) => {
